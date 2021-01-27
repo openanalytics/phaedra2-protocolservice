@@ -8,6 +8,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +26,7 @@ public class FeatureRepositoryTest {
     }
 
     @Test
-    public void createNewFeature() {
+    public void createFeature() {
         long protocolId = 0;
 
         Feature newFeature = new Feature(protocolId);
@@ -61,24 +62,70 @@ public class FeatureRepositoryTest {
     }
 
     @Test
-    public void getFeatureForAGivenProtocolId() {
-        long protocolId = 10L;
+    public void deleteFeature() throws Exception {
+        Long protocolId = 10L;
+
+        List<Feature> results1 = featureRepository.findAllByProtocolId(protocolId);
+        assertThat(results1).isNotNull();
+        assertThat(results1).isNotEmpty();
+
+        featureRepository.delete(results1.get(0));
+
+        List<Feature> results2 = featureRepository.findAllByProtocolId(protocolId);
+        assertThat(results2).isNotNull();
+        assertThat(results2).isNotEmpty();
+        assertThat(results2.size()).isLessThan(results1.size());
+    }
+
+    @Test
+    public void updateFeature() throws Exception {
+        Long protocolId = 20L;
 
         List<Feature> result = featureRepository.findAllByProtocolId(protocolId);
-
         assertThat(result).isNotNull();
         assertThat(result).isNotEmpty();
-        assertThat(result.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
+
+        Feature feature = result.get(0);
+        String newName = "New feature name";
+        String newDescription = "New feature description";
+        feature.setName(newName);
+        feature.setDescription(newDescription);
+
+        Feature updatedFeature = featureRepository.save(feature);
+        assertThat(updatedFeature).isNotNull();
+        assertThat(updatedFeature.getName()).isEqualTo(newName);
+        assertThat(updatedFeature.getDescription()).isEqualTo(newDescription);
+    }
+
+
+    @Test
+    public void getFeatureById() {
+        Long featureId = 1000L;
+
+        Optional<Feature> feature = featureRepository.findById(featureId);
+        assertThat(feature).isNotNull();
+        assertThat(feature.isPresent()).isTrue();
+        assertThat(feature.get().getId()).isEqualTo(featureId);
+    }
+
+    @Test
+    public void getFeatureForAGivenProtocolId() {
+        Long protocolId = 10L;
+
+        List<Feature> features = featureRepository.findAllByProtocolId(protocolId);
+        assertThat(features).isNotNull();
+        assertThat(features).isNotEmpty();
+        assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
     }
 
     @Test
     public void getFeatureForAGivenFeatureGroupId() {
-        long featureGroupId = 20L;
+        Long featureGroupId = 20L;
 
-        List<Feature> result = featureRepository.findAllByFeatureGroupId(featureGroupId);
-
-        assertThat(result).isNotNull();
-        assertThat(result).isNotEmpty();
-        assertThat(result.stream().allMatch(f -> f.getFeatureGroupId().equals(featureGroupId))).isTrue();
+        List<Feature> features = featureRepository.findAllByFeatureGroupId(featureGroupId);
+        assertThat(features).isNotNull();
+        assertThat(features).isNotEmpty();
+        assertThat(features.stream().allMatch(f -> f.getFeatureGroupId().equals(featureGroupId))).isTrue();
     }
+
 }

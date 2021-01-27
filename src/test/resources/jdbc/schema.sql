@@ -9,8 +9,8 @@ create table if not exists protocol
     default_lims               varchar(25),
     default_layout_template    varchar(512),
     default_capture_config     varchar(512),
-    is_editable                boolean default true,
-    is_in_development          boolean default true,
+    is_editable                boolean     default true,
+    is_in_development          boolean     default true,
     low_welltype               varchar(10),
     high_welltype              varchar(10),
     team_code                  varchar(25) default 'NONE'::character varying,
@@ -19,7 +19,7 @@ create table if not exists protocol
 --         constraint hca_pclass_fk_image_settings
 --             references phaedra.hca_image_setting
 --             on delete set null,
-    is_multi_dim_subwell_data  boolean default false,
+    is_multi_dim_subwell_data  boolean     default false,
     default_multiplo_method    varchar(100),
     default_multiplo_parameter varchar(100)
 );
@@ -73,4 +73,17 @@ create table if not exists feature
 --         constraint fk_feature_feature_group
 --             references feature_group
 --             on delete set null
+);
+
+-- Drop and create image_setting table
+create table if not exists image_setting
+(
+    image_setting_id serial primary key,
+--         constraint hca_image_setting_pk
+--             primary key,
+    zoom_ratio       integer,
+    gamma            integer,
+    pixel_size_x     numeric,
+    pixel_size_y     numeric,
+    pixel_size_z     numeric
 );

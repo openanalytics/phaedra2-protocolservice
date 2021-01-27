@@ -21,25 +21,25 @@ public class ProtocolRepositoryTest {
     private ProtocolRepository protocolRepository;
 
     @Test
-    public void contextLoads() throws Exception {
+    public void contextLoads() {
         assertThat(protocolRepository).isNotNull();
     }
 
     @Test
-    public void getProtocols() throws Exception {
+    public void getProtocols() {
         Iterable<Protocol> allProtocols = protocolRepository.findAll();
         assertThat(allProtocols).isNotNull();
         assertThat(allProtocols).isNotEmpty();
     }
 
     @Test
-    public void getProtocolById() throws Exception {
+    public void getProtocolById() {
         Optional<Protocol> protocol = protocolRepository.findById(0L);
         assertThat(protocol.isEmpty()).isTrue();
     }
 
     @Test
-    public void createNewProtocol() throws Exception {
+    public void createNewProtocol() {
         Protocol newProtocol = new Protocol();
         newProtocol.setProtocolName("Test");
         newProtocol.setDescription("Test");
