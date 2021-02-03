@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:application-test.properties")
 @Sql({"classpath:jdbc/schema.sql", "classpath:jdbc/test-data.sql"})
 @AutoConfigureMockMvc
 public class FeatureControllerTest {
@@ -63,7 +65,7 @@ public class FeatureControllerTest {
 
     @Test
     public void deleteFeature() throws Exception {
-        Long featureId = 1L;
+        Long featureId = 1000L;
 
         this.mockMvc.perform(delete("/features/{featureId}", featureId))
                 .andDo(print())
@@ -73,7 +75,7 @@ public class FeatureControllerTest {
 
     @Test
     public void updateFeature() throws Exception {
-        Long featureId = 1L;
+        Long featureId = 2000L;
 
         MvcResult mvcResult = this.mockMvc.perform(get("/features/{featureId}", featureId))
                 .andDo(print())
@@ -105,7 +107,7 @@ public class FeatureControllerTest {
 
     @Test
     public void getFeatureById() throws Exception {
-        Long featureId = 1000L;
+        Long featureId = 3000L;
 
         MvcResult mvcResult = this.mockMvc.perform(get("/features/{featureId}", featureId))
                 .andDo(print())
