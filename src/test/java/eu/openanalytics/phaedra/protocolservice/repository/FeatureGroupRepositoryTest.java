@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.protocolservice.repository;
 
-import eu.openanalytics.phaedra.protocolservice.model.FeatureGroup;
+import eu.openanalytics.phaedra.protocolservice.model.FeatureTag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,17 +20,17 @@ public class FeatureGroupRepositoryTest {
 
     @Test
     public void createFeatureGroup() {
-        Long protocolId = 0L;
+        Long newFeatureTagId = 1000L;
+        String newFeatureTagName = "New Feature Tag";
 
-        FeatureGroup newFeatureGroup = new FeatureGroup(protocolId);
-        newFeatureGroup.setGroupName("New Feature Group");
-        newFeatureGroup.setDescription("A new feature group for test");
-        newFeatureGroup.setGroupType(0);
+        FeatureTag newFeatureTag = new FeatureTag();
+        newFeatureTag.setFeatureTagId(newFeatureTagId);
+        newFeatureTag.setFeatureTagName(newFeatureTagName);
 
-        FeatureGroup savedFeatureGroup = featureGroupRepository.save(newFeatureGroup);
+        FeatureTag savedFeatureGroup = featureGroupRepository.save(newFeatureTag);
 
         assertThat(savedFeatureGroup).isNotNull();
-        assertThat(savedFeatureGroup.getId()).isNotNull();
-        assertThat(savedFeatureGroup.getProtocolId()).isEqualTo(protocolId);
+        assertThat(savedFeatureGroup.getFeatureTagId()).isEqualTo(newFeatureTagId);
+        assertThat(savedFeatureGroup.getFeatureTagName()).isEqualTo(newFeatureTagName);
     }
 }

@@ -34,7 +34,7 @@ public class ImageSettingRepositoryTest {
         ImageSetting savedImageSetting = imageSettingRepository.save(newImageSetting);
 
         assertThat(savedImageSetting).isNotNull();
-        assertThat(savedImageSetting.getId()).isNotNull();
+        assertThat(savedImageSetting.getImageSettingId()).isNotNull();
 
     }
 }

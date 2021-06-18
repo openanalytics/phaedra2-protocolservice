@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,8 +33,8 @@ public class ProtocolRepositoryTest {
 
     @Test
     public void getProtocolById() {
-        Optional<Protocol> protocol = protocolRepository.findById(0L);
-        assertThat(protocol.isEmpty()).isTrue();
+        Optional<Protocol> protocol = protocolRepository.findById(1000L);
+        assertThat(protocol.isPresent()).isTrue();
     }
 
     @Test
@@ -43,23 +42,15 @@ public class ProtocolRepositoryTest {
         Protocol newProtocol = new Protocol();
         newProtocol.setProtocolName("Test");
         newProtocol.setDescription("Test");
-        newProtocol.setDefaultFeatureId(0L);
-        newProtocol.setDefaultLims("Test");
-        newProtocol.setDefaultLayoutTemplate("Test");
-        newProtocol.setDefaultCaptureConfig("Test");
         newProtocol.setEditable(true);
         newProtocol.setInDevelopment(true);
         newProtocol.setLowWelltype("NC");
         newProtocol.setHighWelltype("PC");
-        newProtocol.setImageSettingId(0L);
-        newProtocol.setMultiDimSubwellData(false);
-        newProtocol.setDefaultMultiploMethod("Test");
-        newProtocol.setDefaultMultiploParameter("Test");
 
         Protocol savedProtocol = protocolRepository.save(newProtocol);
 
         assertThat(savedProtocol).isNotNull();
-        assertThat(savedProtocol.getId()).isNotNull();
+        assertThat(savedProtocol.getProtocolId()).isNotNull();
         assertThat(savedProtocol.getProtocolName()).isEqualTo(newProtocol.getProtocolName());
     }
 }

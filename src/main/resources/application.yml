@@ -1,0 +1,11 @@
+server:
+  servlet:
+    context-path: /phaedra/protocol-service
+  port: 3030
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://protocol-db:5432/protocoldb
+    username: phaedra2
+    password: phaedra2

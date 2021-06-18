@@ -2,25 +2,19 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import org.assertj.core.api.Assertions;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -77,7 +71,7 @@ public class ProtocolControllerTest {
                 .andReturn();
         Protocol protocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
         assertThat(protocol).isNotNull();
-        assertThat(protocol.getId()).isEqualTo(protocolId);
+        assertThat(protocol.getProtocolId()).isEqualTo(protocolId);
 
         String newName = "New protocol name";
         protocol.setProtocolName(newName);
@@ -121,7 +115,7 @@ public class ProtocolControllerTest {
 
         Protocol result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(protocolId);
+        assertThat(result.getProtocolId()).isEqualTo(protocolId);
     }
 
     @Test
@@ -133,7 +127,7 @@ public class ProtocolControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Feature>>() {});
+        List<WellFeature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<WellFeature>>() {});
         assertThat(features).isNotNull();
         assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
     }

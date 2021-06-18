@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,14 +17,14 @@ public class FeatureController {
     private FeatureRepository featureRepository;
 
     @PostMapping("/features")
-    public ResponseEntity createFeature(@RequestBody Feature newFeature) {
-        Feature savedFeature = featureRepository.save(newFeature);
+    public ResponseEntity createFeature(@RequestBody WellFeature newFeature) {
+        WellFeature savedFeature = featureRepository.save(newFeature);
         return new ResponseEntity(savedFeature, HttpStatus.CREATED);
     }
 
     @PutMapping("/features")
-    public ResponseEntity updateFeature(@RequestBody Feature updateFeature) {
-        Feature updatedFeature = featureRepository.save(updateFeature);
+    public ResponseEntity updateFeature(@RequestBody WellFeature updateFeature) {
+        WellFeature updatedFeature = featureRepository.save(updateFeature);
         return new ResponseEntity(updatedFeature, HttpStatus.OK);
     }
 
@@ -36,7 +36,7 @@ public class FeatureController {
 
     @GetMapping("/features/{featureId}")
     public ResponseEntity getFeatureById(@PathVariable Long featureId) {
-        Optional<Feature> result = featureRepository.findById(featureId);
+        Optional<WellFeature> result = featureRepository.findById(featureId);
         if (result.isPresent())
             return new ResponseEntity(result.get(), HttpStatus.OK);
         else
@@ -45,7 +45,7 @@ public class FeatureController {
 
     @GetMapping("/features")
     public ResponseEntity getFeaturesByGroupId(@RequestParam("groupId") Long groupId) {
-        List<Feature> result = featureRepository.findAllByFeatureGroupId(groupId);
+        List<WellFeature> result = featureRepository.findAllByFeatureGroupId(groupId);
         if (result != null) {
             return new ResponseEntity(result, HttpStatus.OK);
         } else {

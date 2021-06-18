@@ -2,7 +2,7 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,14 +12,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -41,8 +39,8 @@ public class FeatureControllerTest {
 
     @Test
     public void createFeature() throws Exception {
-        Feature newFeature = new Feature();
-        newFeature.setName("A new feature");
+        WellFeature newFeature = new WellFeature();
+        newFeature.setFeatureName("A new feature");
         newFeature.setDescription("Creating a new feature");
         newFeature.setProtocolId(1000L);
         newFeature.setFormatString("#.###");
@@ -56,10 +54,10 @@ public class FeatureControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        Feature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        WellFeature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
         assertThat(createdFeature).isNotNull();
-        assertThat(createdFeature.getId()).isNotNull();
-        assertThat(createdFeature.getName()).isEqualTo(newFeature.getName());
+        assertThat(createdFeature.getFeatureId()).isNotNull();
+        assertThat(createdFeature.getFeatureName()).isEqualTo(newFeature.getFeatureName());
         assertThat(createdFeature.getDescription()).isEqualTo(newFeature.getDescription());
     }
 
@@ -82,13 +80,13 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        WellFeature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
         assertThat(feature).isNotNull();
-        assertThat(feature.getId()).isEqualTo(featureId);
+        assertThat(feature.getFeatureId()).isEqualTo(featureId);
 
         String updatedName = "Updated feature name";
         String updateDescription = "Update feature description";
-        feature.setName(updatedName);
+        feature.setFeatureName(updatedName);
         feature.setDescription(updateDescription);
 
         String requestBody = objectMapper.writeValueAsString(feature);
@@ -98,10 +96,10 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        WellFeature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
         assertThat(updatedFeature).isNotNull();
-        assertThat(updatedFeature.getId()).isEqualTo(feature.getId());
-        assertThat(updatedFeature.getName()).isEqualTo(feature.getName());
+        assertThat(updatedFeature.getFeatureId()).isEqualTo(feature.getFeatureId());
+        assertThat(updatedFeature.getFeatureName()).isEqualTo(feature.getFeatureName());
         assertThat(updatedFeature.getDescription()).isEqualTo(feature.getDescription());
     }
 
@@ -114,9 +112,9 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        WellFeature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
         assertThat(feature).isNotNull();
-        assertThat(feature.getId()).isEqualTo(featureId);
+        assertThat(feature.getFeatureId()).isEqualTo(featureId);
     }
 
     @Test
@@ -128,9 +126,9 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<Feature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Feature>>() {});
+        List<WellFeature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<WellFeature>>() {});
         assertThat(result).isNotNull();
         assertThat(result).isNotEmpty();
-        assertThat(result.stream().allMatch(r -> r.getFeatureGroupId().equals(groupId)));
+        assertThat(result.stream().allMatch(r -> r.getGroupId().equals(groupId)));
     }
 }

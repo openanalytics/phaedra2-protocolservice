@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
@@ -23,7 +23,7 @@ public class ProtocolController {
     @GetMapping("/protocols")
     public ResponseEntity getProtocolList() {
         List<Protocol> result = new ArrayList<>();
-        protocolRepository.findAll().forEach(result::add);
+        protocolRepository.getProtocolList().forEach(result::add);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
@@ -32,7 +32,7 @@ public class ProtocolController {
         Protocol savedProtocol = protocolRepository.save(newProtocol);
 
         Map<String, Long> responseBody = new HashMap<>();
-        responseBody.put("protocolId", savedProtocol.getId());
+        responseBody.put("protocolId", savedProtocol.getProtocolId());
 
         ResponseEntity<Map<String, Long>> response = new ResponseEntity<>(responseBody, HttpStatus.CREATED);
         return response;
@@ -63,16 +63,16 @@ public class ProtocolController {
 
     @GetMapping("/protocols/{protocolId}")
     public ResponseEntity getProtocol(@PathVariable Long protocolId) {
-        Optional<Protocol> result = protocolRepository.findById(protocolId);
-        if (result.isPresent())
-            return new ResponseEntity(result.get(), HttpStatus.OK);
+        Protocol result = protocolRepository.getProtocolById(protocolId);
+        if (result != null)
+            return new ResponseEntity(result, HttpStatus.OK);
         else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/protocols/{protocolId}/features")
     public ResponseEntity getFeaturesByProtocol(@PathVariable Long protocolId) {
-        List<Feature> result = new ArrayList<>();
+        List<WellFeature> result = new ArrayList<>();
         featureRepository.findAllByProtocolId(protocolId).forEach(result::add);
         return new ResponseEntity(result, HttpStatus.OK);
     }

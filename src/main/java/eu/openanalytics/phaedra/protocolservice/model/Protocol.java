@@ -5,32 +5,28 @@ import org.springframework.data.relational.core.mapping.Column;
 
 public class Protocol {
     @Id
-    @Column("PROTOCOL_ID")
-    private Long id;
+    @Column("protocol_id")
+    private Long protocolId;
+    @Column("protocol_name")
     private String protocolName;
     private String description;
-    private Long defaultFeatureId;
-    private String defaultLims;
-    private String defaultLayoutTemplate;
-    private String defaultCaptureConfig;
-    private boolean isEditable;
-    private boolean isInDevelopment;
-    private String teamCode;
-    private String uploadSystem;
+    private boolean editable;
+    @Column("in_development")
+    private boolean inDevelopment;
+    @Column("low_welltype")
     private String lowWelltype;
+    @Column("high_welltype")
     private String highWelltype;
-    private Long imageSettingId;
-    private boolean isMultiDimSubwellData;
-    private String defaultMultiploMethod;
-    private String defaultMultiploParameter;
+//    private String defaultMultiploMethod;
+//    private String defaultMultiploParameter;
 
     // Getters and setters
-    public Long getId() {
-        return id;
+    public Long getProtocolId() {
+        return protocolId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setProtocolId(Long id) {
+        this.protocolId = id;
     }
 
     public String getProtocolName() {
@@ -49,68 +45,20 @@ public class Protocol {
         this.description = description;
     }
 
-    public Long getDefaultFeatureId() {
-        return defaultFeatureId;
-    }
-
-    public void setDefaultFeatureId(Long defaultFeatureId) {
-        this.defaultFeatureId = defaultFeatureId;
-    }
-
-    public String getDefaultLims() {
-        return defaultLims;
-    }
-
-    public void setDefaultLims(String defaultLims) {
-        this.defaultLims = defaultLims;
-    }
-
-    public String getDefaultLayoutTemplate() {
-        return defaultLayoutTemplate;
-    }
-
-    public void setDefaultLayoutTemplate(String defaultLayoutTemplate) {
-        this.defaultLayoutTemplate = defaultLayoutTemplate;
-    }
-
-    public String getDefaultCaptureConfig() {
-        return defaultCaptureConfig;
-    }
-
-    public void setDefaultCaptureConfig(String defaultCaptureConfig) {
-        this.defaultCaptureConfig = defaultCaptureConfig;
-    }
-
-    public String getTeamCode() {
-        return teamCode;
-    }
-
-    public void setTeamCode(String teamCode) {
-        this.teamCode = teamCode;
-    }
-
-    public String getUploadSystem() {
-        return uploadSystem;
-    }
-
-    public void setUploadSystem(String uploadSystem) {
-        this.uploadSystem = uploadSystem;
-    }
-
     public boolean isEditable() {
-        return isEditable;
+        return this.editable;
     }
 
     public void setEditable(boolean editable) {
-        this.isEditable = editable;
+        this.editable = editable;
     }
 
     public boolean isInDevelopment() {
-        return isInDevelopment;
+        return this.inDevelopment;
     }
 
     public void setInDevelopment(boolean inDevelopment) {
-        this.isInDevelopment = inDevelopment;
+        this.inDevelopment = inDevelopment;
     }
 
     public String getLowWelltype() {
@@ -127,37 +75,5 @@ public class Protocol {
 
     public void setHighWelltype(String highWelltype) {
         this.highWelltype = highWelltype;
-    }
-
-    public Long getImageSettingId() {
-        return imageSettingId;
-    }
-
-    public void setImageSettingId(Long imageSettingId) {
-        this.imageSettingId = imageSettingId;
-    }
-
-    public boolean isMultiDimSubwellData() {
-        return isMultiDimSubwellData;
-    }
-
-    public void setMultiDimSubwellData(boolean multiDimSubwellData) {
-        this.isMultiDimSubwellData = multiDimSubwellData;
-    }
-
-    public String getDefaultMultiploMethod() {
-        return defaultMultiploMethod;
-    }
-
-    public void setDefaultMultiploMethod(String defaultMultiploMethod) {
-        this.defaultMultiploMethod = defaultMultiploMethod;
-    }
-
-    public String getDefaultMultiploParameter() {
-        return defaultMultiploParameter;
-    }
-
-    public void setDefaultMultiploParameter(String defaultMultiploParameter) {
-        this.defaultMultiploParameter = defaultMultiploParameter;
     }
 }

@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Sql({"classpath:jdbc/schema.sql", "classpath:jdbc/test-data.sql"})
-public class ProtocolServiceTest {
+public class ProtocolServiceApplicationTest {
 
     @Autowired
     private ProtocolRepository protocolRepository;

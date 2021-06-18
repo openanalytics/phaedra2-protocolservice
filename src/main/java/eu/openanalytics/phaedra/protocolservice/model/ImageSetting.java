@@ -5,8 +5,7 @@ import org.springframework.data.relational.core.mapping.Column;
 
 public class ImageSetting {
     @Id
-    @Column("IMAGE_SETTING_ID")
-    public Long id;
+    public Long imageSettingId;
     public Integer zoomRatio;
     public Integer gamma;
     public Number pixelSizeX;
@@ -14,12 +13,12 @@ public class ImageSetting {
     public Number pixelSizeZ;
 
     //Getters and setters
-    public Long getId() {
-        return id;
+    public Long getImageSettingId() {
+        return imageSettingId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setImageSettingId(Long imageSettingId) {
+        this.imageSettingId = imageSettingId;
     }
 
     public Integer getZoomRatio() {
