@@ -2,7 +2,7 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
+import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +127,7 @@ public class ProtocolControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<WellFeature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<WellFeature>>() {});
+        List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Feature>>() {});
         assertThat(features).isNotNull();
         assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
     }

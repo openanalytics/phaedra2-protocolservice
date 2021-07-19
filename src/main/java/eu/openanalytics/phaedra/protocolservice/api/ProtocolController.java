@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
+import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
@@ -72,8 +72,8 @@ public class ProtocolController {
 
     @GetMapping("/protocols/{protocolId}/features")
     public ResponseEntity getFeaturesByProtocol(@PathVariable Long protocolId) {
-        List<WellFeature> result = new ArrayList<>();
-        featureRepository.findAllByProtocolId(protocolId).forEach(result::add);
+        List<Feature> result = new ArrayList<>();
+        featureRepository.findByProtocolId(protocolId).forEach(result::add);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 }

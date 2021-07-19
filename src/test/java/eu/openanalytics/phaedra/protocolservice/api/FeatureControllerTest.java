@@ -2,7 +2,7 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.protocolservice.model.WellFeature;
+import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,11 +39,11 @@ public class FeatureControllerTest {
 
     @Test
     public void createFeature() throws Exception {
-        WellFeature newFeature = new WellFeature();
+        Feature newFeature = new Feature();
         newFeature.setFeatureName("A new feature");
         newFeature.setDescription("Creating a new feature");
         newFeature.setProtocolId(1000L);
-        newFeature.setFormatString("#.###");
+        newFeature.setFormat("#.###");
 
         String requestBody = this.objectMapper.writeValueAsString(newFeature);
 
@@ -54,7 +54,7 @@ public class FeatureControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        WellFeature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
+        Feature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(createdFeature).isNotNull();
         assertThat(createdFeature.getFeatureId()).isNotNull();
         assertThat(createdFeature.getFeatureName()).isEqualTo(newFeature.getFeatureName());
@@ -80,7 +80,7 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        WellFeature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
+        Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(feature).isNotNull();
         assertThat(feature.getFeatureId()).isEqualTo(featureId);
 
@@ -96,7 +96,7 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        WellFeature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
+        Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(updatedFeature).isNotNull();
         assertThat(updatedFeature.getFeatureId()).isEqualTo(feature.getFeatureId());
         assertThat(updatedFeature.getFeatureName()).isEqualTo(feature.getFeatureName());
@@ -112,7 +112,7 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        WellFeature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellFeature.class);
+        Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(feature).isNotNull();
         assertThat(feature.getFeatureId()).isEqualTo(featureId);
     }
@@ -126,9 +126,8 @@ public class FeatureControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<WellFeature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<WellFeature>>() {});
+        List<Feature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Feature>>() {});
         assertThat(result).isNotNull();
         assertThat(result).isNotEmpty();
-        assertThat(result.stream().allMatch(r -> r.getGroupId().equals(groupId)));
     }
 }

@@ -15,7 +15,7 @@ public interface ProtocolRepository extends CrudRepository<Protocol, Long> {
      * Get all defined protocols
      * @return
      */
-    @Query("select * from protocol")
+    @Query("select * from protocols.protocol")
     public List<Protocol> getProtocolList();
 
     /**
@@ -23,6 +23,6 @@ public interface ProtocolRepository extends CrudRepository<Protocol, Long> {
      * @param protocolId
      * @return
      */
-    @Query("select * from protocol where protocol_id = :protocolId")
+    @Query("select * from protocols.protocol where id = :protocolId")
     public Protocol getProtocolById(@Param("protocolId") Long protocolId);
 }

@@ -5,11 +5,12 @@ import org.springframework.data.relational.core.mapping.Column;
 
 public class Protocol {
     @Id
-    @Column("protocol_id")
+    @Column("id")
     private Long protocolId;
-    @Column("protocol_name")
+    @Column("name")
     private String protocolName;
     private String description;
+    @Column("editable")
     private boolean editable;
     @Column("in_development")
     private boolean inDevelopment;
@@ -17,8 +18,6 @@ public class Protocol {
     private String lowWelltype;
     @Column("high_welltype")
     private String highWelltype;
-//    private String defaultMultiploMethod;
-//    private String defaultMultiploParameter;
 
     // Getters and setters
     public Long getProtocolId() {

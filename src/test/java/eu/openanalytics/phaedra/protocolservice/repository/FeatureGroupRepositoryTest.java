@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.protocolservice.repository;
 
-import eu.openanalytics.phaedra.protocolservice.model.FeatureTag;
+import eu.openanalytics.phaedra.protocolservice.model.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,22 +15,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FeatureGroupRepositoryTest {
 
     @Autowired
-    private FeatureGroupRepository featureGroupRepository;
+    private TagRepository tagRepository;
 
 
     @Test
     public void createFeatureGroup() {
-        Long newFeatureTagId = 1000L;
-        String newFeatureTagName = "New Feature Tag";
+        String newTagName = "New Feature Tag";
 
-        FeatureTag newFeatureTag = new FeatureTag();
-        newFeatureTag.setFeatureTagId(newFeatureTagId);
-        newFeatureTag.setFeatureTagName(newFeatureTagName);
+        Tag newTag = new Tag(newTagName);
 
-        FeatureTag savedFeatureGroup = featureGroupRepository.save(newFeatureTag);
+        Tag savedTag = (Tag) tagRepository.save(newTag);
 
-        assertThat(savedFeatureGroup).isNotNull();
-        assertThat(savedFeatureGroup.getFeatureTagId()).isEqualTo(newFeatureTagId);
-        assertThat(savedFeatureGroup.getFeatureTagName()).isEqualTo(newFeatureTagName);
+        assertThat(savedTag).isNotNull();
+        assertThat(savedTag.getTagId()).isNotNull();
+        assertThat(savedTag.getTagName()).isEqualTo(newTagName);
     }
 }

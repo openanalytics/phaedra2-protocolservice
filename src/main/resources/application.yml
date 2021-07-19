@@ -6,6 +6,6 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://protocol-db:5432/protocoldb
-    username: phaedra2
-    password: phaedra2
+    url: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=protocols
+    username: phaedra_usr
+    password: phaedra_usr
