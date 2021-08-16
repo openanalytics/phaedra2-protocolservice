@@ -1,79 +1,95 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
-import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
+import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
+@CrossOrigin
 @RestController
+@Slf4j
 public class ProtocolController {
 
-    @Autowired
-    private ProtocolRepository protocolRepository;
+    private final ProtocolService protocolService;
+    private final FeatureService featureService;
 
-    @Autowired
-    private FeatureRepository featureRepository;
-
-    @GetMapping("/protocols")
-    public ResponseEntity getProtocolList() {
-        List<Protocol> result = new ArrayList<>();
-        protocolRepository.getProtocolList().forEach(result::add);
-        return new ResponseEntity(result, HttpStatus.OK);
+    public ProtocolController(ProtocolService protocolService, FeatureService featureService) {
+        this.protocolService = protocolService;
+        this.featureService = featureService;
     }
 
     @PostMapping("/protocols")
-    public ResponseEntity createProtocol(@RequestBody Protocol newProtocol) {
-        Protocol savedProtocol = protocolRepository.save(newProtocol);
+    public ResponseEntity<Map<String, Long>> createProtocol(@RequestBody ProtocolDTO newProtocol) {
+        ProtocolDTO savedProtocol = protocolService.create(newProtocol);
 
         Map<String, Long> responseBody = new HashMap<>();
-        responseBody.put("protocolId", savedProtocol.getProtocolId());
+        responseBody.put("protocolId", savedProtocol.getId());
 
-        ResponseEntity<Map<String, Long>> response = new ResponseEntity<>(responseBody, HttpStatus.CREATED);
-        return response;
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
     @PutMapping("/protocols")
-    public ResponseEntity updateProtocol(@RequestBody Protocol updateProtocol) {
-        Protocol updatedProtocol = protocolRepository.save(updateProtocol);
+    public ResponseEntity<ProtocolDTO> updateProtocol(@RequestBody ProtocolDTO updateProtocol) {
+        ProtocolDTO updatedProtocol = protocolService.update(updateProtocol);
+        return new ResponseEntity<>(updatedProtocol, HttpStatus.OK);
+    }
 
-        if (updatedProtocol != null)
-            return new ResponseEntity(updatedProtocol, HttpStatus.OK);
-        else
-            return new ResponseEntity(HttpStatus.NOT_MODIFIED);
+    @PutMapping("/protocols/{protocolId}/tag")
+    public ResponseEntity<String> tagProtocol(@PathVariable Long protocolId, @RequestParam("tag") String tag) {
+        protocolService.tagProtocol(protocolId, tag);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/protocols/{protocolId}")
-    public ResponseEntity deleteProtocol(@PathVariable Long protocolId) {
-        Optional<Protocol> result = protocolRepository.findById(protocolId);
+    public ResponseEntity<String> deleteProtocol(@PathVariable Long protocolId) {
+        protocolService.delete(protocolId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-        if (result.isPresent()) {
-            Protocol protocol = result.get();
-            protocolRepository.delete(protocol);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/protocols")
+    public ResponseEntity<List<ProtocolDTO>> getProtocols() {
+        log.info("Get all protocols");
+        List<ProtocolDTO> response = protocolService.getProtocols();
+        if (isNotEmpty(response))
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "/protocols", params = {"tag"})
+    public ResponseEntity<List<ProtocolDTO>> getProtocolByTag(@RequestParam(value = "tag", required = false) String tag) {
+        List<ProtocolDTO> response = protocolService.getProtocolByTag(tag);
+        if (isNotEmpty(response))
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/protocols/{protocolId}")
-    public ResponseEntity getProtocol(@PathVariable Long protocolId) {
-        Protocol result = protocolRepository.getProtocolById(protocolId);
-        if (result != null)
-            return new ResponseEntity(result, HttpStatus.OK);
+    public ResponseEntity<ProtocolDTO> getProtocol(@PathVariable Long protocolId) {
+        ProtocolDTO response = protocolService.getProtocolById(protocolId);
+        if (response != null)
+            return new ResponseEntity<>(response, HttpStatus.OK);
         else
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/protocols/{protocolId}/features")
-    public ResponseEntity getFeaturesByProtocol(@PathVariable Long protocolId) {
-        List<Feature> result = new ArrayList<>();
-        featureRepository.findByProtocolId(protocolId).forEach(result::add);
-        return new ResponseEntity(result, HttpStatus.OK);
+    public ResponseEntity<List<FeatureDTO>> getProtocolFeatures(@PathVariable Long protocolId) {
+        List<FeatureDTO> response = featureService.findFeaturesByProtocolId(protocolId);
+        if (isNotEmpty(response))
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

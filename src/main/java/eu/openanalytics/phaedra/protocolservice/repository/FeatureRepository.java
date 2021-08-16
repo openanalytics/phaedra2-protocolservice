@@ -19,17 +19,9 @@ public interface FeatureRepository extends CrudRepository<Feature, Long> {
     List<Feature> findByProtocolId(Long protocolId);
 
     /**
-     * Find all features with the same tag(s)
-     * @param tags
-     * @return
-     */
-    @Query("select f.* from protocols.feature as f where f.id in (select ft.feature_id from protocols.feature_tag as ft join protocols.tag t on t.id = ft.tag_id where t.name in (:tags))")
-    List<Feature> findByTagsIn(@Param("tags") List<String> tags);
-
-    /**
      * Find features with name starting with prefix
      * @param featureNamePrefix
      * @return
      */
-    List<Feature> findByFeatureNameStartsWith(String featureNamePrefix);
+    List<Feature> findByNameStartsWith(String featureNamePrefix);
 }

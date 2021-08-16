@@ -15,7 +15,7 @@ public class FeatureDTO {
     private String description;
     private String format;
     private FeatureType type;
+    private Integer sequence;
     private ProtocolDTO protocol;
     private FormulaDTO formula;
-    private List<String> tags;
 }

@@ -32,8 +32,8 @@ public class FeatureRepositoryTest {
         long protocolId = 0;
 
         Feature newFeature = new Feature(protocolId);
-        newFeature.setFeatureName("TestFeature");
-        newFeature.setFeatureAlias("TF");
+        newFeature.setName("TestFeature");
+        newFeature.setAlias("TF");
         newFeature.setDescription("Insert here the feature description");
         newFeature.setFormat("#.##");
         newFeature.setFormulaId(1L); //Id of a predefined calculation formula
@@ -41,7 +41,7 @@ public class FeatureRepositoryTest {
         Feature savedFeature = featureRepository.save(newFeature);
 
         assertThat(savedFeature).isNotNull();
-        assertThat(savedFeature.getFeatureId()).isNotNull();
+        assertThat(savedFeature.getId()).isNotNull();
         assertThat(savedFeature.getProtocolId()).isEqualTo(protocolId);
     }
 
@@ -72,12 +72,12 @@ public class FeatureRepositoryTest {
         Feature feature = result.get(0);
         String newName = "New feature name";
         String newDescription = "New feature description";
-        feature.setFeatureName(newName);
+        feature.setName(newName);
         feature.setDescription(newDescription);
 
         Feature updatedFeature = featureRepository.save(feature);
         assertThat(updatedFeature).isNotNull();
-        assertThat(updatedFeature.getFeatureName()).isEqualTo(newName);
+        assertThat(updatedFeature.getName()).isEqualTo(newName);
         assertThat(updatedFeature.getDescription()).isEqualTo(newDescription);
     }
 
@@ -89,7 +89,7 @@ public class FeatureRepositoryTest {
         Optional<Feature> feature = featureRepository.findById(featureId);
         assertThat(feature).isNotNull();
         assertThat(feature.isPresent()).isTrue();
-        assertThat(feature.get().getFeatureId()).isEqualTo(featureId);
+        assertThat(feature.get().getId()).isEqualTo(featureId);
     }
 
     @Test
@@ -101,14 +101,4 @@ public class FeatureRepositoryTest {
         assertThat(features).isNotEmpty();
         assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
     }
-
-    @Test
-    public void getFeatureForAGivenFeatureGroupId() {
-        List<Long> tagIds = Arrays.asList(20L);
-
-        List<Feature> features = featureRepository.findByTagsIn(Arrays.asList("TestNew","TestDoorSasa1"));
-        assertThat(features).isNotNull();
-        assertThat(features).isNotEmpty();
-    }
-
 }

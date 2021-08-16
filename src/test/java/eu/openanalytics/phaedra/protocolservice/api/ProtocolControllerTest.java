@@ -37,7 +37,7 @@ public class ProtocolControllerTest {
     @Test
     public void createProtocol() throws Exception {
         Protocol newProtocol = new Protocol();
-        newProtocol.setProtocolName("A new protocol");
+        newProtocol.setName("A new protocol");
         newProtocol.setDescription("Newly created protocol");
         newProtocol.setEditable(true);
         newProtocol.setInDevelopment(true);
@@ -71,10 +71,10 @@ public class ProtocolControllerTest {
                 .andReturn();
         Protocol protocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
         assertThat(protocol).isNotNull();
-        assertThat(protocol.getProtocolId()).isEqualTo(protocolId);
+        assertThat(protocol.getId()).isEqualTo(protocolId);
 
         String newName = "New protocol name";
-        protocol.setProtocolName(newName);
+        protocol.setName(newName);
         String newDescription = "New protocol desription";
         protocol.setDescription(newDescription);
 
@@ -88,7 +88,7 @@ public class ProtocolControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         Protocol updatedProtocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
-        assertThat(updatedProtocol.getProtocolName()).isEqualTo(newName);
+        assertThat(updatedProtocol.getName()).isEqualTo(newName);
         assertThat(updatedProtocol.getDescription()).isEqualTo(newDescription);
     }
 
@@ -115,7 +115,7 @@ public class ProtocolControllerTest {
 
         Protocol result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
         assertThat(result).isNotNull();
-        assertThat(result.getProtocolId()).isEqualTo(protocolId);
+        assertThat(result.getId()).isEqualTo(protocolId);
     }
 
     @Test

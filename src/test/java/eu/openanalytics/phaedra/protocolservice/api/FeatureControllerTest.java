@@ -40,7 +40,7 @@ public class FeatureControllerTest {
     @Test
     public void createFeature() throws Exception {
         Feature newFeature = new Feature();
-        newFeature.setFeatureName("A new feature");
+        newFeature.setName("A new feature");
         newFeature.setDescription("Creating a new feature");
         newFeature.setProtocolId(1000L);
         newFeature.setFormat("#.###");
@@ -56,8 +56,8 @@ public class FeatureControllerTest {
 
         Feature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(createdFeature).isNotNull();
-        assertThat(createdFeature.getFeatureId()).isNotNull();
-        assertThat(createdFeature.getFeatureName()).isEqualTo(newFeature.getFeatureName());
+        assertThat(createdFeature.getId()).isNotNull();
+        assertThat(createdFeature.getName()).isEqualTo(newFeature.getName());
         assertThat(createdFeature.getDescription()).isEqualTo(newFeature.getDescription());
     }
 
@@ -82,11 +82,11 @@ public class FeatureControllerTest {
 
         Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(feature).isNotNull();
-        assertThat(feature.getFeatureId()).isEqualTo(featureId);
+        assertThat(feature.getId()).isEqualTo(featureId);
 
         String updatedName = "Updated feature name";
         String updateDescription = "Update feature description";
-        feature.setFeatureName(updatedName);
+        feature.setName(updatedName);
         feature.setDescription(updateDescription);
 
         String requestBody = objectMapper.writeValueAsString(feature);
@@ -98,8 +98,8 @@ public class FeatureControllerTest {
 
         Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(updatedFeature).isNotNull();
-        assertThat(updatedFeature.getFeatureId()).isEqualTo(feature.getFeatureId());
-        assertThat(updatedFeature.getFeatureName()).isEqualTo(feature.getFeatureName());
+        assertThat(updatedFeature.getId()).isEqualTo(feature.getId());
+        assertThat(updatedFeature.getName()).isEqualTo(feature.getName());
         assertThat(updatedFeature.getDescription()).isEqualTo(feature.getDescription());
     }
 
@@ -114,7 +114,7 @@ public class FeatureControllerTest {
 
         Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(feature).isNotNull();
-        assertThat(feature.getFeatureId()).isEqualTo(featureId);
+        assertThat(feature.getId()).isEqualTo(featureId);
     }
 
     @Test

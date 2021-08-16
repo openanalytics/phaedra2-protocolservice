@@ -11,18 +11,4 @@ import java.util.List;
 @Repository
 public interface ProtocolRepository extends CrudRepository<Protocol, Long> {
 
-    /**
-     * Get all defined protocols
-     * @return
-     */
-    @Query("select * from protocols.protocol")
-    public List<Protocol> getProtocolList();
-
-    /**
-     * Get a protocol by protocolId
-     * @param protocolId
-     * @return
-     */
-    @Query("select * from protocols.protocol where id = :protocolId")
-    public Protocol getProtocolById(@Param("protocolId") Long protocolId);
 }

@@ -40,7 +40,7 @@ public class ProtocolRepositoryTest {
     @Test
     public void createNewProtocol() {
         Protocol newProtocol = new Protocol();
-        newProtocol.setProtocolName("Test");
+        newProtocol.setName("Test");
         newProtocol.setDescription("Test");
         newProtocol.setEditable(true);
         newProtocol.setInDevelopment(true);
@@ -50,7 +50,7 @@ public class ProtocolRepositoryTest {
         Protocol savedProtocol = protocolRepository.save(newProtocol);
 
         assertThat(savedProtocol).isNotNull();
-        assertThat(savedProtocol.getProtocolId()).isNotNull();
-        assertThat(savedProtocol.getProtocolName()).isEqualTo(newProtocol.getProtocolName());
+        assertThat(savedProtocol.getId()).isNotNull();
+        assertThat(savedProtocol.getName()).isEqualTo(newProtocol.getName());
     }
 }

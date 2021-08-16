@@ -2,105 +2,163 @@ package eu.openanalytics.phaedra.protocolservice.service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.model.Tag;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import eu.openanalytics.phaedra.protocolservice.repository.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 @Service
 public class FeatureService {
+    private static final ModelMapper modelMapper = new ModelMapper();
+    private static final String PHAEDRA_METADATA_SERVICE = "http://PHAEDRA-METADATA-SERVICE/phaedra/metadata-service";
+    private static final String FEATURE_OBJECT_CLASS = "FEATURE";
 
-    @Autowired
-    private FeatureRepository featureRepository;
-    @Autowired
-    private ProtocolRepository protocolRepository;
-    @Autowired
-    private TagRepository tagRepository;
+    private final RestTemplate restTemplate;
+    private final FeatureRepository featureRepository;
+    private final ProtocolRepository protocolRepository;
+
+    public FeatureService(RestTemplate restTemplate, FeatureRepository featureRepository, ProtocolRepository protocolRepository) {
+        this.restTemplate = restTemplate;
+        this.featureRepository = featureRepository;
+        this.protocolRepository = protocolRepository;
+    }
+
+    /**
+     * Create a new feature
+     * @param newFeature New feature
+     */
+    public Feature create(Feature newFeature) {
+        return featureRepository.save(newFeature);
+    }
+
+    /**
+     * Update an existing feature
+     * @param featureDTO Feature updates
+     */
+    public FeatureDTO update(FeatureDTO featureDTO) {
+        Optional<Feature> feature = featureRepository.findById(featureDTO.getId());
+        feature.ifPresent(f -> {
+            modelMapper.typeMap(FeatureDTO.class, Feature.class)
+                    .setPropertyCondition(Conditions.isNotNull())
+                    .map(featureDTO, f);
+            featureRepository.save(f);
+        });
+        return featureDTO;
+    }
+
+    /**
+     * Delete an existing feature
+     * @param featureId The feature id
+     */
+    public void delete(Long featureId) {
+        featureRepository.deleteById(featureId);
+    }
 
     /**
      * Tag a feature
-     * @param tagName
-     * @param featureId
+     * @param featureId The feature id
+     * @param tagName A tag string
      */
-    public void addTagToFeature(String tagName, Long featureId) {
-        Optional<Feature> feature = featureRepository.findById(featureId);
-        feature.ifPresent(f -> {
-            Tag tag = tagRepository.findByName(tagName);
-            if (tag == null) {
-                tag = tagRepository.save(new Tag(tagName));
-            }
-            f.addTag(tag);
-            featureRepository.save(f);
-        });
-    }
+    public void tagFeature(Long featureId, String tagName) {
+        StringBuilder urlBuilder = new StringBuilder(PHAEDRA_METADATA_SERVICE);
+        urlBuilder.append("/tags");
 
-    public Feature create(Feature newFeature) {
-        return null;
+        TaggedObjectDTO request = new TaggedObjectDTO(FEATURE_OBJECT_CLASS);
+        request.setTag(tagName);
+        request.setObjectId(featureId);
+
+        restTemplate.postForObject(urlBuilder.toString(), request, ResponseEntity.class);
     }
 
     /**
      * Get feature information by id
-     * @param featureId
-     * @return
+     * @param featureId The feature id
      */
-    public FeatureDTO getFeatureById(Long featureId) {
+    public FeatureDTO findFeatureById(Long featureId) {
         Optional<Feature> feature = featureRepository.findById(featureId);
         FeatureDTO result = feature.map(f -> mapToFeatureDTO(f)).get();
         return result;
     }
 
-    public List<FeatureDTO> getAllFeatures() {
-
-        return null;
+    /**
+     * Get all available features
+     */
+    public List<FeatureDTO> findAllFeatures() {
+        List<Feature> features = (List<Feature>) featureRepository.findAll();
+        return features.stream()
+                .map(this::mapToFeatureDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<FeatureDTO> getFeatureByTags(List<String> tags) {
-        List<Feature> features = featureRepository.findByTagsIn(tags);
-
-        List<FeatureDTO> result = features.stream()
-                .map(f -> mapToFeatureDTO(f))
+    /**
+     * Find features for a specific protocol
+     * @param protocolId The protocol id
+     */
+    public List<FeatureDTO> findFeaturesByProtocolId(Long protocolId) {
+        List<Feature> features = featureRepository.findByProtocolId(protocolId);
+        return features.stream()
+                .map(this::mapToFeatureDTO)
                 .collect(Collectors.toList());
+    }
 
-        return result;
+    /**
+     * Find all features containing one of the specified tags
+     * @param tag A tag string
+     */
+    public List<FeatureDTO> findAllFeaturesWithTag(String tag) {
+        StringBuilder urlBuilder = new StringBuilder(PHAEDRA_METADATA_SERVICE);
+        urlBuilder.append("/").append(FEATURE_OBJECT_CLASS);
+        urlBuilder.append("?tag=").append(tag);
+
+        ResponseEntity<List<TaggedObjectDTO>> responseEntity = restTemplate.exchange(
+                urlBuilder.toString(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {});
+
+        if (isNotEmpty(responseEntity.getBody())) {
+            return responseEntity.getBody().stream().map(to -> {
+                Optional<Feature> feature = featureRepository.findById(to.getObjectId());
+                return feature.map(this::mapToFeatureDTO).orElse(null);
+            }).collect(Collectors.toList());
+        } else {
+            return Collections.EMPTY_LIST;
+        }
      }
 
+    /**
+     * Map Feature object to FeatureDTO object
+     * @param feature The feature entity object
+     * @return featureDTO object
+     */
     private FeatureDTO mapToFeatureDTO(Feature feature) {
-        FeatureDTO result = new FeatureDTO();
-
-        result.setId(feature.getFeatureId());
-        result.setName(feature.getFeatureName());
-        result.setAlias(feature.getFeatureAlias());
-        result.setDescription(feature.getDescription());
-        result.setFormat(feature.getFormat());
-        result.setType(feature.getFeatureType());
+        FeatureDTO featureDTO = new FeatureDTO();
+        modelMapper.typeMap(Feature.class, FeatureDTO.class)
+                .map(feature, featureDTO);
 
         Optional<Protocol> protocol = protocolRepository.findById(feature.getProtocolId());
         protocol.ifPresent(p -> {
             ProtocolDTO protocolDTO = new ProtocolDTO();
-            protocolDTO.setName(p.getProtocolName());
-            protocolDTO.setDescription(p.getDescription());
-            result.setProtocol(protocolDTO);
+            modelMapper.typeMap(Protocol.class, ProtocolDTO.class)
+                    .map(p, protocolDTO);
+            featureDTO.setProtocol(protocolDTO);
         });
 
-        List<String> tags = feature.getTags().stream()
-                .map(ftr -> tagRepository.findById(ftr.getTagId()).get().getTagName())
-                .collect(Collectors.toList());
-        result.setTags(tags);
-
-        return result;
-    }
-
-    public List<FeatureDTO> getFeaturesByQueryParams(Map<String, String> queryParams) {
-        return null;
+        return featureDTO;
     }
 }

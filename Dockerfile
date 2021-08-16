@@ -1,6 +1,4 @@
-FROM openjdk:11
-
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} pha2_protocolservice.jar
-
-ENTRYPOINT ["java", "-jar", "/pha2_protocolservice.jar"]
+FROM openjdk:16-jdk-alpine
+ADD target/*.jar app.jar
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar /app.jar" ]

@@ -1,23 +1,16 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import com.mashape.unirest.http.utils.MapUtil;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
-import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
-import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+@CrossOrigin
 @RestController
 public class FeatureController {
 
@@ -33,8 +26,8 @@ public class FeatureController {
     }
 
     @PutMapping("/features")
-    public ResponseEntity updateFeature(@RequestBody Feature updateFeature) {
-        Feature updatedFeature = featureService.update(updateFeature);
+    public ResponseEntity updateFeature(@RequestBody FeatureDTO updateFeature) {
+        FeatureDTO updatedFeature = featureService.update(updateFeature);
         return new ResponseEntity(updatedFeature, HttpStatus.OK);
     }
 
@@ -44,33 +37,27 @@ public class FeatureController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/features")
+    public ResponseEntity getFeatures() {
+        List<FeatureDTO> response = featureService.findAllFeatures();
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/features", params = {"tag"})
+    public ResponseEntity getFeaturesWithTag(@RequestParam(value = "tag", required = false) String tag) {
+        List<FeatureDTO> response = featureService.findAllFeaturesWithTag(tag);
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
     @GetMapping("/features/{featureId}")
     public ResponseEntity getFeatureById(@PathVariable Long featureId) {
-        FeatureDTO result = featureService.getFeatureById(featureId);
+        FeatureDTO result = featureService.findFeatureById(featureId);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @GetMapping("/features")
-    public ResponseEntity getFeatures(@RequestParam Map<String, String> queryParams) {
-        List<FeatureDTO> result = new ArrayList<>();
-        if (MapUtils.isEmpty(queryParams)) {
-            result.addAll(featureService.getAllFeatures());
-        } else {
-            result.addAll(featureService.getFeaturesByQueryParams(queryParams));
-        }
-
-        if (CollectionUtils.isEmpty(result)) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity(result, HttpStatus.OK);
-        }
-    }
-
-    @PostMapping("/features/{featureId}/tag")
-    public ResponseEntity addTagToFeature(@PathVariable ("featureId") Long featureId, @Valid @RequestBody List<String> tags) {
-        for (String tag: tags) {
-            featureService.addTagToFeature(tag, featureId);
-        }
+    @PutMapping("/features/{featureId}/tag")
+    public ResponseEntity addTagToFeature(@PathVariable ("featureId") Long featureId, @RequestParam("tag") String tag) {
+        featureService.tagFeature(featureId, tag);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 }
