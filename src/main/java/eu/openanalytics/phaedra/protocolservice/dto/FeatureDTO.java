@@ -17,5 +17,5 @@ public class FeatureDTO {
     private FeatureType type;
     private Integer sequence;
     private ProtocolDTO protocol;
-    private FormulaDTO formula;
+    private Integer formula;
 }

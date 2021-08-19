@@ -78,3 +78,17 @@ create table if not exists protocols.feature_class
     foreign key (feature_id) references protocols.feature (id) on update cascade,
     foreign key (class_id) references protocols.classification (id) on update cascade
 );
+
+-- Create calculation_input_value table
+CREATE TABLE IF NOT EXISTS protocols.calculation_input_value
+(
+    id                   serial PRIMARY KEY,
+    feature_id           bigint NOT NULL,
+    source_meas_col_name text,
+    source_feature_id    text,
+    variable_name        text NOT NULL,
+    FOREIGN KEY (feature_id) REFERENCES protocols.feature (id) ON UPDATE CASCADE,
+    UNIQUE(feature_id, source_meas_col_name),
+    UNIQUE(feature_id, source_feature_id)
+    UNIQUE(feature_id, variable_name)
+);

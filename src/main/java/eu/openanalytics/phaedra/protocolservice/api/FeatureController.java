@@ -20,7 +20,7 @@ public class FeatureController {
     private FeatureService featureService;
 
     @PostMapping("/features")
-    public ResponseEntity createFeature(@RequestBody Feature newFeature) {
+    public ResponseEntity createFeature(@RequestBody FeatureDTO newFeature) {
         Feature savedFeature = featureService.create(newFeature);
         return new ResponseEntity(savedFeature, HttpStatus.CREATED);
     }

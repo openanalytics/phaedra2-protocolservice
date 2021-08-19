@@ -42,8 +42,10 @@ public class FeatureService {
      * Create a new feature
      * @param newFeature New feature
      */
-    public Feature create(Feature newFeature) {
-        return featureRepository.save(newFeature);
+    public Feature create(FeatureDTO newFeature) {
+        Feature feature = new Feature();
+        modelMapper.typeMap(FeatureDTO.class, Feature.class).map(newFeature, feature);
+        return featureRepository.save(feature);
     }
 
     /**
