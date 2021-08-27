@@ -4,8 +4,11 @@ server:
   port: 3001
 
 spring:
+  cloud:
+    kubernetes:
+      enabled: false
   application:
-    name: PHAEDRA-PROTOCOL-SERVICE
+    name: phaedra-protocol-service
 #  datasource:
 #    driver-class-name: org.postgresql.Driver
 #    url: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=protocols
@@ -16,9 +19,5 @@ spring:
       indent_output: true
 
 eureka:
-  instance:
-    appname: ${spring.application.name}
-
   client:
-    service-url:
-      defaultZone: ${SERVICE_REGISTRY}
+    enabled: true
