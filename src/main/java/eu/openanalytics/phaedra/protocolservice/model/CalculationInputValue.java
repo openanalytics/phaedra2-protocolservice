@@ -9,6 +9,6 @@ public class CalculationInputValue {
     private Long id;
     private Long featureId;
     private String sourceMeasColName;
-    private String sourceFeatureId;
+    private Long sourceFeatureId;
     private String variableName;
 }

@@ -36,6 +36,9 @@ public class FeatureService {
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
         this.protocolRepository = protocolRepository;
+        modelMapper.typeMap(FeatureDTO.class, Feature.class);
+        modelMapper.typeMap(Feature.class, FeatureDTO.class);
+        modelMapper.validate();
     }
 
     /**
@@ -158,7 +161,7 @@ public class FeatureService {
             ProtocolDTO protocolDTO = new ProtocolDTO();
             modelMapper.typeMap(Protocol.class, ProtocolDTO.class)
                     .map(p, protocolDTO);
-            featureDTO.setProtocol(protocolDTO);
+//            featureDTO.setProtocol(protocolDTO);
         });
 
         return featureDTO;

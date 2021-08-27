@@ -85,10 +85,10 @@ CREATE TABLE IF NOT EXISTS protocols.calculation_input_value
     id                   serial PRIMARY KEY,
     feature_id           bigint NOT NULL,
     source_meas_col_name text,
-    source_feature_id    text,
+    source_feature_id    bigint,
     variable_name        text NOT NULL,
     FOREIGN KEY (feature_id) REFERENCES protocols.feature (id) ON UPDATE CASCADE,
     UNIQUE(feature_id, source_meas_col_name),
-    UNIQUE(feature_id, source_feature_id)
+    UNIQUE(feature_id, source_feature_id),
     UNIQUE(feature_id, variable_name)
 );

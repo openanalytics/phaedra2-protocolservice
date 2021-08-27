@@ -21,7 +21,7 @@ public class CalculationInputValueDTO {
 
     private String sourceMeasColName;
 
-    private String sourceFeatureId;
+    private Long sourceFeatureId;
 
     @JsonIgnore
     @AssertTrue(message = "Only one of sourceMeansColumnName or sourceFeatureId may be specified (not both).")

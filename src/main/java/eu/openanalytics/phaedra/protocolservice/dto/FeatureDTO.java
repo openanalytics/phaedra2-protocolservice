@@ -2,6 +2,7 @@ package eu.openanalytics.phaedra.protocolservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
+import eu.openanalytics.phaedra.protocolservice.enumeration.ScriptLanguage;
 import lombok.Data;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public class FeatureDTO {
     private String format;
     private FeatureType type;
     private Integer sequence;
-    private ProtocolDTO protocol;
-    private Integer formula;
+    private Long protocolId;
+    private Long formulaId;
+    private String trigger;
+    private ScriptLanguage scriptLanguage;
 }
