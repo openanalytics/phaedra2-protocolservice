@@ -7,6 +7,7 @@ import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,12 +21,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections4.CollectionUtils.*;
 
 @Service
 public class FeatureService {
     private static final ModelMapper modelMapper = new ModelMapper();
-    private static final String PHAEDRA_METADATA_SERVICE = "http://PHAEDRA-METADATA-SERVICE/phaedra/metadata-service";
+    private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String FEATURE_OBJECT_CLASS = "FEATURE";
 
     private final RestTemplate restTemplate;
@@ -127,6 +128,7 @@ public class FeatureService {
      */
     public List<FeatureDTO> findAllFeaturesWithTag(String tag) {
         StringBuilder urlBuilder = new StringBuilder(PHAEDRA_METADATA_SERVICE);
+        urlBuilder.append("/tagged_objects");
         urlBuilder.append("/").append(FEATURE_OBJECT_CLASS);
         urlBuilder.append("?tag=").append(tag);
 
