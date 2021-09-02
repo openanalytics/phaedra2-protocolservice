@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProtocolService {
     private static final ModelMapper modelMapper = new ModelMapper();
-    private static final String PHAEDRA_METADATA_SERVICE = "http://PHAEDRA-METADATA-SERVICE/phaedra/metadata-service";
+    private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String PROTOCOL_OBJECT_CLASS = "PROTOCOL";
 
     private final RestTemplate restTemplate;
