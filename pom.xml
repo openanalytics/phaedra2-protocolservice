@@ -19,6 +19,9 @@
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
+        <!-- TODO the next line can be removed once we switch to parent pom!  -->
+        <spotify.docker.version>1.4.13</spotify.docker.version>
+        <docker.repoPrefix/>
     </properties>
 
     <dependencies>
@@ -146,11 +149,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
+            <!-- Allows building a Docker image -->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.13</version>
+                <version>${spotify.docker.version}</version>
                 <executions>
                     <execution>
                         <id>default</id>
@@ -161,10 +164,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>${project.artifactId}</repository>
+                    <repository>${docker.repoPrefix}${project.artifactId}</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
-                        <JAR_FILE>${project.build.finalName}</JAR_FILE>
+                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>
             </plugin>
