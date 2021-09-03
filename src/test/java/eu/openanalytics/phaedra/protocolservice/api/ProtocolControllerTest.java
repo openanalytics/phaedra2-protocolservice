@@ -9,10 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
@@ -22,9 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Testcontainers
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Sql({"classpath:jdbc/schema.sql", "classpath:jdbc/test-data.sql"})
+@Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
 @AutoConfigureMockMvc
 public class ProtocolControllerTest {
 
@@ -33,6 +39,20 @@ public class ProtocolControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Container
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
+            .withDatabaseName("phaedra2")
+            .withUrlParam("currentSchema","protocols")
+            .withPassword("inmemory")
+            .withUsername("inmemory");
+
+    @DynamicPropertySource
+    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @Test
     public void createProtocol() throws Exception {
@@ -49,7 +69,7 @@ public class ProtocolControllerTest {
         this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().json("{ protocolId: 1001 }"));
+                .andExpect(content().json("{ protocolId: 1 }"));
     }
 
     @Test
@@ -58,7 +78,7 @@ public class ProtocolControllerTest {
 
         this.mockMvc.perform(delete("/protocols/{protocolId}", protocolId))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test

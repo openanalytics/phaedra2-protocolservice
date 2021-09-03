@@ -1,26 +1,44 @@
 package eu.openanalytics.phaedra.protocolservice.repository;
 
-import eu.openanalytics.phaedra.protocolservice.enumeration.ScriptLanguage;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Testcontainers
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Sql({"classpath:jdbc/schema.sql", "classpath:jdbc/test-data.sql"})
+@Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
 public class FeatureRepositoryTest {
 
     @Autowired
     private FeatureRepository featureRepository;
+
+    @Container
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
+            .withDatabaseName("phaedra2")
+            .withUrlParam("currentSchema","protocols")
+            .withPassword("inmemory")
+            .withUsername("inmemory");
+
+    @DynamicPropertySource
+    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @Test
     public void contextLoads() throws Exception {
@@ -29,9 +47,8 @@ public class FeatureRepositoryTest {
 
     @Test
     public void createFeature() {
-        long protocolId = 0;
-
-        Feature newFeature = new Feature(protocolId);
+        Feature newFeature = new Feature();
+        newFeature.setProtocolId(1000L);
         newFeature.setName("TestFeature");
         newFeature.setAlias("TF");
         newFeature.setDescription("Insert here the feature description");
@@ -42,12 +59,12 @@ public class FeatureRepositoryTest {
 
         assertThat(savedFeature).isNotNull();
         assertThat(savedFeature.getId()).isNotNull();
-        assertThat(savedFeature.getProtocolId()).isEqualTo(protocolId);
+        assertThat(savedFeature.getProtocolId()).isEqualTo(savedFeature.getProtocolId());
     }
 
     @Test
     public void deleteFeature() throws Exception {
-        Long protocolId = 10L;
+        Long protocolId = 1000L;
 
         List<Feature> results1 = featureRepository.findByProtocolId(protocolId);
         assertThat(results1).isNotNull();
@@ -63,7 +80,7 @@ public class FeatureRepositoryTest {
 
     @Test
     public void updateFeature() throws Exception {
-        Long protocolId = 20L;
+        Long protocolId = 1000L;
 
         List<Feature> result = featureRepository.findByProtocolId(protocolId);
         assertThat(result).isNotNull();
@@ -94,7 +111,7 @@ public class FeatureRepositoryTest {
 
     @Test
     public void getFeatureForAGivenProtocolId() {
-        Long protocolId = 10L;
+        Long protocolId = 1000L;
 
         List<Feature> features = featureRepository.findByProtocolId(protocolId);
         assertThat(features).isNotNull();
