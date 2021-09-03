@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -41,7 +40,7 @@ public class FeatureRepositoryTest {
     }
 
     @Test
-    public void contextLoads() throws Exception {
+    public void contextLoads() {
         assertThat(featureRepository).isNotNull();
     }
 
@@ -63,7 +62,7 @@ public class FeatureRepositoryTest {
     }
 
     @Test
-    public void deleteFeature() throws Exception {
+    public void deleteFeature() {
         Long protocolId = 1000L;
 
         List<Feature> results1 = featureRepository.findByProtocolId(protocolId);
@@ -79,7 +78,7 @@ public class FeatureRepositoryTest {
     }
 
     @Test
-    public void updateFeature() throws Exception {
+    public void updateFeature() {
         Long protocolId = 1000L;
 
         List<Feature> result = featureRepository.findByProtocolId(protocolId);

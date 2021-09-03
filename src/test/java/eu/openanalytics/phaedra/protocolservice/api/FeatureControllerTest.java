@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -138,14 +137,14 @@ public class FeatureControllerTest {
 
     @Test
     public void getFeaturesByFeatureGroupId() throws Exception{
-        Long groupId = 20L;
+        long groupId = 20L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/features").param("groupId", groupId.toString()))
+        MvcResult mvcResult = this.mockMvc.perform(get("/features").param("groupId", Long.toString(groupId)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<Feature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Feature>>() {});
+        List<Feature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(result).isNotNull();
         assertThat(result).isNotEmpty();
     }
