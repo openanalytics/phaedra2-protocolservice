@@ -4,20 +4,40 @@ import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@Testcontainers
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Sql({"classpath:jdbc/schema.sql", "classpath:jdbc/test-data.sql"})
+@Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
 public class ProtocolRepositoryTest {
+
     @Autowired
     private ProtocolRepository protocolRepository;
+
+    @Container
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
+            .withDatabaseName("phaedra2")
+            .withUrlParam("currentSchema","protocols")
+            .withPassword("inmemory")
+            .withUsername("inmemory");
+
+    @DynamicPropertySource
+    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @Test
     public void contextLoads() {

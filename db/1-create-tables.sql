@@ -2,12 +2,12 @@
 create schema if not exists protocols;
 
 -- Drop all tables
-drop table if exists feature_tag;
-drop table if exists feature_class;
-drop table if exists protocol;
-drop table if exists feature;
-drop table if exists tag;
-drop table if exists classification;
+drop table if exists protocols.feature_tag;
+drop table if exists protocols.feature_class;
+drop table if exists protocols.protocol;
+drop table if exists protocols.feature;
+drop table if exists protocols.tag;
+drop table if exists protocols.classification;
 
 -- Create protocol table
 create table if not exists protocols.protocol

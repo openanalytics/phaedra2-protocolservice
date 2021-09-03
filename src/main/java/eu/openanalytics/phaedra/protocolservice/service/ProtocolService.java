@@ -4,7 +4,6 @@ import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,10 +17,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
 @Service
 public class ProtocolService {
     private static final ModelMapper modelMapper = new ModelMapper();
-    private static final String PHAEDRA_METADATA_SERVICE = "http://PHAEDRA-METADATA-SERVICE/phaedra/metadata-service";
+    private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String PROTOCOL_OBJECT_CLASS = "PROTOCOL";
 
     private final RestTemplate restTemplate;
@@ -98,7 +99,7 @@ public class ProtocolService {
      */
     public List<ProtocolDTO> getProtocols() {
         List<Protocol> protocols = (List<Protocol>) protocolRepository.findAll();
-        if (CollectionUtils.isNotEmpty(protocols)) {
+        if (isNotEmpty(protocols)) {
             return protocols.stream()
                     .map(this::mapToProtocolDTO)
                     .collect(Collectors.toList());
