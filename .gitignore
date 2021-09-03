@@ -25,3 +25,9 @@ hs_err_pid*
 
 /.idea/
 /phaedra2-protocolservice.iml
+
+# Eclipse IDE files
+/target/
+/.settings/
+/.project
+/.classpath
