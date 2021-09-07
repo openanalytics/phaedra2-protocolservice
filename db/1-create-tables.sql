@@ -1,7 +1,4 @@
--- create schema if not exists
-create schema if not exists protocols;
-
--- Drop all tables
+-- drop all tables if exist
 drop table if exists protocols.feature_tag;
 drop table if exists protocols.feature_class;
 drop table if exists protocols.protocol;
@@ -9,7 +6,7 @@ drop table if exists protocols.feature;
 drop table if exists protocols.tag;
 drop table if exists protocols.classification;
 
--- Create protocol table
+-- create protocol table
 create table if not exists protocols.protocol
 (
     id             serial primary key,
@@ -20,8 +17,9 @@ create table if not exists protocols.protocol
     low_welltype   text,
     high_welltype  text
 );
+grant all on table protocols.protocol to phaedra_usr;
 
--- Create feature table
+-- create feature table
 create table if not exists protocols.feature
 (
     id            serial,
@@ -39,56 +37,18 @@ create table if not exists protocols.feature
     primary key (id),
     foreign key (protocol_id) references protocols.protocol (id) on update cascade on delete cascade
 );
+grant all on table protocols.feature to phaedra_usr;
 
--- Create tag table
-create table if not exists protocols.tag
+-- create calculation_input_value table
+create table if not exists protocols.calculation_input_value
 (
-    id   serial,
-    name text not null,
-    primary key (id)
-);
-
--- Create classification table
-create table if not exists protocols.classification
-(
-    id          serial  primary key,
-    name        text    not null,
-    description text,
-    color       int,
-    symbol      text,
-    value       int     not null
-);
-
--- Create feature_tag table
-create table if not exists protocols.feature_tag
-(
-    feature_id bigint not null,
-    tag_id     bigint not null,
-    primary key (feature_id, tag_id),
-    foreign key (feature_id) references protocols.feature (id) on update cascade,
-    foreign key (tag_id) references protocols.tag (id) on update cascade
-);
-
--- Create feature_class table
-create table if not exists protocols.feature_class
-(
-    feature_id bigint not null,
-    class_id   bigint not null,
-    primary key (feature_id, class_id),
-    foreign key (feature_id) references protocols.feature (id) on update cascade,
-    foreign key (class_id) references protocols.classification (id) on update cascade
-);
-
--- Create calculation_input_value table
-CREATE TABLE IF NOT EXISTS protocols.calculation_input_value
-(
-    id                   serial PRIMARY KEY,
-    feature_id           bigint NOT NULL,
+    id                   serial primary key,
+    feature_id           bigint not null,
     source_meas_col_name text,
     source_feature_id    bigint,
-    variable_name        text NOT NULL,
-    FOREIGN KEY (feature_id) REFERENCES protocols.feature (id) ON UPDATE CASCADE,
-    UNIQUE(feature_id, source_meas_col_name),
-    UNIQUE(feature_id, source_feature_id),
-    UNIQUE(feature_id, variable_name)
+    variable_name        text not null,
+    foreign key (feature_id) references protocols.feature (id) on update cascade,
+    unique(feature_id, source_meas_col_name),
+    unique(feature_id, source_feature_id),
+    unique(feature_id, variable_name)
 );

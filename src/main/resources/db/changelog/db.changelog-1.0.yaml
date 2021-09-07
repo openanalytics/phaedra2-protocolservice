@@ -1,0 +1,174 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: protocol_pkey
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: name
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  defaultValueBoolean: true
+                  name: editable
+                  type: BOOLEAN
+              - column:
+                  defaultValueBoolean: true
+                  name: in_development
+                  type: BOOLEAN
+              - column:
+                  name: low_welltype
+                  type: TEXT
+              - column:
+                  name: high_welltype
+                  type: TEXT
+            tableName: protocol
+  - changeSet:
+      id: 2
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: feature_pkey
+                  name: id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: TEXT
+              - column:
+                  name: alias
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: format
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: protocol_id
+                  type: BIGINT
+              - column:
+                  name: formula
+                  type: TEXT
+              - column:
+                  name: script_language
+                  type: TEXT
+              - column:
+                  name: formula_id
+                  type: BIGINT
+              - column:
+                  name: calc_trigger
+                  type: TEXT
+              - column:
+                  name: calc_sequence
+                  type: INTEGER
+              - column:
+                  name: type
+                  type: TEXT
+            tableName: feature
+  - changeSet:
+      id: 3
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: calculation_input_value_pkey
+                  name: id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: feature_id
+                  type: BIGINT
+              - column:
+                  name: source_meas_col_name
+                  type: TEXT
+              - column:
+                  name: source_feature_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: variable_name
+                  type: TEXT
+            tableName: calculation_input_value
+  - changeSet:
+      id: 4
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: protocol_id
+            baseTableName: feature
+            constraintName: feature_protocol_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: protocol
+            validate: true
+  - changeSet:
+      id: 5
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: feature_id
+            baseTableName: calculation_input_value
+            constraintName: calculation_input_value_feature_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: feature
+            validate: true
+  - changeSet:
+      id: 6
+      author: sberberovic
+      changes:
+        - addUniqueConstraint:
+            columnNames: feature_id, source_feature_id
+            constraintName: calculation_input_value_feature_id_source_feature_id_key
+            tableName: calculation_input_value
+  - changeSet:
+      id: 7
+      author: sberberovic
+      changes:
+        - addUniqueConstraint:
+            columnNames: feature_id, source_meas_col_name
+            constraintName: calculation_input_value_feature_id_source_meas_col_name_key
+            tableName: calculation_input_value
+  - changeSet:
+      id: 8
+      author: sberberovic
+      changes:
+        - addUniqueConstraint:
+            columnNames: feature_id, variable_name
+            constraintName: calculation_input_value_feature_id_variable_name_key
+            tableName: calculation_input_value
+
