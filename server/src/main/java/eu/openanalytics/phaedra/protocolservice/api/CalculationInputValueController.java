@@ -37,8 +37,7 @@ public class CalculationInputValueController {
     @PostMapping("/features/{featureId}/calculationinputvalue")
     public ResponseEntity<CalculationInputValueDTO> createCalculationInputValue(@PathVariable Long featureId,
                                                                                 @Valid @RequestBody CalculationInputValueDTO calculationInputValueDTO) throws UserVisibleException {
-        calculationInputValueDTO.setFeatureId(featureId);
-        var res = calculationInputValueService.create(calculationInputValueDTO);
+        var res = calculationInputValueService.create(featureId, calculationInputValueDTO);
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 

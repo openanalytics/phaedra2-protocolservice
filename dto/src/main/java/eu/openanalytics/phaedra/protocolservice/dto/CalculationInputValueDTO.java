@@ -1,27 +1,35 @@
 package eu.openanalytics.phaedra.protocolservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+import lombok.With;
+import lombok.experimental.NonFinal;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
-@Data
+@Value
+@Builder
+@With
+@AllArgsConstructor
+@NonFinal
 public class CalculationInputValueDTO {
 
     @Null
-    private Long id;
+    Long id;
 
     @Null
-    private Long featureId;
+    Long featureId;
 
     @NotNull
-    private String variableName;
+    String variableName;
 
-    private String sourceMeasColName;
+    String sourceMeasColName;
 
-    private Long sourceFeatureId;
+    Long sourceFeatureId;
 
     @JsonIgnore
     @AssertTrue(message = "Only one of sourceMeansColumnName or sourceFeatureId may be specified (not both).")

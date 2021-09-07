@@ -8,7 +8,6 @@ import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
 import eu.openanalytics.phaedra.protocolservice.repository.CalculationInputValueRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
@@ -22,31 +21,33 @@ public class CalculationInputValueService {
     private final FeatureRepository featureRepository;
     private final ProtocolRepository protocolRepository;
     private final CalculationInputValueRepository calculationInputValueRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
-    public CalculationInputValueService(FeatureRepository featureRepository, ProtocolRepository protocolRepository, CalculationInputValueRepository calculationInputValueRepository) {
+    public CalculationInputValueService(FeatureRepository featureRepository, ProtocolRepository protocolRepository, CalculationInputValueRepository calculationInputValueRepository, ModelMapper modelMapper) {
         this.featureRepository = featureRepository;
         this.protocolRepository = protocolRepository;
         this.calculationInputValueRepository = calculationInputValueRepository;
-        modelMapper.typeMap(CalculationInputValueDTO.class, CalculationInputValue.class);
-        modelMapper.typeMap(CalculationInputValue.class, CalculationInputValueDTO.class);
-        modelMapper.validate(); // ensure that objects can be mapped
+        this.modelMapper = modelMapper;
     }
 
     /**
      * Create a CalculationInputValue
+     *
+     * @param featureId
      * @param calculationInputValueDTO the CalculationInputValue to create
      * @return the resulting DTO
      * @throws FeatureNotFoundException when the given feature is not found
      * @throws DuplicateCalculationInputValueException when a CalculationInputValue for this feature already exists with the given values
      */
-    public CalculationInputValueDTO create(CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
-        var feature = featureRepository.findById(calculationInputValueDTO.getFeatureId());
+    public CalculationInputValueDTO create(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
+        var feature = featureRepository.findById(featureId);
         if (feature.isEmpty()) {
-            throw new FeatureNotFoundException(calculationInputValueDTO.getFeatureId());
+            throw new FeatureNotFoundException(featureId);
         }
 
-        CalculationInputValue calculationInputValue = map(calculationInputValueDTO, new CalculationInputValue());
+        CalculationInputValue calculationInputValue = modelMapper.map(calculationInputValueDTO)
+                .featureId(featureId)
+                .build();
 
         try {
             return save(calculationInputValue);
@@ -72,7 +73,7 @@ public class CalculationInputValueService {
 
         return calculationInputValueRepository.findByFeatureId(featureId)
                 .stream()
-                .map((f) -> map(f, new CalculationInputValueDTO()))
+                .map((f) -> modelMapper.map(f).build())
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -90,24 +91,8 @@ public class CalculationInputValueService {
 
         return calculationInputValueRepository.findByProtocolId(protocolId)
                 .stream()
-                .map((f) -> map(f, new CalculationInputValueDTO()))
+                .map((f) -> modelMapper.map(f).build())
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    /**
-     * Convenience-function to easily convert Entities to/from DTOs.
-     */
-    private CalculationInputValueDTO map(CalculationInputValue calculationInputValue, CalculationInputValueDTO calculationInputValueDTO) {
-        modelMapper.map(calculationInputValue, calculationInputValueDTO);
-        return calculationInputValueDTO;
-    }
-
-    /**
-     * Convenience-function to easily convert Entities to/from DTOs.
-     */
-    private CalculationInputValue map(CalculationInputValueDTO calculationInputValueDTO, CalculationInputValue calculationInputValue) {
-        modelMapper.map(calculationInputValueDTO, calculationInputValue);
-        return calculationInputValue;
     }
 
     /**
@@ -115,7 +100,7 @@ public class CalculationInputValueService {
      */
     private CalculationInputValueDTO save(CalculationInputValue formula) {
         CalculationInputValue newFormula = calculationInputValueRepository.save(formula);
-        return map(newFormula, new CalculationInputValueDTO());
+        return modelMapper.map(newFormula).build();
     }
 
 }

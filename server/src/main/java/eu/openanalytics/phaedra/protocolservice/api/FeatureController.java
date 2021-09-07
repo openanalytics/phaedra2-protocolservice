@@ -1,12 +1,19 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,12 +26,16 @@ public class FeatureController {
     @Autowired
     private FeatureService featureService;
 
+    // TODO creating feature with non-existing protoclId returns 500
+    // -> use rest URL? e.g. /protocol/10/feature ?
     @PostMapping("/features")
-    public ResponseEntity createFeature(@RequestBody FeatureDTO newFeature) {
-        Feature savedFeature = featureService.create(newFeature);
-        return new ResponseEntity(savedFeature, HttpStatus.CREATED);
+    public ResponseEntity<FeatureDTO> createFeature(@RequestBody FeatureDTO newFeature) {
+        FeatureDTO savedFeature = featureService.create(newFeature);
+        return new ResponseEntity<>(savedFeature, HttpStatus.CREATED);
     }
 
+    // TODO use rest URL: PUT /features/1/ instead of PUT /features ? cfr .delete
+    // TODO validate the feature exists (updating non-existent feature does nothing and returns 200)
     @PutMapping("/features")
     public ResponseEntity updateFeature(@RequestBody FeatureDTO updateFeature) {
         FeatureDTO updatedFeature = featureService.update(updateFeature);
