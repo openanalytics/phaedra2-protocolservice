@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 @SpringBootTest
 @Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
+@ActiveProfiles("test")
 public class ProtocolRepositoryTest {
 
     @Autowired
