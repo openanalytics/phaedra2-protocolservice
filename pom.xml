@@ -20,7 +20,7 @@
 
     <modules>
         <module>dto/</module>
-<!--        <module>client/</module>-->
+        <module>client/</module>
         <module>server/</module>
     </modules>
 

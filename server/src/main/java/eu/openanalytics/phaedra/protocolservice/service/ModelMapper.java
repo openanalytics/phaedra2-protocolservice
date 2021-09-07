@@ -48,9 +48,7 @@ public class ModelMapper {
      * The return value can be further customized by calling the builder methods.
      */
     public CalculationInputValueDTO.CalculationInputValueDTOBuilder map(CalculationInputValue calculationInputValue) {
-        CalculationInputValueDTO.CalculationInputValueDTOBuilder builder = CalculationInputValueDTO.builder();
-        modelMapper.map(calculationInputValue, builder);
-        return builder;
+        return modelMapper.map(calculationInputValue, CalculationInputValueDTO.CalculationInputValueDTOBuilder.class);
     }
 
     /**
@@ -58,44 +56,34 @@ public class ModelMapper {
      * The return value can be further customized by calling the builder methods.
      */
     public CalculationInputValue.CalculationInputValueBuilder map(CalculationInputValueDTO calculationInputValueDTO) {
-        CalculationInputValue.CalculationInputValueBuilder builder = CalculationInputValue.builder();
-        modelMapper.map(calculationInputValueDTO, builder);
-        return builder;
+        return modelMapper.map(calculationInputValueDTO, CalculationInputValue.CalculationInputValueBuilder.class);
     }
 
     /**
      * Maps a {@link ProtocolDTO} to a {@link Protocol}.
      */
     public Protocol map(ProtocolDTO protocolDTO) {
-        Protocol protocol = new Protocol();
-        modelMapper.map(protocolDTO, protocol);
-        return protocol;
+        return modelMapper.map(protocolDTO, Protocol.class);
     }
 
     /**
      * Maps a {@link Protocol} to a {@link ProtocolDTO}.
      */
     public ProtocolDTO map(Protocol protocol) {
-        ProtocolDTO protocolDTO = new ProtocolDTO();
-        modelMapper.map(protocol, protocolDTO);
-        return protocolDTO;
+        return modelMapper.map(protocol, ProtocolDTO.class);
     }
 
     /**
      * Maps a {@link FeatureDTO} to a {@link Feature}.
      */
     public Feature map(FeatureDTO featureDTO) {
-        Feature feature = new Feature();
-        modelMapper.map(featureDTO, feature);
-        return feature;
+        return modelMapper.map(featureDTO, Feature.class);
     }
 
     /**
      * Maps a {@link Feature} to a {@link FeatureDTO}.
      */
     public FeatureDTO map(Feature feature) {
-        FeatureDTO featureDTO = new FeatureDTO();
-        modelMapper.map(feature, featureDTO);
-        return featureDTO;
+        return modelMapper.map(feature, FeatureDTO.class);
     }
 }

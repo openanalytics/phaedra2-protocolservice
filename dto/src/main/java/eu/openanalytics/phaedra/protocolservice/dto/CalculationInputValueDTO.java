@@ -1,8 +1,10 @@
 package eu.openanalytics.phaedra.protocolservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.With;
 import lombok.experimental.NonFinal;
@@ -15,6 +17,7 @@ import javax.validation.constraints.Null;
 @Builder
 @With
 @AllArgsConstructor
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE) // Jackson deserialize compatibility
 @NonFinal
 public class CalculationInputValueDTO {
 
