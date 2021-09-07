@@ -1,6 +1,7 @@
 package eu.openanalytics.phaedra.protocolservice.repository;
 
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,10 +36,10 @@ public class FeatureRepositoryTest {
             .withUsername("inmemory");
 
     @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    static void registerPgProperties(DynamicPropertyRegistry registry) {
+        registry.add("DB_URL", Containers.postgreSQLContainer::getJdbcUrl);
+        registry.add("DB_USER", Containers.postgreSQLContainer::getUsername);
+        registry.add("DB_PASSWORD", Containers.postgreSQLContainer::getPassword);
     }
 
     @Test

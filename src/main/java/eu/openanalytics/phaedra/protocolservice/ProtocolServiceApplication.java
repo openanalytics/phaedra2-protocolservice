@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -41,7 +40,6 @@ public class ProtocolServiceApplication {
     }
 
     @Bean
-    @Profile({"defualt", "kubernetes"})
     public DataSource dataSource() {
         String url = environment.getProperty("DB_URL");
         String username = environment.getProperty("DB_USER");
