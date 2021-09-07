@@ -33,3 +33,6 @@ hs_err_pid*
 /.classpath
 
 application.yml
+/server/target/
+/dto/target/
+/client/target/
