@@ -5,8 +5,6 @@ import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
 import eu.openanalytics.phaedra.protocolservice.enumeration.ScriptLanguage;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FeatureDTO {
