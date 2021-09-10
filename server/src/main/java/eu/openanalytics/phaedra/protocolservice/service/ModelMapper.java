@@ -1,10 +1,12 @@
 package eu.openanalytics.phaedra.protocolservice.service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.DefaultFeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
+import eu.openanalytics.phaedra.protocolservice.model.DefaultFeatureStat;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
@@ -43,6 +45,10 @@ public class ModelMapper {
         modelMapper.createTypeMap(FeatureStat.class, FeatureStatDTO.FeatureStatDTOBuilder.class, builderConfiguration);
 
         modelMapper.createTypeMap(FeatureStatDTO.class, FeatureStat.FeatureStatBuilder.class, builderConfiguration);
+
+        modelMapper.createTypeMap(DefaultFeatureStat.class, DefaultFeatureStatDTO.DefaultFeatureStatDTOBuilder.class, builderConfiguration);
+
+        modelMapper.createTypeMap(DefaultFeatureStatDTO.class, DefaultFeatureStat.DefaultFeatureStatBuilder.class, builderConfiguration);
 
         modelMapper.validate(); // ensure that objects can be mapped
     }
@@ -107,4 +113,19 @@ public class ModelMapper {
         return modelMapper.map(featureStat, FeatureStatDTO.FeatureStatDTOBuilder.class);
     }
 
+    /**
+     * Maps a {@link DefaultFeatureStat} to a {@link DefaultFeatureStatDTO.DefaultFeatureStatDTOBuilder}.
+     * The return value can be further customized by calling the builder methods.
+     */
+    public DefaultFeatureStatDTO.DefaultFeatureStatDTOBuilder map(DefaultFeatureStat defaultFeatureStat) {
+        return modelMapper.map(defaultFeatureStat, DefaultFeatureStatDTO.DefaultFeatureStatDTOBuilder.class);
+    }
+
+    /**
+     * Maps a {@link DefaultFeatureStatDTO} to a {@link DefaultFeatureStat.DefaultFeatureStatBuilder}.
+     * The return value can be further customized by calling the builder methods.
+     */
+    public DefaultFeatureStat.DefaultFeatureStatBuilder map(DefaultFeatureStatDTO defaultFeatureStatDTO) {
+        return modelMapper.map(defaultFeatureStatDTO, DefaultFeatureStat.DefaultFeatureStatBuilder.class);
+    }
 }

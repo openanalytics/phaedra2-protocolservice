@@ -225,3 +225,46 @@ databaseChangeLog:
             referencedTableName: feature
             validate: true
             constraintName: feature_stat_feature_id_fkey
+  - changeSet:
+      id: 10
+      author: tdekoninck
+      changes:
+        - createTable:
+            tableName: default_feature_stat
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: default_feature_stat_pkey
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: welltype
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: formula_id
+                  type: BIGINT
+        - addUniqueConstraint:
+            # This is a constraint for ensuring no default_feature_stat exists with the same name
+            columnNames: name
+            tableName: default_feature_stat
+        - addUniqueConstraint:
+            # This is a constraint for ensuring no duplicate calculations are performed.
+            # Note that this index allows duplicate values in case welltype is null.
+            columnNames: welltype, formula_id
+            tableName: default_feature_stat
+        - sql:
+            # This is a constraint for ensuring no duplicate calculations are performed.
+            # This constraint is needed for cases where welltype is null.
+            sql: CREATE UNIQUE INDEX ON default_feature_stat (formula_id) WHERE welltype IS NULL;

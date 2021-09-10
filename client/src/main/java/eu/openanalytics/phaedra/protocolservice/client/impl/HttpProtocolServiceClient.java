@@ -4,6 +4,7 @@ import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import org.springframework.stereotype.Component;
@@ -61,6 +62,21 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
             throw new ProtocolUnresolvableException("Civs not found");
         } catch (HttpClientErrorException ex) {
             throw new ProtocolUnresolvableException("Error while fetching Civs");
+        }
+    }
+
+    @Override
+    public List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException {
+        try {
+            var res = restTemplate.getForObject(UrlFactory.protocolCiv(protocolId), FeatureStatDTO[].class);
+            if (res == null) {
+                throw new ProtocolUnresolvableException("FeatureStats could not be converted");
+            }
+            return Arrays.asList(res);
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new ProtocolUnresolvableException("FeatureStats not found");
+        } catch (HttpClientErrorException ex) {
+            throw new ProtocolUnresolvableException("Error while fetching FeatureStats");
         }
     }
 
