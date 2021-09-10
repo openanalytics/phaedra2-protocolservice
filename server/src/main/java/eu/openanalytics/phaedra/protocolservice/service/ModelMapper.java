@@ -2,9 +2,11 @@ package eu.openanalytics.phaedra.protocolservice.service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import org.modelmapper.Conditions;
 import org.modelmapper.config.Configuration;
@@ -22,12 +24,6 @@ public class ModelMapper {
                 .setDestinationNameTransformer(NameTransformers.builder())
                 .setDestinationNamingConvention(NamingConventions.builder());
 
-        modelMapper.createTypeMap(CalculationInputValueDTO.class, CalculationInputValue.CalculationInputValueBuilder.class, builderConfiguration)
-                .setPropertyCondition(Conditions.isNotNull());
-
-        modelMapper.createTypeMap(CalculationInputValue.class, CalculationInputValueDTO.CalculationInputValueDTOBuilder.class, builderConfiguration)
-                .setPropertyCondition(Conditions.isNotNull());
-
         modelMapper.createTypeMap(Protocol.class, ProtocolDTO.class)
                 .setPropertyCondition(Conditions.isNotNull());
 
@@ -39,6 +35,14 @@ public class ModelMapper {
 
         modelMapper.createTypeMap(FeatureDTO.class, Feature.class)
                 .setPropertyCondition(Conditions.isNotNull());
+
+        modelMapper.createTypeMap(CalculationInputValueDTO.class, CalculationInputValue.CalculationInputValueBuilder.class, builderConfiguration);
+
+        modelMapper.createTypeMap(CalculationInputValue.class, CalculationInputValueDTO.CalculationInputValueDTOBuilder.class, builderConfiguration);
+
+        modelMapper.createTypeMap(FeatureStat.class, FeatureStatDTO.FeatureStatDTOBuilder.class, builderConfiguration);
+
+        modelMapper.createTypeMap(FeatureStatDTO.class, FeatureStat.FeatureStatBuilder.class, builderConfiguration);
 
         modelMapper.validate(); // ensure that objects can be mapped
     }
@@ -86,4 +90,21 @@ public class ModelMapper {
     public FeatureDTO map(Feature feature) {
         return modelMapper.map(feature, FeatureDTO.class);
     }
+
+    /**
+     * Maps a {@link FeatureStatDTO} to a {@link FeatureStat.FeatureStatBuilder}.
+     * The return value can be further customized by calling the builder methods.
+     */
+    public FeatureStat.FeatureStatBuilder map(FeatureStatDTO featureStatDTO) {
+        return modelMapper.map(featureStatDTO, FeatureStat.FeatureStatBuilder.class);
+    }
+
+    /**
+     * Maps a {@link FeatureStat} to a {@link FeatureStatDTO.FeatureStatDTOBuilder}.
+     * The return value can be further customized by calling the builder methods.
+     */
+    public FeatureStatDTO.FeatureStatDTOBuilder map(FeatureStat featureStat) {
+        return modelMapper.map(featureStat, FeatureStatDTO.FeatureStatDTOBuilder.class);
+    }
+
 }

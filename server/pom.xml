@@ -16,7 +16,9 @@
     <name>phaedra2-protocolservice-server</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>16</java.version>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
         <docker.repoPrefix/>
         <docker.imageName>${project.parent.artifactId}</docker.imageName>

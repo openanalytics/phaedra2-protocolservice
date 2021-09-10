@@ -171,3 +171,57 @@ databaseChangeLog:
             columnNames: feature_id, variable_name
             constraintName: calculation_input_value_feature_id_variable_name_key
             tableName: calculation_input_value
+  - changeSet:
+      id: 9
+      author: tdekoninck
+      changes:
+        - createTable:
+            tableName: feature_stat
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: feature_stat_pkey
+                  name: id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: feature_id
+                  type: BIGINT
+              - column:
+                  name: welltype
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: formula_id
+                  type: BIGINT
+        - addUniqueConstraint:
+            columnNames: feature_id, name
+            tableName: feature_stat
+        - addUniqueConstraint:
+            # This is a constraint for ensuring no duplicate calculations are performed.
+            # Note that this index allows duplicate values in case welltype is null.
+            columnNames: feature_id, welltype, formula_id
+            tableName: feature_stat
+        - sql:
+            # This is a constraint for ensuring no duplicate calculations are performed.
+            # This constraint is needed for cases where welltype is null.
+            sql: CREATE UNIQUE INDEX ON feature_stat (feature_id, formula_id) WHERE welltype IS NULL;
+        - addForeignKeyConstraint:
+            baseColumnNames: feature_id
+            baseTableName: feature_stat
+            referencedColumnNames: id
+            referencedTableName: feature
+            validate: true
+            constraintName: feature_stat_feature_id_fkey

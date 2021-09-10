@@ -98,9 +98,9 @@ public class CalculationInputValueService {
     /**
      * Saves a {@link CalculationInputValue} and returns the resulting corresponding {@link CalculationInputValueDTO}.
      */
-    private CalculationInputValueDTO save(CalculationInputValue formula) {
-        CalculationInputValue newFormula = calculationInputValueRepository.save(formula);
-        return modelMapper.map(newFormula).build();
+    private CalculationInputValueDTO save(CalculationInputValue civ) {
+        CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
+        return modelMapper.map(newCiv).build();
     }
 
 }

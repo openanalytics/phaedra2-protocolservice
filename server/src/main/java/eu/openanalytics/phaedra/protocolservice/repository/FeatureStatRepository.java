@@ -1,0 +1,24 @@
+package eu.openanalytics.phaedra.protocolservice.repository;
+
+import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface FeatureStatRepository extends CrudRepository<FeatureStat, Long> {
+
+    @Query("SELECT feature_stat.* FROM feature_stat" +
+            " JOIN feature as feat ON feat.id = feature_stat.feature_id" +
+            " WHERE feat.id = :featureId ")
+    List<FeatureStat> findByFeatureId(@Param("featureId") Long featureId);
+
+    @Query("SELECT feature_stat.* FROM feature_stat" +
+            " JOIN feature as feat ON feat.id = feature_stat.feature_id" +
+            " WHERE feat.protocol_id = :protocolId ")
+    List<FeatureStat> findByProtocolId(@Param("protocolId") Long featureId);
+
+}
