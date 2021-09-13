@@ -17,4 +17,8 @@ public class UrlFactory {
         return String.format("%s/protocols/%s/calculationinputvalue", PROTOCOL_SERVICE, protocolId);
     }
 
+    public static String defaultFeatureStat() {
+        return String.format("%s/defaultfeaturestat", PROTOCOL_SERVICE);
+    }
+
 }

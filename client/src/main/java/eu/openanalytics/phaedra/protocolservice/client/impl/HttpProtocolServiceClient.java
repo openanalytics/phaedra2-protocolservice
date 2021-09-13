@@ -1,8 +1,10 @@
 package eu.openanalytics.phaedra.protocolservice.client.impl;
 
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
+import eu.openanalytics.phaedra.protocolservice.client.exception.DefaultFeatureStatUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.DefaultFeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
@@ -65,7 +67,6 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
         }
     }
 
-    @Override
     public List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException {
         try {
             var res = restTemplate.getForObject(UrlFactory.protocolCiv(protocolId), FeatureStatDTO[].class);
@@ -77,6 +78,28 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
             throw new ProtocolUnresolvableException("FeatureStats not found");
         } catch (HttpClientErrorException ex) {
             throw new ProtocolUnresolvableException("Error while fetching FeatureStats");
+        }
+    }
+
+    @Override
+    public DefaultFeatureStatDTO createDefaultFeatureStat(String wellType, String name, Long formulaId) throws DefaultFeatureStatUnresolvableException {
+        try {
+            var input = DefaultFeatureStatDTO
+                    .builder()
+                    .welltype(wellType)
+                    .name(name)
+                    .formulaId(formulaId)
+                    .build();
+
+            var res = restTemplate.postForObject(UrlFactory.defaultFeatureStat(), input, DefaultFeatureStatDTO.class);
+            if (res == null) {
+                throw new DefaultFeatureStatUnresolvableException("FeatureStats could not be converted");
+            }
+            return res;
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new DefaultFeatureStatUnresolvableException("FeatureStats not found");
+        } catch (HttpClientErrorException ex) {
+            throw new DefaultFeatureStatUnresolvableException("Error while fetching FeatureStats");
         }
     }
 
