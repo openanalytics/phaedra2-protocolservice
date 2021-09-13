@@ -26,8 +26,9 @@ public class FeatureController {
     @Autowired
     private FeatureService featureService;
 
-    // TODO creating feature with non-existing protoclId returns 500
+    // TODO creating feature with non-existing protocolId returns 500
     // -> use rest URL? e.g. /protocol/10/feature ?
+    // TODO it is possible to create features with the same name
     @PostMapping("/features")
     public ResponseEntity<FeatureDTO> createFeature(@RequestBody FeatureDTO newFeature) {
         FeatureDTO savedFeature = featureService.create(newFeature);

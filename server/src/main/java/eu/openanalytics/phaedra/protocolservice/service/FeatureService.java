@@ -4,7 +4,6 @@ import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +25,13 @@ public class FeatureService {
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
     private final FeatureRepository featureRepository;
+    private final FeatureStatService featureStatService;
 
-    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository, ProtocolRepository protocolRepository) {
+    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository, FeatureStatService featureStatService) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
+        this.featureStatService = featureStatService;
     }
 
     /**
@@ -41,7 +42,10 @@ public class FeatureService {
     public FeatureDTO create(FeatureDTO featureDTO) {
         Feature newFeature = modelMapper.map(featureDTO);
 
-        return modelMapper.map(featureRepository.save(newFeature));
+        var resFeature = featureRepository.save(newFeature);
+        featureStatService.createDefaultsForFeature(resFeature);
+
+        return modelMapper.map(resFeature);
     }
 
     /**

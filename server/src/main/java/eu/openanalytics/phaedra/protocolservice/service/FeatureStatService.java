@@ -6,6 +6,7 @@ import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundExcepti
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureStatNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.UserVisibleException;
+import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureStatRepository;
@@ -14,6 +15,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,12 +27,14 @@ public class FeatureStatService {
     private final FeatureRepository featureRepository;
     private final ModelMapper modelMapper;
     private final ProtocolRepository protocolRepository;
+    private final DefaultFeatureStatService defaultFeatureStatService;
 
-    public FeatureStatService(FeatureStatRepository featureStatRepository, FeatureRepository featureRepository, ModelMapper modelMapper, ProtocolRepository protocolRepository) {
+    public FeatureStatService(FeatureStatRepository featureStatRepository, FeatureRepository featureRepository, ModelMapper modelMapper, ProtocolRepository protocolRepository, DefaultFeatureStatService defaultFeatureStatService) {
         this.featureStatRepository = featureStatRepository;
         this.featureRepository = featureRepository;
         this.modelMapper = modelMapper;
         this.protocolRepository = protocolRepository;
+        this.defaultFeatureStatService = defaultFeatureStatService;
     }
 
     public FeatureStatDTO create(long featureId, FeatureStatDTO featureStatDTO) throws FeatureNotFoundException, DuplicateFeatureStatException {
@@ -113,6 +117,25 @@ public class FeatureStatService {
                 .stream()
                 .map((f) -> modelMapper.map(f).build())
                 .toList();
+    }
+
+    public void createDefaultsForFeature(Feature resFeature) {
+        // 1. get all default FeatureStats
+        var defaults = defaultFeatureStatService.get();
+        var featureStats = new ArrayList<FeatureStat>();
+
+        for (var defaultStat : defaults) {
+            var featureStat = FeatureStat.builder()
+                    .featureId(resFeature.getId())
+                    .plateStat(defaultStat.getPlateStat())
+                    .welltypeStat(defaultStat.getWelltypeStat())
+                    .name(defaultStat.getName())
+                    .formulaId(defaultStat.getFormulaId())
+                    .build();
+            featureStats.add(featureStat);
+        }
+
+        featureStatRepository.saveAll(featureStats);
     }
 
     /**
