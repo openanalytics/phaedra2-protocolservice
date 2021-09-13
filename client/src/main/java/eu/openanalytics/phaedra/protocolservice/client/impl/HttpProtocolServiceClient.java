@@ -82,11 +82,12 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
     }
 
     @Override
-    public DefaultFeatureStatDTO createDefaultFeatureStat(String wellType, String name, Long formulaId) throws DefaultFeatureStatUnresolvableException {
+    public DefaultFeatureStatDTO createDefaultFeatureStat(String name, Long formulaId, Boolean plateStat, Boolean wellTypeStat) throws DefaultFeatureStatUnresolvableException {
         try {
             var input = DefaultFeatureStatDTO
                     .builder()
-                    .welltype(wellType)
+                    .plateStat(plateStat)
+                    .welltypeStat(wellTypeStat)
                     .name(name)
                     .formulaId(formulaId)
                     .build();

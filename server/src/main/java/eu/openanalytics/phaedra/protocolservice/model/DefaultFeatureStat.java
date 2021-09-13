@@ -16,7 +16,9 @@ public class DefaultFeatureStat {
     @Id
     Long id;
 
-    String welltype;
+    Boolean plateStat;
+
+    Boolean welltypeStat;
 
     String name;
 

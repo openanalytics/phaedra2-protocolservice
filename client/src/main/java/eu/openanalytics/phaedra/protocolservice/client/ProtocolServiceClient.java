@@ -20,6 +20,6 @@ public interface ProtocolServiceClient {
 
     List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException;
 
-    DefaultFeatureStatDTO createDefaultFeatureStat(String wellType, String name, Long formulaId) throws DefaultFeatureStatUnresolvableException;
+    DefaultFeatureStatDTO createDefaultFeatureStat(String name, Long formulaId, Boolean plateStat, Boolean wellTypeStat) throws DefaultFeatureStatUnresolvableException;
 
 }

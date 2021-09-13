@@ -18,7 +18,9 @@ public class FeatureStat {
 
     Long featureId;
 
-    String welltype;
+    Boolean plateStat;
+
+    Boolean welltypeStat;
 
     String name;
 

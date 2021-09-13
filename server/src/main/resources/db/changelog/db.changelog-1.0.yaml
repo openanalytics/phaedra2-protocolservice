@@ -192,10 +192,15 @@ databaseChangeLog:
                   name: feature_id
                   type: BIGINT
               - column:
-                  name: welltype
-                  type: TEXT
                   constraints:
-                    nullable: true
+                    nullable: false
+                  name: plate_stat
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: welltype_stat
+                  type: BOOLEAN
               - column:
                   constraints:
                     nullable: false
@@ -209,15 +214,6 @@ databaseChangeLog:
         - addUniqueConstraint:
             columnNames: feature_id, name
             tableName: feature_stat
-        - addUniqueConstraint:
-            # This is a constraint for ensuring no duplicate calculations are performed.
-            # Note that this index allows duplicate values in case welltype is null.
-            columnNames: feature_id, welltype, formula_id
-            tableName: feature_stat
-        - sql:
-            # This is a constraint for ensuring no duplicate calculations are performed.
-            # This constraint is needed for cases where welltype is null.
-            sql: CREATE UNIQUE INDEX ON feature_stat (feature_id, formula_id) WHERE welltype IS NULL;
         - addForeignKeyConstraint:
             baseColumnNames: feature_id
             baseTableName: feature_stat
@@ -241,10 +237,15 @@ databaseChangeLog:
                   name: id
                   type: INTEGER
               - column:
-                  name: welltype
-                  type: TEXT
                   constraints:
-                    nullable: true
+                    nullable: false
+                  name: plate_stat
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: welltype_stat
+                  type: BOOLEAN
               - column:
                   constraints:
                     nullable: false
@@ -259,12 +260,3 @@ databaseChangeLog:
             # This is a constraint for ensuring no default_feature_stat exists with the same name
             columnNames: name
             tableName: default_feature_stat
-        - addUniqueConstraint:
-            # This is a constraint for ensuring no duplicate calculations are performed.
-            # Note that this index allows duplicate values in case welltype is null.
-            columnNames: welltype, formula_id
-            tableName: default_feature_stat
-        - sql:
-            # This is a constraint for ensuring no duplicate calculations are performed.
-            # This constraint is needed for cases where welltype is null.
-            sql: CREATE UNIQUE INDEX ON default_feature_stat (formula_id) WHERE welltype IS NULL;
