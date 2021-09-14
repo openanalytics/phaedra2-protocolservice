@@ -13,7 +13,6 @@ import org.springframework.data.relational.core.conversion.DbActionExecutionExce
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CalculationInputValueService {
@@ -36,7 +35,7 @@ public class CalculationInputValueService {
      * @param featureId
      * @param calculationInputValueDTO the CalculationInputValue to create
      * @return the resulting DTO
-     * @throws FeatureNotFoundException when the given feature is not found
+     * @throws FeatureNotFoundException                when the given feature is not found
      * @throws DuplicateCalculationInputValueException when a CalculationInputValue for this feature already exists with the given values
      */
     public CalculationInputValueDTO create(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
@@ -49,18 +48,12 @@ public class CalculationInputValueService {
                 .featureId(featureId)
                 .build();
 
-        try {
-            return save(calculationInputValue);
-        } catch (DbActionExecutionException ex) {
-            if (ex.getCause() instanceof DuplicateKeyException) {
-                throw new DuplicateCalculationInputValueException();
-            }
-            throw ex;
-        }
+        return save(calculationInputValue);
     }
 
     /**
      * Get all {@link CalculationInputValueDTO} of a feature.
+     *
      * @param featureId the feature to the {@link CalculationInputValue} from
      * @return the CalculationInputValues of the feature
      * @throws FeatureNotFoundException when the feature is not found
@@ -74,11 +67,12 @@ public class CalculationInputValueService {
         return calculationInputValueRepository.findByFeatureId(featureId)
                 .stream()
                 .map((f) -> modelMapper.map(f).build())
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
      * Get all {@link CalculationInputValueDTO} of a protocol by looking at the features of the given protocol.
+     *
      * @param protocolId the protocol to fetch the {@link CalculationInputValue} from
      * @return the CalculationInputValues of the protocol
      * @throws ProtocolNotFoundException when the protocol is not found
@@ -92,15 +86,22 @@ public class CalculationInputValueService {
         return calculationInputValueRepository.findByProtocolId(protocolId)
                 .stream()
                 .map((f) -> modelMapper.map(f).build())
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
      * Saves a {@link CalculationInputValue} and returns the resulting corresponding {@link CalculationInputValueDTO}.
      */
-    private CalculationInputValueDTO save(CalculationInputValue civ) {
-        CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
-        return modelMapper.map(newCiv).build();
+    private CalculationInputValueDTO save(CalculationInputValue civ) throws DuplicateCalculationInputValueException {
+        try {
+            CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
+            return modelMapper.map(newCiv).build();
+        } catch (DbActionExecutionException ex) {
+            if (ex.getCause() instanceof DuplicateKeyException) {
+                throw new DuplicateCalculationInputValueException();
+            }
+            throw ex;
+        }
     }
 
 }

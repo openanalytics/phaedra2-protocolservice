@@ -29,15 +29,7 @@ public class DefaultFeatureStatService {
 
     public DefaultFeatureStatDTO create(DefaultFeatureStatDTO defaultFeatureStatDTO) throws FeatureNotFoundException, DuplicateFeatureStatException {
         DefaultFeatureStat defaultFeatureStat = modelMapper.map(defaultFeatureStatDTO).build();
-
-        try {
-            return save(defaultFeatureStat);
-        } catch (DbActionExecutionException ex) {
-            if (ex.getCause() instanceof DuplicateKeyException) {
-                throw new DuplicateFeatureStatException();
-            }
-            throw ex;
-        }
+        return save(defaultFeatureStat);
     }
 
     public DefaultFeatureStatDTO update(DefaultFeatureStatDTO defaultFeatureStatDTO) throws UserVisibleException {
@@ -74,9 +66,16 @@ public class DefaultFeatureStatService {
     /**
      * Saves a {@link FeatureStat} and returns the resulting corresponding {@link FeatureStatDTO}.
      */
-    private DefaultFeatureStatDTO save(DefaultFeatureStat featureStat) {
-        DefaultFeatureStat newFeatureStat = defaultFeatureStatRepository.save(featureStat);
-        return modelMapper.map(newFeatureStat).build();
+    private DefaultFeatureStatDTO save(DefaultFeatureStat featureStat) throws DuplicateFeatureStatException {
+        try {
+            DefaultFeatureStat newFeatureStat = defaultFeatureStatRepository.save(featureStat);
+            return modelMapper.map(newFeatureStat).build();
+        } catch (DbActionExecutionException ex) {
+            if (ex.getCause() instanceof DuplicateKeyException) {
+                throw new DuplicateFeatureStatException();
+            }
+            throw ex;
+        }
     }
 
 }

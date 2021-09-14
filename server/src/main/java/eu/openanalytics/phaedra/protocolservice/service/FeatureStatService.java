@@ -47,14 +47,7 @@ public class FeatureStatService {
                 .featureId(featureId)
                 .build();
 
-        try {
-            return save(featureStat);
-        } catch (DbActionExecutionException ex) {
-            if (ex.getCause() instanceof DuplicateKeyException) {
-                throw new DuplicateFeatureStatException();
-            }
-            throw ex;
-        }
+        return save(featureStat);
     }
 
     public FeatureStatDTO update(FeatureStatDTO featureStatDTO) throws UserVisibleException {
@@ -141,9 +134,16 @@ public class FeatureStatService {
     /**
      * Saves a {@link FeatureStat} and returns the resulting corresponding {@link FeatureStatDTO}.
      */
-    private FeatureStatDTO save(FeatureStat featureStat) {
-        FeatureStat newFeatureStat = featureStatRepository.save(featureStat);
-        return modelMapper.map(newFeatureStat).build();
+    private FeatureStatDTO save(FeatureStat featureStat) throws DuplicateFeatureStatException {
+        try {
+            FeatureStat newFeatureStat = featureStatRepository.save(featureStat);
+            return modelMapper.map(newFeatureStat).build();
+        } catch (DbActionExecutionException ex) {
+            if (ex.getCause() instanceof DuplicateKeyException) {
+                throw new DuplicateFeatureStatException();
+            }
+            throw ex;
+        }
     }
 
 }

@@ -69,7 +69,7 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
 
     public List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException {
         try {
-            var res = restTemplate.getForObject(UrlFactory.protocolCiv(protocolId), FeatureStatDTO[].class);
+            var res = restTemplate.getForObject(UrlFactory.featureStats(protocolId), FeatureStatDTO[].class);
             if (res == null) {
                 throw new ProtocolUnresolvableException("FeatureStats could not be converted");
             }

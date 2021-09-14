@@ -3,7 +3,6 @@ package eu.openanalytics.phaedra.protocolservice.client.impl;
 public class UrlFactory {
 
     private static final String PROTOCOL_SERVICE = "http://phaedra-protocol-service/phaedra/protocol-service";
-    private static final String MEAS_SERVICE = "http://phaedra-measurement-service/phaedra/meas-service";
 
     public static String protocol(long protocolId) {
         return String.format("%s/protocols/%s", PROTOCOL_SERVICE, protocolId);
@@ -21,4 +20,7 @@ public class UrlFactory {
         return String.format("%s/defaultfeaturestat", PROTOCOL_SERVICE);
     }
 
+    public static String featureStats(long protocolId) {
+        return String.format("%s/protocols/%s/featurestat", PROTOCOL_SERVICE, protocolId);
+    }
 }
