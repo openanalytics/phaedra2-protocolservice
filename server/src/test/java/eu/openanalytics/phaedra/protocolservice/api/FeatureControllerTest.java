@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 public class FeatureControllerTest {
     @Autowired
     private MockMvc mockMvc;
