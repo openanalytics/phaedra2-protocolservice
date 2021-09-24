@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest
-@Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
+@Sql({"/jdbc/test-data.sql"})
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class FeatureRepositoryTest {
 

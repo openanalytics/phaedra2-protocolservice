@@ -1,5 +1,8 @@
 -- noinspection SqlResolveForFile
 
+TRUNCATE protocols.protocol RESTART IDENTITY CASCADE;
+TRUNCATE protocols.feature RESTART IDENTITY CASCADE;
+
 insert into protocols.protocol
 values (1000, 'PKD High Content SD', null, true, true, 'NC', 'PC');
 

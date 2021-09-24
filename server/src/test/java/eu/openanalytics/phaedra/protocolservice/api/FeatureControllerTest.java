@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Testcontainers
 @SpringBootTest
-@Sql({"/jdbc/schema.sql", "/jdbc/test-data.sql"})
+@Sql({"/jdbc/test-data.sql"})
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class FeatureControllerTest {
