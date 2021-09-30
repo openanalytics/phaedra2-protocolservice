@@ -1,7 +1,6 @@
 package eu.openanalytics.phaedra.protocolservice.model;
 
 import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
-import eu.openanalytics.phaedra.protocolservice.enumeration.ScriptLanguage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -24,8 +23,6 @@ public class Feature {
     private Long formulaId;
     @Column("type")
     private FeatureType featureType;
-    @Column("script_language")
-    private ScriptLanguage scriptLanguage;
     @Column("calc_sequence")
     private Integer sequence;
     @Column("calc_trigger")

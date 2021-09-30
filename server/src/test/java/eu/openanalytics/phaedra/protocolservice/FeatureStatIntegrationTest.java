@@ -4,7 +4,6 @@ import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
-import eu.openanalytics.phaedra.protocolservice.enumeration.ScriptLanguage;
 import eu.openanalytics.phaedra.protocolservice.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .protocolId(1000L)
                 .name("example_feature")
                 .format("test")
-                .scriptLanguage(ScriptLanguage.R)
                 .sequence(1)
                 .type(FeatureType.CALCULATION)
                 .trigger("abc")
@@ -74,7 +72,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .protocolId(1000L)
                 .name("example_feature")
                 .format("test")
-                .scriptLanguage(ScriptLanguage.R)
                 .sequence(1)
                 .type(FeatureType.CALCULATION)
                 .trigger("abc")
@@ -137,7 +134,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                     .protocolId((long) i)
                     .name("example_feature1")
                     .format("test")
-                    .scriptLanguage(ScriptLanguage.R)
                     .sequence(1)
                     .type(FeatureType.CALCULATION)
                     .trigger("abc")
@@ -159,7 +155,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                     .protocolId((long) i)
                     .name("example_feature2")
                     .format("test2")
-                    .scriptLanguage(ScriptLanguage.R)
                     .sequence(1)
                     .type(FeatureType.CALCULATION)
                     .trigger("ab2c")
@@ -225,7 +220,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .protocolId(1000L)
                 .name("example_feature")
                 .format("test")
-                .scriptLanguage(ScriptLanguage.R)
                 .sequence(1)
                 .type(FeatureType.CALCULATION)
                 .trigger("abc")
@@ -323,7 +317,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .protocolId(1000L)
                 .name("example_feature")
                 .format("test")
-                .scriptLanguage(ScriptLanguage.R)
                 .sequence(1)
                 .type(FeatureType.CALCULATION)
                 .trigger("abc")
@@ -393,7 +386,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .protocolId(1000L)
                 .name("example_feature")
                 .format("test")
-                .scriptLanguage(ScriptLanguage.R)
                 .sequence(1)
                 .type(FeatureType.CALCULATION)
                 .trigger("abc")
