@@ -1,8 +1,11 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
-import eu.openanalytics.phaedra.protocolservice.exception.UserVisibleException;
 import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueService;
+import eu.openanalytics.phaedra.util.exceptionhandling.HttpMessageNotReadableExceptionHandler;
+import eu.openanalytics.phaedra.util.exceptionhandling.MethodArgumentNotValidExceptionHandler;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleExceptionHandler;
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import java.util.List;
 
 @RestController
 @Validated
-public class CalculationInputValueController extends BaseController {
+public class CalculationInputValueController implements MethodArgumentNotValidExceptionHandler, HttpMessageNotReadableExceptionHandler, UserVisibleExceptionHandler {
 
     private final CalculationInputValueService calculationInputValueService;
 

@@ -5,12 +5,12 @@ import eu.openanalytics.phaedra.protocolservice.exception.DuplicateFeatureStatEx
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureStatNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
-import eu.openanalytics.phaedra.protocolservice.exception.UserVisibleException;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureStatRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;

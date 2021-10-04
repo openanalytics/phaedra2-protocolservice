@@ -1,6 +1,8 @@
 package eu.openanalytics.phaedra.protocolservice.exception;
 
-public class DuplicateCalculationInputValueException extends UserVisibleException  {
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
+
+public class DuplicateCalculationInputValueException extends UserVisibleException {
 
     public DuplicateCalculationInputValueException() {
         // TODO be more specific

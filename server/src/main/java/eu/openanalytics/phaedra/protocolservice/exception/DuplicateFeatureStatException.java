@@ -1,6 +1,8 @@
 package eu.openanalytics.phaedra.protocolservice.exception;
 
-public class DuplicateFeatureStatException extends UserVisibleException  {
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
+
+public class DuplicateFeatureStatException extends UserVisibleException {
 
     public DuplicateFeatureStatException() {
         // TODO be more specific

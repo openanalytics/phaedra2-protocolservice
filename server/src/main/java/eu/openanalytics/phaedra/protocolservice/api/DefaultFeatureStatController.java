@@ -3,8 +3,11 @@ package eu.openanalytics.phaedra.protocolservice.api;
 import eu.openanalytics.phaedra.protocolservice.dto.DefaultFeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.validation.OnCreate;
 import eu.openanalytics.phaedra.protocolservice.dto.validation.OnUpdate;
-import eu.openanalytics.phaedra.protocolservice.exception.UserVisibleException;
 import eu.openanalytics.phaedra.protocolservice.service.DefaultFeatureStatService;
+import eu.openanalytics.phaedra.util.exceptionhandling.HttpMessageNotReadableExceptionHandler;
+import eu.openanalytics.phaedra.util.exceptionhandling.MethodArgumentNotValidExceptionHandler;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +24,7 @@ import java.util.Objects;
 
 @RestController
 @Validated
-public class DefaultFeatureStatController extends BaseController {
+public class DefaultFeatureStatController implements MethodArgumentNotValidExceptionHandler, HttpMessageNotReadableExceptionHandler, UserVisibleExceptionHandler {
 
     private final DefaultFeatureStatService defaultFeatureStatService;
 

@@ -3,8 +3,11 @@ package eu.openanalytics.phaedra.protocolservice.api;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.validation.OnCreate;
 import eu.openanalytics.phaedra.protocolservice.dto.validation.OnUpdate;
-import eu.openanalytics.phaedra.protocolservice.exception.UserVisibleException;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureStatService;
+import eu.openanalytics.phaedra.util.exceptionhandling.HttpMessageNotReadableExceptionHandler;
+import eu.openanalytics.phaedra.util.exceptionhandling.MethodArgumentNotValidExceptionHandler;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
+import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +24,7 @@ import java.util.Objects;
 
 @RestController
 @Validated
-public class FeatureStatController extends BaseController {
+public class FeatureStatController implements MethodArgumentNotValidExceptionHandler, HttpMessageNotReadableExceptionHandler, UserVisibleExceptionHandler {
 
     private final FeatureStatService featureStatService;
 
@@ -60,7 +63,7 @@ public class FeatureStatController extends BaseController {
     @DeleteMapping("/features/{featureId}/featurestat/{featureStatId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFeatureStat(@PathVariable Long featureId,
-                                         @PathVariable Long featureStatId) throws UserVisibleException {
+                                  @PathVariable Long featureStatId) throws UserVisibleException {
         featureStatService.delete(featureId, featureStatId);
     }
 
