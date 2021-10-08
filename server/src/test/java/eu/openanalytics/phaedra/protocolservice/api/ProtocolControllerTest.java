@@ -2,6 +2,7 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
@@ -60,11 +61,13 @@ public class ProtocolControllerTest {
         newProtocol.setHighWelltype("HC");
 
         String requestBody = objectMapper.writeValueAsString(newProtocol);
-
-        this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().json("{ protocolId: 1 }"));
+                .andReturn();
+        ProtocolDTO protocolDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
+        assertThat(protocolDTO).isNotNull();
+        assertThat(protocolDTO.getId()).isEqualTo(1);
     }
 
     @Test

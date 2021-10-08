@@ -29,13 +29,9 @@ public class ProtocolController {
     }
 
     @PostMapping("/protocols")
-    public ResponseEntity<Map<String, Long>> createProtocol(@RequestBody ProtocolDTO newProtocol) {
+    public ResponseEntity<ProtocolDTO> createProtocol(@RequestBody ProtocolDTO newProtocol) {
         ProtocolDTO savedProtocol = protocolService.create(newProtocol);
-
-        Map<String, Long> responseBody = new HashMap<>();
-        responseBody.put("protocolId", savedProtocol.getId());
-
-        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedProtocol, HttpStatus.CREATED);
     }
 
     @PutMapping("/protocols")
