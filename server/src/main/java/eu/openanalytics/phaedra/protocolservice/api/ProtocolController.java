@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static org.apache.commons.collections4.CollectionUtils.*;
 
-@CrossOrigin
+//@CrossOrigin
 @RestController
 @Slf4j
 public class ProtocolController {
