@@ -27,10 +27,10 @@ hs_err_pid*
 /phaedra2-protocolservice.iml
 
 # Eclipse IDE files
-/target/
-/.settings/
-/.project
-/.classpath
+target/
+.settings/
+.project
+.classpath
 
 application.yml
 /server/target/
