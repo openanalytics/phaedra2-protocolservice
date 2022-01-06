@@ -62,6 +62,11 @@ public class CalculationInputValueService {
         return calculationInputValueDTO;
     }
 
+    public void delete(Long calculationInputValueId) {
+        calculationInputValueRepository.deleteById(calculationInputValueId);
+    }
+
+
     /**
      * Get all {@link CalculationInputValueDTO} of a feature.
      *

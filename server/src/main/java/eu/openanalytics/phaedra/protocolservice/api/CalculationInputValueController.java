@@ -10,12 +10,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -42,6 +37,12 @@ public class CalculationInputValueController implements MethodArgumentNotValidEx
                                                                                 @RequestBody CalculationInputValueDTO calculationInputValueDTO) throws UserVisibleException {
         var res = calculationInputValueService.update(featureId, calculationInputValueDTO);
         return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/features/calculationinputvalue/{calculationInputValue}")
+    public ResponseEntity deleteFeature(@PathVariable Long calculationInputValue) {
+        calculationInputValueService.delete(calculationInputValue);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/features/{featureId}/calculationinputvalue")
