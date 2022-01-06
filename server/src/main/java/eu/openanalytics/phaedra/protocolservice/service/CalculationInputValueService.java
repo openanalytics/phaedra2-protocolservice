@@ -8,11 +8,13 @@ import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
 import eu.openanalytics.phaedra.protocolservice.repository.CalculationInputValueRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import org.modelmapper.Conditions;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CalculationInputValueService {
@@ -49,6 +51,15 @@ public class CalculationInputValueService {
                 .build();
 
         return save(calculationInputValue);
+    }
+
+    public CalculationInputValueDTO update(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
+        Optional<CalculationInputValue> calculationInputValue = calculationInputValueRepository.findById(calculationInputValueDTO.getId());
+        calculationInputValue.ifPresent(c -> {
+            c = modelMapper.map(calculationInputValueDTO).build();
+            calculationInputValueRepository.save(c);
+        });
+        return calculationInputValueDTO;
     }
 
     /**

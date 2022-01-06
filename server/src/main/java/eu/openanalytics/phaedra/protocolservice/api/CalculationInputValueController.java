@@ -39,20 +39,27 @@ public class CalculationInputValueController implements MethodArgumentNotValidEx
 
     @PutMapping("/features/{featureId}/calculationinputvalue")
     public ResponseEntity<CalculationInputValueDTO> updateCalculationInputValue(@PathVariable Long featureId,
-                                                                                @Valid @RequestBody CalculationInputValueDTO calculationInputValueDTO) throws UserVisibleException {
-        throw new NotImplementedException("TODO");
+                                                                                @RequestBody CalculationInputValueDTO calculationInputValueDTO) throws UserVisibleException {
+        var res = calculationInputValueService.update(featureId, calculationInputValueDTO);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/features/{featureId}/calculationinputvalue")
     public ResponseEntity<List<CalculationInputValueDTO>> getCalculationInputValue(@PathVariable Long featureId) throws UserVisibleException {
         var res = calculationInputValueService.getByFeatureId(featureId);
-        return ResponseEntity.ok(res);
+        if (res.size() != 0)
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/protocols/{protocolId}/calculationinputvalue")
     public ResponseEntity<List<CalculationInputValueDTO>> getCalculationInputValueByProtocolIds(@PathVariable Long protocolId) throws UserVisibleException {
         var res = calculationInputValueService.getByProtocolId(protocolId);
-        return ResponseEntity.ok(res);
+        if (res.size() != 0)
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
     }
 
 }
