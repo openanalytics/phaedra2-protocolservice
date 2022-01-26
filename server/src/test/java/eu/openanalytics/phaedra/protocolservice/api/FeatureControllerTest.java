@@ -3,9 +3,12 @@ package eu.openanalytics.phaedra.protocolservice.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -31,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
 @AutoConfigureMockMvc
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class FeatureControllerTest {
     @Autowired
@@ -143,5 +147,50 @@ public class FeatureControllerTest {
         List<Feature> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(result).isNotNull();
         assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    public void deleteCascadeTest() throws Exception {
+        Feature newFeature = new Feature();
+        newFeature.setName("A new feature");
+        newFeature.setDescription("Creating a new feature");
+        newFeature.setProtocolId(1000L);
+        newFeature.setFormulaId(1L);
+        newFeature.setFormat("#.###");
+
+        String requestBody = this.objectMapper.writeValueAsString(newFeature);
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/features")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Feature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        assertThat(createdFeature).isNotNull();
+        assertThat(createdFeature.getId()).isNotNull();
+        assertThat(createdFeature.getName()).isEqualTo(newFeature.getName());
+        assertThat(createdFeature.getDescription()).isEqualTo(newFeature.getDescription());
+
+        MvcResult res = this.mockMvc.perform(get("/features/{featureId}/featurestat", createdFeature.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<FeatureStat> featureStats = this.objectMapper.readValue(res.getResponse().getContentAsString(), List.class);
+        assertThat(featureStats.size()).isNotEqualTo(0);
+
+        this.mockMvc.perform(delete("/features/{featureId}", createdFeature.getId()))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/features/{featureId}", createdFeature.getId()))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+        this.mockMvc.perform(get("/features/{featureId}/featurestat", createdFeature.getId()))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
     }
 }

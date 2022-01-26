@@ -96,8 +96,7 @@ public class FeatureService {
      */
     public FeatureDTO findFeatureById(Long featureId) {
         Optional<Feature> feature = featureRepository.findById(featureId);
-        FeatureDTO result = feature.map(modelMapper::map).get();
-        return result;
+        return feature.map(modelMapper::map).orElse(null);
     }
 
     /**

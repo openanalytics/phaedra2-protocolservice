@@ -7,11 +7,14 @@ import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
 import eu.openanalytics.phaedra.protocolservice.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
 
@@ -40,7 +43,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         var res2 = performRequest(post("/features/1/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
-        Assertions.assertEquals(1, res2.getId());
+        Assertions.assertEquals(2, res2.getId());
         Assertions.assertEquals(1, res2.getFeatureId());
         Assertions.assertTrue(res2.getPlateStat());
         Assertions.assertFalse(res2.getWelltypeStat());
@@ -48,8 +51,8 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
         Assertions.assertEquals("count", res2.getName());
 
         // 3. get specific FeatureStat
-        var res3 = performRequest(get("/features/1/featurestat/1"), HttpStatus.OK, FeatureStatDTO.class);
-        Assertions.assertEquals(1, res3.getId());
+        var res3 = performRequest(get("/features/1/featurestat/2"), HttpStatus.OK, FeatureStatDTO.class);
+        Assertions.assertEquals(2, res3.getId());
         Assertions.assertEquals(1, res3.getFeatureId());
         Assertions.assertTrue(res3.getPlateStat());
         Assertions.assertFalse(res3.getWelltypeStat());
@@ -89,7 +92,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         var res2 = performRequest(post("/features/1/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
-        Assertions.assertEquals(1, res2.getId());
+        Assertions.assertEquals(2, res2.getId());
         Assertions.assertEquals(1, res2.getFeatureId());
         Assertions.assertTrue(res2.getPlateStat());
         Assertions.assertFalse(res2.getWelltypeStat());
@@ -98,16 +101,16 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         // 3. update FeatureStat
         var input3 = FeatureStatDTO.builder()
-                .id(1L)
+                .id(2L)
                 .featureId(1L)
                 .formulaId(10L)
                 .plateStat(false)
                 .welltypeStat(true)
                 .name("count-updated")
                 .build();
-        var res3 = performRequest(put("/features/1/featurestat/1", input3), HttpStatus.OK, FeatureStatDTO.class);
+        var res3 = performRequest(put("/features/1/featurestat/2", input3), HttpStatus.OK, FeatureStatDTO.class);
 
-        Assertions.assertEquals(1, res3.getId());
+        Assertions.assertEquals(2, res3.getId());
         Assertions.assertEquals(1, res3.getFeatureId());
         Assertions.assertFalse(res3.getPlateStat());
         Assertions.assertTrue(res3.getWelltypeStat());
@@ -174,19 +177,19 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         // 2. get all featureStats of feature 1
         var res2 = performRequest(get("/features/1/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":1,\"formulaId\":1,\"id\":1,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res2);
+        Assertions.assertEquals("[{\"featureId\":1,\"formulaId\":1,\"id\":1,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":1,\"formulaId\":1,\"id\":2,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res2);
 
         // 3. get all featureStats of feature 4
         var res3 = performRequest(get("/features/4/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":4,\"formulaId\":1,\"id\":4,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res3);
+        Assertions.assertEquals("[{\"featureId\":4,\"formulaId\":1,\"id\":7,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":4,\"formulaId\":1,\"id\":8,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res3);
 
         // 4. get all featureStats by protocol 1
         var res4 = performRequest(get("/protocols/1/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":1,\"formulaId\":1,\"id\":1,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false},{\"featureId\":2,\"formulaId\":1,\"id\":2,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res4);
+        Assertions.assertEquals("[{\"featureId\":1,\"formulaId\":1,\"id\":1,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":1,\"formulaId\":1,\"id\":2,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false},{\"featureId\":2,\"formulaId\":1,\"id\":3,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":2,\"formulaId\":1,\"id\":4,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res4);
 
         // 5. get all featureStats by protocol 2
         var res5 = performRequest(get("/protocols/2/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":3,\"formulaId\":1,\"id\":3,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false},{\"featureId\":4,\"formulaId\":1,\"id\":4,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res5);
+        Assertions.assertEquals("[{\"featureId\":3,\"formulaId\":1,\"id\":5,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":3,\"formulaId\":1,\"id\":6,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false},{\"featureId\":4,\"formulaId\":1,\"id\":7,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":4,\"formulaId\":1,\"id\":8,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res5);
 
         // 6. get all featureStats of non-existing feature
         var res6 = performRequest(get("/features/42/featurestat"), HttpStatus.NOT_FOUND);

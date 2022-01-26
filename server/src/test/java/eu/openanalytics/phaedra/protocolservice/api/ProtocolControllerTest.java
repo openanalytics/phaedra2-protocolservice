@@ -8,6 +8,8 @@ import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
 @AutoConfigureMockMvc
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class ProtocolControllerTest {
 

@@ -2,6 +2,8 @@
 
 TRUNCATE protocols.protocol RESTART IDENTITY CASCADE;
 TRUNCATE protocols.feature RESTART IDENTITY CASCADE;
+TRUNCATE protocols.default_feature_stat RESTART IDENTITY CASCADE;
+TRUNCATE protocols.calculation_input_value RESTART IDENTITY CASCADE;
 
 insert into protocols.protocol
 values (1000, 'PKD High Content SD', null, true, true, 'NC', 'PC');
@@ -23,3 +25,6 @@ values (6000, 'Test feature 5', 'TF5', null, '#.##', 1000, 'calc_formula TF5', 0
 
 insert into protocols.feature
 values (7000, 'Test feature 6', 'TF6', null, '#.##', 1000, 'calc_formula TF6', 0, null, 2, 'RAW');
+
+insert into protocols.default_feature_stat
+values (1000, TRUE, TRUE, 'test',1 );

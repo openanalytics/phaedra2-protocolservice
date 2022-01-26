@@ -63,7 +63,9 @@ public class FeatureController {
     @GetMapping("/features/{featureId}")
     public ResponseEntity getFeatureById(@PathVariable Long featureId) {
         FeatureDTO result = featureService.findFeatureById(featureId);
-        return new ResponseEntity(result, HttpStatus.OK);
+        if(result != null)
+            return new ResponseEntity(result, HttpStatus.OK);
+        else return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/features/{featureId}/tag")

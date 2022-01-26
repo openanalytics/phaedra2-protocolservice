@@ -6,4 +6,36 @@ databaseChangeLog:
         - dropColumn:
             columnName: script_language
             tableName: feature
+  - changeSet:
+      id: 2
+      author: smarien
+      changes:
+        - dropForeignKeyConstraint:
+            - constraintName: feature_stat_feature_id_fkey
+            - baseTableName: feature_stat
+        - addForeignKeyConstraint:
+            baseColumnNames: feature_id
+            baseTableName: feature_stat
+            constraintName: feature_stat_feature_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: feature
+            validate: true
+        - dropForeignKeyConstraint:
+            - constraintName: calculation_input_value_feature_id_fkey
+            - baseTableName: calculation_input_value
+        - addForeignKeyConstraint:
+            baseColumnNames: feature_id
+            baseTableName: calculation_input_value
+            constraintName: calculation_input_value_feature_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: feature
+            validate: true
 
