@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,8 @@ import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 
-@SpringBootApplication
+// TODO: When authorisation is tested and ready to be integrated into other services remove the exclude property
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableDiscoveryClient
 @EnableScheduling
 public class ProtocolServiceApplication {
