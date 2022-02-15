@@ -40,8 +40,6 @@ import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 @RestController
 public class FeatureController {
 
-    private static final String TAGS = "tags";
-
     @Autowired
     private FeatureService featureService;
 
@@ -57,40 +55,39 @@ public class FeatureController {
     // TODO use rest URL: PUT /features/1/ instead of PUT /features ? cfr .delete
     // TODO validate the feature exists (updating non-existent feature does nothing and returns 200)
     @PutMapping("/features")
-    public ResponseEntity updateFeature(@RequestBody FeatureDTO updateFeature) {
+    public ResponseEntity<?> updateFeature(@RequestBody FeatureDTO updateFeature) {
         FeatureDTO updatedFeature = featureService.update(updateFeature);
-        return new ResponseEntity(updatedFeature, HttpStatus.OK);
+        return new ResponseEntity<>(updatedFeature, HttpStatus.OK);
     }
 
     @DeleteMapping("/features/{featureId}")
-    public ResponseEntity deleteFeature(@PathVariable Long featureId) {
+    public ResponseEntity<?> deleteFeature(@PathVariable Long featureId) {
         featureService.delete(featureId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/features")
-    public ResponseEntity getFeatures() {
+    public ResponseEntity<?> getFeatures() {
         List<FeatureDTO> response = featureService.findAllFeatures();
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/features", params = {"tag"})
-    public ResponseEntity getFeaturesWithTag(@RequestParam(value = "tag", required = false) String tag) {
+    public ResponseEntity<?> getFeaturesWithTag(@RequestParam(value = "tag", required = false) String tag) {
         List<FeatureDTO> response = featureService.findAllFeaturesWithTag(tag);
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/features/{featureId}")
-    public ResponseEntity getFeatureById(@PathVariable Long featureId) {
+    public ResponseEntity<?> getFeatureById(@PathVariable Long featureId) {
         FeatureDTO result = featureService.findFeatureById(featureId);
-        if(result != null)
-            return new ResponseEntity(result, HttpStatus.OK);
-        else return new ResponseEntity(HttpStatus.NOT_FOUND);
+        if (result == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/features/{featureId}/tag")
-    public ResponseEntity addTagToFeature(@PathVariable ("featureId") Long featureId, @RequestParam("tag") String tag) {
+    public ResponseEntity<?> addTagToFeature(@PathVariable ("featureId") Long featureId, @RequestParam("tag") String tag) {
         featureService.tagFeature(featureId, tag);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

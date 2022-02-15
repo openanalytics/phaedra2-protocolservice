@@ -145,8 +145,6 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
             var input1 = ProtocolDTO.builder()
                     .name("MyProtocol")
                     .description("MyProtocol")
-                    .editable(true)
-                    .inDevelopment(false)
                     .highWelltype("HC")
                     .lowWelltype("LC")
                     .build();

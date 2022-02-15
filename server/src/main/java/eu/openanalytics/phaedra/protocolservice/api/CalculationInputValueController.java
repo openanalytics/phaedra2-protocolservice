@@ -26,7 +26,6 @@ import eu.openanalytics.phaedra.util.exceptionhandling.HttpMessageNotReadableExc
 import eu.openanalytics.phaedra.util.exceptionhandling.MethodArgumentNotValidExceptionHandler;
 import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
 import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleExceptionHandler;
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -60,9 +59,9 @@ public class CalculationInputValueController implements MethodArgumentNotValidEx
     }
 
     @DeleteMapping("/features/calculationinputvalue/{calculationInputValue}")
-    public ResponseEntity deleteFeature(@PathVariable Long calculationInputValue) {
+    public ResponseEntity<?> deleteFeature(@PathVariable Long calculationInputValue) {
         calculationInputValueService.delete(calculationInputValue);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/features/{featureId}/calculationinputvalue")

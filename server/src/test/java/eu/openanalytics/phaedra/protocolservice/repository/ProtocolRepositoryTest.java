@@ -85,8 +85,6 @@ public class ProtocolRepositoryTest {
         Protocol newProtocol = new Protocol();
         newProtocol.setName("Test");
         newProtocol.setDescription("Test");
-        newProtocol.setEditable(true);
-        newProtocol.setInDevelopment(true);
         newProtocol.setLowWelltype("NC");
         newProtocol.setHighWelltype("PC");
 

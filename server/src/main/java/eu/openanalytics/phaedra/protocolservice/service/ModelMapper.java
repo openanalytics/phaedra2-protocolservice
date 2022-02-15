@@ -20,6 +20,12 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
+import org.modelmapper.Conditions;
+import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.NameTransformers;
+import org.modelmapper.convention.NamingConventions;
+import org.springframework.stereotype.Service;
+
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.DefaultFeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
@@ -30,11 +36,6 @@ import eu.openanalytics.phaedra.protocolservice.model.DefaultFeatureStat;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import org.modelmapper.Conditions;
-import org.modelmapper.config.Configuration;
-import org.modelmapper.convention.NameTransformers;
-import org.modelmapper.convention.NamingConventions;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ModelMapper {
@@ -95,6 +96,16 @@ public class ModelMapper {
     public Protocol map(ProtocolDTO protocolDTO) {
         return modelMapper.map(protocolDTO, Protocol.class);
     }
+    
+    /**
+     * Maps a {@link ProtocolDTO} to an existing {@link Protocol}, omitting null fields.
+     */
+    public void map(ProtocolDTO sourceProtocolDTO, Protocol targetProtocol) {
+    	modelMapper
+    		.typeMap(ProtocolDTO.class, Protocol.class)
+    		.setPropertyCondition(Conditions.isNotNull())
+    		.map(sourceProtocolDTO, targetProtocol);
+    }
 
     /**
      * Maps a {@link Protocol} to a {@link ProtocolDTO}.
@@ -110,6 +121,16 @@ public class ModelMapper {
         return modelMapper.map(featureDTO, Feature.class);
     }
 
+    /**
+     * Maps a {@link FeatureDTO} to an existing {@link Feature}, omitting null fields.
+     */
+    public void map(FeatureDTO sourceFeatureDTO, Feature targetFeature) {
+    	modelMapper
+    		.typeMap(FeatureDTO.class, Feature.class)
+    		.setPropertyCondition(Conditions.isNotNull())
+    		.map(sourceFeatureDTO, targetFeature);
+    }
+    
     /**
      * Maps a {@link Feature} to a {@link FeatureDTO}.
      */

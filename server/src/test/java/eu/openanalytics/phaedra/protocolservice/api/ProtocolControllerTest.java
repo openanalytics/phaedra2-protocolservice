@@ -49,7 +49,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Testcontainers
@@ -78,8 +77,6 @@ public class ProtocolControllerTest {
         Protocol newProtocol = new Protocol();
         newProtocol.setName("A new protocol");
         newProtocol.setDescription("Newly created protocol");
-        newProtocol.setEditable(true);
-        newProtocol.setInDevelopment(true);
         newProtocol.setLowWelltype("LC");
         newProtocol.setHighWelltype("HC");
 

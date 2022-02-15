@@ -26,24 +26,30 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
 
+import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 
-// TODO: When authorisation is tested and ready to be integrated into other services remove the exclude property
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@EnableWebSecurity
+@SpringBootApplication
 @EnableDiscoveryClient
 @EnableScheduling
 public class ProtocolServiceApplication {
+	
     private final Environment environment;
     private final ServletContext servletContext;
 
@@ -88,5 +94,15 @@ public class ProtocolServiceApplication {
 	public OpenAPI customOpenAPI() {
         Server server = new Server().url(servletContext.getContextPath()).description("Default Server URL");
     	return new OpenAPI().addServersItem(server);
+	}
+    
+	@Bean
+	public IAuthorizationService authService() {
+		return AuthorizationServiceFactory.create();
+	}
+
+	@Bean
+	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
+		return AuthenticationConfigHelper.configure(http);
 	}
 }

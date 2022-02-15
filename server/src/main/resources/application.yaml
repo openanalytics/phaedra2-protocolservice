@@ -16,6 +16,11 @@ spring:
 #    password: phaedra_usr
   liquibase:
     enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost
   jackson:
     serialization:
       indent_output: true

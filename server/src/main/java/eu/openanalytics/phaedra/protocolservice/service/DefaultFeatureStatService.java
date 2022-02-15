@@ -28,6 +28,7 @@ import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundExcepti
 import eu.openanalytics.phaedra.protocolservice.model.DefaultFeatureStat;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.repository.DefaultFeatureStatRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
@@ -41,18 +42,24 @@ public class DefaultFeatureStatService {
 
     private final DefaultFeatureStatRepository defaultFeatureStatRepository;
     private final ModelMapper modelMapper;
+    private final IAuthorizationService authService;
 
-    public DefaultFeatureStatService(DefaultFeatureStatRepository defaultFeatureStatRepository, ModelMapper modelMapper) {
+    public DefaultFeatureStatService(DefaultFeatureStatRepository defaultFeatureStatRepository, ModelMapper modelMapper, IAuthorizationService authService) {
         this.defaultFeatureStatRepository = defaultFeatureStatRepository;
         this.modelMapper = modelMapper;
+        this.authService = authService;
     }
 
     public DefaultFeatureStatDTO create(DefaultFeatureStatDTO defaultFeatureStatDTO) throws FeatureNotFoundException, DuplicateFeatureStatException {
+    	authService.performAccessCheck(p -> authService.hasAdminAccess());
+    	
         DefaultFeatureStat defaultFeatureStat = modelMapper.map(defaultFeatureStatDTO).build();
         return save(defaultFeatureStat);
     }
 
     public DefaultFeatureStatDTO update(DefaultFeatureStatDTO defaultFeatureStatDTO) throws UserVisibleException {
+    	authService.performAccessCheck(p -> authService.hasAdminAccess());
+    	
         Optional<DefaultFeatureStat> existingDefaultFeatureStat = defaultFeatureStatRepository.findById(defaultFeatureStatDTO.getId());
         if (existingDefaultFeatureStat.isEmpty()) {
             throw new DefaultFeatureStatNotFoundException(defaultFeatureStatDTO.getId());
@@ -75,6 +82,8 @@ public class DefaultFeatureStatService {
     }
 
     public void delete(Long defaultFeatureStatId) throws UserVisibleException {
+    	authService.performAccessCheck(p -> authService.hasAdminAccess());
+    	
         Optional<DefaultFeatureStat> featureStat = defaultFeatureStatRepository.findById(defaultFeatureStatId);
         if (featureStat.isEmpty()) {
             throw new DefaultFeatureStatNotFoundException(defaultFeatureStatId);

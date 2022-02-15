@@ -20,6 +20,15 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.relational.core.conversion.DbActionExecutionException;
+import org.springframework.stereotype.Service;
+
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.DuplicateFeatureStatException;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
@@ -29,16 +38,7 @@ import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureStatRepository;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
 import eu.openanalytics.phaedra.util.exceptionhandling.UserVisibleException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.relational.core.conversion.DbActionExecutionException;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class FeatureStatService {
@@ -46,14 +46,15 @@ public class FeatureStatService {
     private final FeatureStatRepository featureStatRepository;
     private final FeatureRepository featureRepository;
     private final ModelMapper modelMapper;
-    private final ProtocolRepository protocolRepository;
+    private final ProtocolService protocolService;
     private final DefaultFeatureStatService defaultFeatureStatService;
-
-    public FeatureStatService(FeatureStatRepository featureStatRepository, FeatureRepository featureRepository, ModelMapper modelMapper, ProtocolRepository protocolRepository, DefaultFeatureStatService defaultFeatureStatService) {
+    
+    public FeatureStatService(FeatureStatRepository featureStatRepository, FeatureRepository featureRepository, ModelMapper modelMapper,
+    		ProtocolService protocolService, DefaultFeatureStatService defaultFeatureStatService) {
         this.featureStatRepository = featureStatRepository;
         this.featureRepository = featureRepository;
         this.modelMapper = modelMapper;
-        this.protocolRepository = protocolRepository;
+        this.protocolService = protocolService;
         this.defaultFeatureStatService = defaultFeatureStatService;
     }
 
@@ -62,6 +63,7 @@ public class FeatureStatService {
         if (feature.isEmpty()) {
             throw new FeatureNotFoundException(featureId);
         }
+        protocolService.performOwnershipCheck(feature.get().getProtocolId());
 
         FeatureStat featureStat = modelMapper.map(featureStatDTO)
                 .featureId(featureId)
@@ -80,6 +82,9 @@ public class FeatureStatService {
             throw new UserVisibleException("The featureId of a FeatureStat cannot be changed");
         }
 
+        var feature = featureRepository.findById(featureStatDTO.getFeatureId());
+        protocolService.performOwnershipCheck(feature.get().getProtocolId());
+        
         FeatureStat updatedFeatureStat = modelMapper.map(featureStatDTO).build();
         return save(updatedFeatureStat);
     }
@@ -105,6 +110,10 @@ public class FeatureStatService {
         if (!Objects.equals(featureStat.get().getFeatureId(), featureId)) {
             throw new UserVisibleException("The provided featureId is not equal to the actual featureId of the FeatureStat");
         }
+        
+        var feature = featureRepository.findById(featureId);
+        protocolService.performOwnershipCheck(feature.get().getProtocolId());
+        
         featureStatRepository.deleteById(featureStatId);
     }
 
@@ -121,8 +130,8 @@ public class FeatureStatService {
     }
 
     public List<FeatureStatDTO> getByProtocolId(Long protocolId) throws ProtocolNotFoundException {
-        var feature = protocolRepository.findById(protocolId);
-        if (feature.isEmpty()) {
+    	var protocol = protocolService.getProtocolById(protocolId);
+        if (protocol == null) {
             throw new ProtocolNotFoundException(protocolId);
         }
 

@@ -20,37 +20,44 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
-import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
+import eu.openanalytics.phaedra.protocolservice.model.Protocol;
+import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class ProtocolService {
+	
     private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String PROTOCOL_OBJECT_CLASS = "PROTOCOL";
 
     private final RestTemplate restTemplate;
-
     private final ProtocolRepository protocolRepository;
     private final ModelMapper modelMapper;
-
-    public ProtocolService(RestTemplate restTemplate, ProtocolRepository protocolRepository, ModelMapper modelMapper) {
+    private final IAuthorizationService authService;
+    
+    public ProtocolService(RestTemplate restTemplate, ProtocolRepository protocolRepository, ModelMapper modelMapper, IAuthorizationService authService) {
         this.restTemplate = restTemplate;
         this.protocolRepository = protocolRepository;
         this.modelMapper = modelMapper;
+        this.authService = authService;
     }
 
     /**
@@ -58,8 +65,11 @@ public class ProtocolService {
      * @param protocolDTO New protocol
      */
     public ProtocolDTO create(ProtocolDTO protocolDTO) {
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
+    	
         Protocol newProtocol = modelMapper.map(protocolDTO);
-
+        newProtocol.setCreatedBy(authService.getCurrentPrincipalName());
+        newProtocol.setCreatedOn(new Date());
         return modelMapper.map(protocolRepository.save(newProtocol));
     }
 
@@ -67,38 +77,62 @@ public class ProtocolService {
      * Update an existing protocol
      * @param protocolDTO Protocol to be updated
      */
+    @CacheEvict(value = "protocols", key = "#protocolDTO?.id")
     public ProtocolDTO update(ProtocolDTO protocolDTO) {
-        Optional<Protocol> protocol = protocolRepository.findById(protocolDTO.getId());
-        protocol.ifPresent(p -> {
-            p = modelMapper.map(protocolDTO);
-            protocolRepository.save(p);
-        });
-        return protocolDTO;
+        return protocolRepository.findById(protocolDTO.getId())
+        	.map(protocol -> {
+        		performOwnershipCheck(protocol.getId());
+        		
+        		modelMapper.map(protocolDTO, protocol);
+				protocol.setUpdatedBy(authService.getCurrentPrincipalName());
+				protocol.setUpdatedOn(new Date());
+				protocolRepository.save(protocol);
+				
+				return modelMapper.map(protocol);
+        	})
+        	.orElse(null);
     }
 
     /**
      * Delete an existing protocol
      * @param protocolId Protocol to be deleted
      */
+    @CacheEvict(value = "protocols")
     public void delete(Long protocolId) {
-        protocolRepository.deleteById(protocolId);
+    	performOwnershipCheck(protocolId);
+    	protocolRepository.deleteById(protocolId);
     }
 
     /**
      * Get a protocol for a given id
      * @param protocolId A protocol id
      */
+    @Cacheable("protocols")
     public ProtocolDTO getProtocolById(Long protocolId) {
         Optional<Protocol> protocol = protocolRepository.findById(protocolId);
         return protocol.map(modelMapper::map).orElse(null);
     }
 
     /**
+     * Performs an ownership check on a protocol, if the provided ID is not null
+     * and points to a valid protocol.
+     * 
+     * @param protocolId The ID of the protocol to check against.
+     */
+    public void performOwnershipCheck(Long protocolId) {
+    	Optional.ofNullable(protocolId)
+    		.map(id -> getProtocolById(id))
+    		.ifPresent(protocol -> authService.performOwnershipCheck(protocol.getCreatedBy()));
+    }
+    
+    /**
      * Add a tag to a protocol
      * @param protocolId Protocol to be tagged
      * @param tag A protocol tag
      */
     public void tagProtocol(Long protocolId, String tag) {
+    	performOwnershipCheck(protocolId);
+    	
         StringBuilder urlBuilder = new StringBuilder(PHAEDRA_METADATA_SERVICE);
         urlBuilder.append("/tags");
 
@@ -119,7 +153,7 @@ public class ProtocolService {
                     .map(modelMapper::map)
                     .collect(Collectors.toList());
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
