@@ -5,8 +5,8 @@ TRUNCATE protocols.feature RESTART IDENTITY CASCADE;
 TRUNCATE protocols.default_feature_stat RESTART IDENTITY CASCADE;
 TRUNCATE protocols.calculation_input_value RESTART IDENTITY CASCADE;
 
-insert into protocols.protocol
-values (1000, 'PKD High Content SD', null, true, true, 'NC', 'PC');
+insert into protocols.protocol(id, name, low_welltype, high_welltype)
+values (1000, 'PKD High Content SD', 'NC', 'PC');
 
 insert into protocols.feature
 values (1000, 'Test feature 1', 'TF1', null, '#.##', 1000, 'calc_formula TF1', 0, null, 1, 'CALCULATION');
