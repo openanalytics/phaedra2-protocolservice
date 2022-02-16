@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: fmichielssen
+      changes:
+        - dropColumn:
+            tableName: protocol
+            columnName: editable
+        - dropColumn:
+            tableName: protocol
+            columnName: in_development
+  - changeSet:
+      id: 2
+      author: fmichielssen
+      changes:
+        - addColumn:
+            tableName: protocol
+            columns:
+              - column:
+                  name: created_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: created_by
+                  type: TEXT
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: updated_by
+                  type: TEXT
