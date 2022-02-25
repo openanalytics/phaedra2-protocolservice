@@ -32,13 +32,13 @@ import java.util.List;
 
 public interface ProtocolServiceClient {
 
-    ProtocolDTO getProtocol(long protocolId) throws ProtocolUnresolvableException;
+    ProtocolDTO getProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException;
 
-    List<FeatureDTO> getFeaturesOfProtocol(long protocolId) throws ProtocolUnresolvableException;
+    List<FeatureDTO> getFeaturesOfProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException;
 
-    List<CalculationInputValueDTO> getCalculationInputValuesOfProtocol(long protocolId) throws ProtocolUnresolvableException;
+    List<CalculationInputValueDTO> getCalculationInputValuesOfProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException;
 
-    List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException;
+    List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException;
 
     DefaultFeatureStatDTO createDefaultFeatureStat(String name, Long formulaId, Boolean plateStat, Boolean wellTypeStat) throws DefaultFeatureStatUnresolvableException;
 

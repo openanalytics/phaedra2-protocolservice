@@ -29,6 +29,10 @@ import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -45,13 +49,20 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
         this.restTemplate = restTemplate;
     }
 
-    public ProtocolDTO getProtocol(long protocolId) throws ProtocolUnresolvableException {
+    public ProtocolDTO getProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException {
+        // 1. get protocol
         try {
-            var res = restTemplate.getForObject(UrlFactory.protocol(protocolId), ProtocolDTO.class);
+            String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+
+            var res = restTemplate.exchange(UrlFactory.protocol(protocolId), HttpMethod.GET, httpEntity, ProtocolDTO.class);
+//            var res = restTemplate.getForObject(UrlFactory.protocol(protocolId), ProtocolDTO.class);
             if (res == null) {
                 throw new ProtocolUnresolvableException("Protocol could not be converted");
             }
-            return res;
+            return res.getBody();
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProtocolUnresolvableException("Protocol not found");
         } catch (HttpClientErrorException ex) {
@@ -59,13 +70,20 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
         }
     }
 
-    public List<FeatureDTO> getFeaturesOfProtocol(long protocolId) throws ProtocolUnresolvableException {
+    public List<FeatureDTO> getFeaturesOfProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException {
+        // 2. get features
         try {
-            var res = restTemplate.getForObject(UrlFactory.protocolFeatures(protocolId), FeatureDTO[].class);
+            String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+
+            var res = restTemplate.exchange(UrlFactory.protocolFeatures(protocolId), HttpMethod.GET, httpEntity, FeatureDTO[].class);
+//            var res = restTemplate.getForObject(UrlFactory.protocolFeatures(protocolId), FeatureDTO[].class);
             if (res == null) {
                 throw new ProtocolUnresolvableException("Features could not be converted");
             }
-            return Arrays.asList(res);
+            return Arrays.asList(res.getBody());
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProtocolUnresolvableException("Features not found");
         } catch (HttpClientErrorException ex) {
@@ -73,13 +91,20 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
         }
     }
 
-    public List<CalculationInputValueDTO> getCalculationInputValuesOfProtocol(long protocolId) throws ProtocolUnresolvableException {
+    public List<CalculationInputValueDTO> getCalculationInputValuesOfProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException {
+        // 3. get CalculationInputValues corresponding to the feature
         try {
-            var res = restTemplate.getForObject(UrlFactory.protocolCiv(protocolId), CalculationInputValueDTO[].class);
+            String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+
+            var res = restTemplate.exchange(UrlFactory.protocolCiv(protocolId), HttpMethod.GET, httpEntity, CalculationInputValueDTO[].class);
+//            var res = restTemplate.getForObject(UrlFactory.protocolCiv(protocolId), CalculationInputValueDTO[].class);
             if (res == null) {
                 throw new ProtocolUnresolvableException("Civs could not be converted");
             }
-            return Arrays.asList(res);
+            return Arrays.asList(res.getBody());
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProtocolUnresolvableException("Civs not found");
         } catch (HttpClientErrorException ex) {
@@ -87,13 +112,20 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
         }
     }
 
-    public List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException {
+    public List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId, String... authToken) throws ProtocolUnresolvableException {
+        // 4. get FeatureStats of protocol
         try {
-            var res = restTemplate.getForObject(UrlFactory.featureStats(protocolId), FeatureStatDTO[].class);
+            String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+
+            var res = restTemplate.exchange(UrlFactory.featureStats(protocolId), HttpMethod.GET, httpEntity, FeatureStatDTO[].class);
+//            var res = restTemplate.getForObject(UrlFactory.featureStats(protocolId), FeatureStatDTO[].class);
             if (res == null) {
                 throw new ProtocolUnresolvableException("FeatureStats could not be converted");
             }
-            return Arrays.asList(res);
+            return Arrays.asList(res.getBody());
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProtocolUnresolvableException("FeatureStats not found");
         } catch (HttpClientErrorException ex) {
