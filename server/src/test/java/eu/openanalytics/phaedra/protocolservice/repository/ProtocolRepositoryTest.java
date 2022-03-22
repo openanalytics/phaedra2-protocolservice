@@ -87,6 +87,7 @@ public class ProtocolRepositoryTest {
         newProtocol.setDescription("Test");
         newProtocol.setLowWelltype("NC");
         newProtocol.setHighWelltype("PC");
+        newProtocol.setVersionNumber("1.0-20220322.115833");
 
         Protocol savedProtocol = protocolRepository.save(newProtocol);
 

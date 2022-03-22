@@ -28,3 +28,18 @@ databaseChangeLog:
               - column:
                   name: updated_by
                   type: TEXT
+  - changeSet:
+      id: 3
+      author: smarien
+      changes:
+        - addColumn:
+            tableName: protocol
+            columns:
+              - column:
+                  name: previous_version
+                  type: TEXT
+              - column:
+                  name: version_number
+                  type: TEXT
+                  constraints:
+                    - nullable: false
