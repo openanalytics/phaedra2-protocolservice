@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.protocolservice.service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
@@ -79,12 +80,15 @@ public class FeatureService {
      *
      * @param featureDTO Feature updates
      */
-    public FeatureDTO update(FeatureDTO featureDTO) {
+    public FeatureDTO update(FeatureDTO featureDTO, Long newProtocolId) {
     	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
     	
         return featureRepository.findById(featureDTO.getId())
         	.map(feature -> {
 	            modelMapper.map(featureDTO, feature);
+	            //Remove id so new feature is created
+                feature.setId(null);
+                feature.setProtocolId(newProtocolId);
 	            featureRepository.save(feature);
 	            return modelMapper.map(feature);
 	        })
@@ -180,6 +184,15 @@ public class FeatureService {
             }).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
+        }
+    }
+
+    public void updateFeaturesToNewProtocol(Long oldProtocolId, Long newProtocolId){
+        List<FeatureDTO> featureDTOS = this.findFeaturesByProtocolId(oldProtocolId);
+        for (FeatureDTO f : featureDTOS){
+            f.setId(null);
+            f.setProtocolId(newProtocolId);
+            this.create(f);
         }
     }
 

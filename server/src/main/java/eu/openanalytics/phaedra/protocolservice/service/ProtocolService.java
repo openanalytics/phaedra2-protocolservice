@@ -99,8 +99,7 @@ public class ProtocolService {
 
 				//Delete id to create a new copy of the protocol in the DB
 				protocol.setId(null);
-				protocolRepository.save(protocol);
-				
+				protocol = protocolRepository.save(protocol);
 				return modelMapper.map(protocol);
         	})
         	.orElse(null);

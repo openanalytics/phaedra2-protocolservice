@@ -136,7 +136,6 @@ public class FeatureControllerTest {
 
         Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(updatedFeature).isNotNull();
-        assertThat(updatedFeature.getId()).isEqualTo(feature.getId());
         assertThat(updatedFeature.getName()).isEqualTo(feature.getName());
         assertThat(updatedFeature.getDescription()).isEqualTo(feature.getDescription());
     }

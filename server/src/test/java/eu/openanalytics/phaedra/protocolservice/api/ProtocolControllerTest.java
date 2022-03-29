@@ -123,6 +123,14 @@ public class ProtocolControllerTest {
         String newVersion = "2.0";
         protocol.setVersionNumber(newVersion);
 
+        //Check number of features
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", protocolId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(features.size()).isEqualTo(6);
+
         String requestBody = objectMapper.writeValueAsString(protocol);
         this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
@@ -137,6 +145,14 @@ public class ProtocolControllerTest {
         assertThat(updatedProtocol.getDescription()).isEqualTo(newDescription);
         assertThat(updatedProtocol.getPreviousVersion()).isEqualTo(protocol.getPreviousVersion());
         assertThat(updatedProtocol.getVersionNumber().split("-")[0]).isEqualTo(newVersion);
+
+        //Check number of features
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", updatedProtocol.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(features.size()).isEqualTo(6);
     }
 
     @Test
