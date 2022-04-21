@@ -62,7 +62,7 @@ public class ProtocolController {
     @PutMapping("/protocols")
     public ResponseEntity<ProtocolDTO> updateProtocol(@RequestBody ProtocolDTO updateProtocol) {
         ProtocolDTO updatedProtocol = protocolService.update(updateProtocol);
-        featureService.updateFeaturesToNewProtocol(updateProtocol.getId(), updatedProtocol.getId());
+        featureService.updateFeaturesToNewProtocol(updateProtocol.getId(), updatedProtocol.getId(), null);
         return new ResponseEntity<>(updatedProtocol, HttpStatus.OK);
     }
 

@@ -187,9 +187,19 @@ public class FeatureService {
         }
     }
 
-    public void updateFeaturesToNewProtocol(Long oldProtocolId, Long newProtocolId){
+    /**
+     * Duplicate all features for a specific protocol to new version except the updated feature.
+     * @param oldProtocolId The old protocol id
+     * @param newProtocolId The new protocol id
+     * @param updatedFeatureId The updated feature id
+     */
+    public void updateFeaturesToNewProtocol(Long oldProtocolId, Long newProtocolId, Long updatedFeatureId) {
         List<FeatureDTO> featureDTOS = this.findFeaturesByProtocolId(oldProtocolId);
         for (FeatureDTO f : featureDTOS){
+            // Skip the updated feature
+            if (updatedFeatureId != null && f.getId().equals(updatedFeatureId)){
+                continue;
+            }
             f.setId(null);
             f.setProtocolId(newProtocolId);
             this.create(f);

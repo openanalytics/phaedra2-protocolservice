@@ -54,7 +54,7 @@ public class FeatureController {
     @PostMapping("/features")
     public ResponseEntity<FeatureDTO> createFeature(@RequestBody FeatureDTO newFeature) {
         //create new protocol version
-        ProtocolDTO newProtocol = createNewVersionProtocol(newFeature.getProtocolId());
+        ProtocolDTO newProtocol = createNewVersionProtocol(newFeature.getProtocolId(), null);
         newFeature.setProtocolId(newProtocol.getId());
         FeatureDTO savedFeature = featureService.create(newFeature);
         return new ResponseEntity<>(savedFeature, HttpStatus.CREATED);
@@ -65,7 +65,7 @@ public class FeatureController {
     @PutMapping("/features")
     public ResponseEntity<?> updateFeature(@RequestBody FeatureDTO updateFeature) {
         //create new protocol version
-        ProtocolDTO newProtocol = createNewVersionProtocol(updateFeature.getProtocolId());
+        ProtocolDTO newProtocol = createNewVersionProtocol(updateFeature.getProtocolId(), updateFeature.getId());
         FeatureDTO updatedFeature = featureService.update(updateFeature, newProtocol.getId());
         return new ResponseEntity<>(updatedFeature, HttpStatus.OK);
     }
@@ -101,7 +101,13 @@ public class FeatureController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private ProtocolDTO createNewVersionProtocol(Long protocolId){
+    /**
+     * Creates a new protocol version for the given protocol.
+     * @param protocolId The protocol to create a new version for.
+     * @param updatedFeatureId The feature that gets updated.
+     * @return protocolDTO The new protocol version.
+     */
+    private ProtocolDTO createNewVersionProtocol(Long protocolId, Long updatedFeatureId) {
         ProtocolDTO currentProtocolDTO = protocolService.getProtocolById(protocolId);
         //Change versionNumber
         Double newVersion = Double.parseDouble(currentProtocolDTO.getVersionNumber().split("-")[0])+0.01;
@@ -109,7 +115,7 @@ public class FeatureController {
         currentProtocolDTO.setVersionNumber(newVersion.toString());
         ProtocolDTO newProtocol = protocolService.update(currentProtocolDTO);
         //Duplicate current features
-        featureService.updateFeaturesToNewProtocol(protocolId,newProtocol.getId());
+        featureService.updateFeaturesToNewProtocol(protocolId,newProtocol.getId(), updatedFeatureId);
         return newProtocol;
     }
 }

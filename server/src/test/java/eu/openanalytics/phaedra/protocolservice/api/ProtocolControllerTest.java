@@ -194,4 +194,33 @@ public class ProtocolControllerTest {
         assertThat(features).isNotNull();
         assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
     }
+
+    @Test
+    public void updateProtocolDoesFeaturesGetCoppied() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("New protocol name");
+        protocol.setDescription("New protocol description");
+        String newVersion = "2.0";
+        protocol.setVersionNumber(newVersion);
+        protocol.setId(1000L);
+
+        // update protocol
+        String requestBody = objectMapper.writeValueAsString(protocol);
+        MvcResult res = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        Protocol updatedProtocol = objectMapper.readValue(res.getResponse().getContentAsString(), Protocol.class);
+        assertThat(updatedProtocol.getId()).isNotEqualTo(protocol.getId());
+        assertThat(updatedProtocol.getName()).isEqualTo(protocol.getName());
+        assertThat(updatedProtocol.getDescription()).isEqualTo(protocol.getDescription());
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(features).isNotNull();
+        assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(1L))).isTrue();
+    }
 }
