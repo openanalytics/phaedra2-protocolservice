@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.phaedra.protocolservice;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureStatDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
@@ -27,9 +29,16 @@ import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
 import eu.openanalytics.phaedra.protocolservice.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.http.HttpStatus;
+import org.testcontainers.shaded.org.bouncycastle.math.raw.Mod;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -63,7 +72,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         var res2 = performRequest(post("/features/1/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
-        Assertions.assertEquals(2, res2.getId());
+        Assertions.assertEquals(8, res2.getId());
         Assertions.assertEquals(1, res2.getFeatureId());
         Assertions.assertTrue(res2.getPlateStat());
         Assertions.assertFalse(res2.getWelltypeStat());
@@ -71,8 +80,8 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
         Assertions.assertEquals("count", res2.getName());
 
         // 3. get specific FeatureStat
-        var res3 = performRequest(get("/features/1/featurestat/2"), HttpStatus.OK, FeatureStatDTO.class);
-        Assertions.assertEquals(2, res3.getId());
+        var res3 = performRequest(get("/features/1/featurestat/8"), HttpStatus.OK, FeatureStatDTO.class);
+        Assertions.assertEquals(8, res3.getId());
         Assertions.assertEquals(1, res3.getFeatureId());
         Assertions.assertTrue(res3.getPlateStat());
         Assertions.assertFalse(res3.getWelltypeStat());
@@ -112,7 +121,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         var res2 = performRequest(post("/features/1/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
-        Assertions.assertEquals(2, res2.getId());
+        Assertions.assertEquals(8, res2.getId());
         Assertions.assertEquals(1, res2.getFeatureId());
         Assertions.assertTrue(res2.getPlateStat());
         Assertions.assertFalse(res2.getWelltypeStat());
@@ -121,16 +130,16 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
         // 3. update FeatureStat
         var input3 = FeatureStatDTO.builder()
-                .id(2L)
+                .id(8L)
                 .featureId(1L)
                 .formulaId(10L)
                 .plateStat(false)
                 .welltypeStat(true)
                 .name("count-updated")
                 .build();
-        var res3 = performRequest(put("/features/1/featurestat/2", input3), HttpStatus.OK, FeatureStatDTO.class);
+        var res3 = performRequest(put("/features/1/featurestat/8", input3), HttpStatus.OK, FeatureStatDTO.class);
 
-        Assertions.assertEquals(2, res3.getId());
+        Assertions.assertEquals(8, res3.getId());
         Assertions.assertEquals(1, res3.getFeatureId());
         Assertions.assertFalse(res3.getPlateStat());
         Assertions.assertTrue(res3.getWelltypeStat());
@@ -147,6 +156,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                     .description("MyProtocol")
                     .highWelltype("HC")
                     .lowWelltype("LC")
+                    .versionNumber("1.0")
                     .build();
             performRequest(post("/protocols", input1), HttpStatus.CREATED);
 
@@ -192,22 +202,78 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
 
             performRequest(post("/features/" + res4.getId() + " /featurestat", input5), HttpStatus.CREATED);
         }
-
+        ObjectMapper mapper = new ObjectMapper();
         // 2. get all featureStats of feature 1
-        var res2 = performRequest(get("/features/1/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":1,\"formulaId\":1,\"id\":1,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":1,\"formulaId\":1,\"id\":2,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res2);
+        var res2 = performRequest(get("/features/1/featurestat"), HttpStatus.OK, List.class);
+        Assertions.assertEquals(2, res2.size());
+        //Map res2 hashmap list to FeatureStatDTO list
+        List<FeatureStatDTO> featureStatDTOs = mapper.convertValue(res2, new TypeReference<List<FeatureStatDTO>>() {});
+        var f1 = featureStatDTOs.stream().filter(f -> f.getId() == 1).findFirst().get();
+        Assertions.assertEquals(1, f1.getFeatureId());
+        Assertions.assertTrue(f1.getPlateStat());
+        Assertions.assertTrue(f1.getWelltypeStat());
+        Assertions.assertEquals(1, f1.getFormulaId());
+        Assertions.assertEquals("test", f1.getName());
+        var f2 = featureStatDTOs.stream().filter(f -> f.getId() == 2).findFirst().get();
+        Assertions.assertEquals(1, f2.getFeatureId());
+        Assertions.assertTrue(f2.getPlateStat());
+        Assertions.assertFalse(f2.getWelltypeStat());
+        Assertions.assertEquals(1, f2.getFormulaId());
+        Assertions.assertEquals("count", f2.getName());
 
         // 3. get all featureStats of feature 4
-        var res3 = performRequest(get("/features/4/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":4,\"formulaId\":1,\"id\":7,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":4,\"formulaId\":1,\"id\":8,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res3);
+        var res3 = performRequest(get("/features/4/featurestat"), HttpStatus.OK, List.class);
+        Assertions.assertEquals(2, res3.size());
+        //Map res3 hashmap list to FeatureStatDTO list
+        featureStatDTOs = mapper.convertValue(res3, new TypeReference<List<FeatureStatDTO>>() {});
+        var f3 = featureStatDTOs.stream().filter(f -> f.getId() == 6).findFirst().get();
+        Assertions.assertEquals(4, f3.getFeatureId());
+        Assertions.assertTrue(f3.getPlateStat());
+        Assertions.assertTrue(f3.getWelltypeStat());
+        Assertions.assertEquals(1, f3.getFormulaId());
+        Assertions.assertEquals("test", f3.getName());
+        var f4 = featureStatDTOs.stream().filter(f -> f.getId() == 7).findFirst().get();
+        Assertions.assertEquals(4, f4.getFeatureId());
+        Assertions.assertTrue(f4.getPlateStat());
+        Assertions.assertFalse(f4.getWelltypeStat());
+        Assertions.assertEquals(1, f4.getFormulaId());
+        Assertions.assertEquals("count", f4.getName());
 
         // 4. get all featureStats by protocol 1
-        var res4 = performRequest(get("/protocols/1/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":1,\"formulaId\":1,\"id\":1,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":1,\"formulaId\":1,\"id\":2,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false},{\"featureId\":2,\"formulaId\":1,\"id\":3,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":2,\"formulaId\":1,\"id\":4,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res4);
+        var res4 = performRequest(get("/protocols/3/featurestat"), HttpStatus.OK, List.class);
+        Assertions.assertEquals(2, res4.size());
+        //Map res4 hashmap list to FeatureStatDTO list
+        featureStatDTOs = mapper.convertValue(res4, new TypeReference<List<FeatureStatDTO>>() {});
+        var f5 = featureStatDTOs.stream().filter(f -> f.getId() == 3).findFirst().get();
+        Assertions.assertEquals(2, f5.getFeatureId());
+        Assertions.assertTrue(f5.getPlateStat());
+        Assertions.assertTrue(f5.getWelltypeStat());
+        Assertions.assertEquals(1, f5.getFormulaId());
+        Assertions.assertEquals("test", f5.getName());
+        var f6 = featureStatDTOs.stream().filter(f -> f.getId() == 4).findFirst().get();
+        Assertions.assertEquals(2, f6.getFeatureId());
+        Assertions.assertTrue(f6.getPlateStat());
+        Assertions.assertFalse(f6.getWelltypeStat());
+        Assertions.assertEquals(1, f6.getFormulaId());
+        Assertions.assertEquals("count", f6.getName());
 
         // 5. get all featureStats by protocol 2
-        var res5 = performRequest(get("/protocols/2/featurestat"), HttpStatus.OK);
-        Assertions.assertEquals("[{\"featureId\":3,\"formulaId\":1,\"id\":5,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":3,\"formulaId\":1,\"id\":6,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false},{\"featureId\":4,\"formulaId\":1,\"id\":7,\"name\":\"test\",\"plateStat\":true,\"welltypeStat\":true},{\"featureId\":4,\"formulaId\":1,\"id\":8,\"name\":\"count\",\"plateStat\":true,\"welltypeStat\":false}]", res5);
+        var res5 = performRequest(get("/protocols/2/featurestat"), HttpStatus.OK, List.class);
+        Assertions.assertEquals(2, res5.size());
+        //Map res5 hashmap list to FeatureStatDTO list
+        featureStatDTOs = mapper.convertValue(res5, new TypeReference<List<FeatureStatDTO>>() {});
+        var f7 = featureStatDTOs.stream().filter(f -> f.getId() == 1).findFirst().get();
+        Assertions.assertEquals(1, f7.getFeatureId());
+        Assertions.assertTrue(f7.getPlateStat());
+        Assertions.assertTrue(f7.getWelltypeStat());
+        Assertions.assertEquals(1, f7.getFormulaId());
+        Assertions.assertEquals("test", f7.getName());
+        var f8 = featureStatDTOs.stream().filter(f -> f.getId() == 2).findFirst().get();
+        Assertions.assertEquals(1, f8.getFeatureId());
+        Assertions.assertTrue(f8.getPlateStat());
+        Assertions.assertFalse(f8.getWelltypeStat());
+        Assertions.assertEquals(1, f8.getFormulaId());
+        Assertions.assertEquals("count", f8.getName());
 
         // 6. get all featureStats of non-existing feature
         var res6 = performRequest(get("/features/42/featurestat"), HttpStatus.NOT_FOUND);

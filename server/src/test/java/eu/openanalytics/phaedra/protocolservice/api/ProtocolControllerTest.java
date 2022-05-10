@@ -26,6 +26,7 @@ import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -79,6 +80,7 @@ public class ProtocolControllerTest {
         newProtocol.setDescription("Newly created protocol");
         newProtocol.setLowWelltype("LC");
         newProtocol.setHighWelltype("HC");
+        newProtocol.setVersionNumber("1.0");
 
         String requestBody = objectMapper.writeValueAsString(newProtocol);
         MvcResult mvcResult = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -88,6 +90,8 @@ public class ProtocolControllerTest {
         ProtocolDTO protocolDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
         assertThat(protocolDTO).isNotNull();
         assertThat(protocolDTO.getId()).isEqualTo(1);
+        assertThat(protocolDTO.getPreviousVersion()).isNull();
+        assertThat(protocolDTO.getVersionNumber().split("-")[0]).isEqualTo("1.0");
     }
 
     @Test
@@ -113,21 +117,42 @@ public class ProtocolControllerTest {
 
         String newName = "New protocol name";
         protocol.setName(newName);
-        String newDescription = "New protocol desription";
+        String newDescription = "New protocol description";
         protocol.setDescription(newDescription);
+        protocol.setPreviousVersion(protocol.getVersionNumber());
+        String newVersion = "2.0";
+        protocol.setVersionNumber(newVersion);
+
+        //Check number of features
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", protocolId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(features.size()).isEqualTo(6);
 
         String requestBody = objectMapper.writeValueAsString(protocol);
         this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}", protocolId))
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
         Protocol updatedProtocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
         assertThat(updatedProtocol.getName()).isEqualTo(newName);
         assertThat(updatedProtocol.getDescription()).isEqualTo(newDescription);
+        assertThat(updatedProtocol.getPreviousVersion()).isEqualTo(protocol.getPreviousVersion());
+        assertThat(updatedProtocol.getVersionNumber().split("-")[0]).isEqualTo(newVersion);
+
+        //Check number of features
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", updatedProtocol.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(features.size()).isEqualTo(6);
     }
 
     @Test
@@ -168,5 +193,34 @@ public class ProtocolControllerTest {
         List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(features).isNotNull();
         assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(protocolId))).isTrue();
+    }
+
+    @Test
+    public void updateProtocolDoesFeaturesGetCoppied() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("New protocol name");
+        protocol.setDescription("New protocol description");
+        String newVersion = "2.0";
+        protocol.setVersionNumber(newVersion);
+        protocol.setId(1000L);
+
+        // update protocol
+        String requestBody = objectMapper.writeValueAsString(protocol);
+        MvcResult res = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        Protocol updatedProtocol = objectMapper.readValue(res.getResponse().getContentAsString(), Protocol.class);
+        assertThat(updatedProtocol.getId()).isNotEqualTo(protocol.getId());
+        assertThat(updatedProtocol.getName()).isEqualTo(protocol.getName());
+        assertThat(updatedProtocol.getDescription()).isEqualTo(protocol.getDescription());
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(features).isNotNull();
+        assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(1L))).isTrue();
     }
 }

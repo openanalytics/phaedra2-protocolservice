@@ -20,8 +20,11 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +45,17 @@ public class FeatureController {
 
     @Autowired
     private FeatureService featureService;
+    @Autowired
+    private ProtocolService protocolService;
 
     // TODO creating feature with non-existing protocolId returns 500
     // -> use rest URL? e.g. /protocol/10/feature ?
     // TODO it is possible to create features with the same name
     @PostMapping("/features")
     public ResponseEntity<FeatureDTO> createFeature(@RequestBody FeatureDTO newFeature) {
+        //create new protocol version
+        ProtocolDTO newProtocol = createNewVersionProtocol(newFeature.getProtocolId(), null);
+        newFeature.setProtocolId(newProtocol.getId());
         FeatureDTO savedFeature = featureService.create(newFeature);
         return new ResponseEntity<>(savedFeature, HttpStatus.CREATED);
     }
@@ -56,7 +64,9 @@ public class FeatureController {
     // TODO validate the feature exists (updating non-existent feature does nothing and returns 200)
     @PutMapping("/features")
     public ResponseEntity<?> updateFeature(@RequestBody FeatureDTO updateFeature) {
-        FeatureDTO updatedFeature = featureService.update(updateFeature);
+        //create new protocol version
+        ProtocolDTO newProtocol = createNewVersionProtocol(updateFeature.getProtocolId(), updateFeature.getId());
+        FeatureDTO updatedFeature = featureService.update(updateFeature, newProtocol.getId());
         return new ResponseEntity<>(updatedFeature, HttpStatus.OK);
     }
 
@@ -89,5 +99,23 @@ public class FeatureController {
     public ResponseEntity<?> addTagToFeature(@PathVariable ("featureId") Long featureId, @RequestParam("tag") String tag) {
         featureService.tagFeature(featureId, tag);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
+     * Creates a new protocol version for the given protocol.
+     * @param protocolId The protocol to create a new version for.
+     * @param updatedFeatureId The feature that gets updated.
+     * @return protocolDTO The new protocol version.
+     */
+    private ProtocolDTO createNewVersionProtocol(Long protocolId, Long updatedFeatureId) {
+        ProtocolDTO currentProtocolDTO = protocolService.getProtocolById(protocolId);
+        //Change versionNumber
+        Double newVersion = Double.parseDouble(currentProtocolDTO.getVersionNumber().split("-")[0])+0.01;
+        currentProtocolDTO.setPreviousVersion(currentProtocolDTO.getVersionNumber());
+        currentProtocolDTO.setVersionNumber(newVersion.toString());
+        ProtocolDTO newProtocol = protocolService.update(currentProtocolDTO);
+        //Duplicate current features
+        featureService.updateFeaturesToNewProtocol(protocolId,newProtocol.getId(), updatedFeatureId);
+        return newProtocol;
     }
 }

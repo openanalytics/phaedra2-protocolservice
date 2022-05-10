@@ -22,6 +22,7 @@ package eu.openanalytics.phaedra.protocolservice.service;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -66,10 +67,15 @@ public class ProtocolService {
      */
     public ProtocolDTO create(ProtocolDTO protocolDTO) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
-    	
+
         Protocol newProtocol = modelMapper.map(protocolDTO);
+
+        Date currentDate = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
+        newProtocol.setPreviousVersion(null);
+        newProtocol.setVersionNumber(newProtocol.getVersionNumber()+"-"+format.format(currentDate));
         newProtocol.setCreatedBy(authService.getCurrentPrincipalName());
-        newProtocol.setCreatedOn(new Date());
+        newProtocol.setCreatedOn(currentDate);
         return modelMapper.map(protocolRepository.save(newProtocol));
     }
 
@@ -84,10 +90,16 @@ public class ProtocolService {
         		performOwnershipCheck(protocol.getId());
         		
         		modelMapper.map(protocolDTO, protocol);
-				protocol.setUpdatedBy(authService.getCurrentPrincipalName());
-				protocol.setUpdatedOn(new Date());
-				protocolRepository.save(protocol);
-				
+
+                Date currentDate = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
+                protocol.setVersionNumber(protocol.getVersionNumber()+"-"+format.format(currentDate));
+                protocol.setUpdatedBy(authService.getCurrentPrincipalName());
+				protocol.setUpdatedOn(currentDate);
+
+				//Delete id to create a new copy of the protocol in the DB
+				protocol.setId(null);
+				protocol = protocolRepository.save(protocol);
 				return modelMapper.map(protocol);
         	})
         	.orElse(null);

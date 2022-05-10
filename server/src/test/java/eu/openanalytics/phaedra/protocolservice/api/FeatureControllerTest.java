@@ -136,7 +136,6 @@ public class FeatureControllerTest {
 
         Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(updatedFeature).isNotNull();
-        assertThat(updatedFeature.getId()).isEqualTo(feature.getId());
         assertThat(updatedFeature.getName()).isEqualTo(feature.getName());
         assertThat(updatedFeature.getDescription()).isEqualTo(feature.getDescription());
     }
@@ -212,5 +211,59 @@ public class FeatureControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
+    }
+
+    @Test
+    public void createNewFeatureDoesNewVersionGetCreated() throws Exception {
+        Feature newFeature = new Feature();
+        newFeature.setName("A new feature");
+        newFeature.setDescription("Creating a new feature");
+        newFeature.setProtocolId(1000L);
+        newFeature.setFormulaId(1L);
+        newFeature.setFormat("#.###");
+
+        String requestBody = this.objectMapper.writeValueAsString(newFeature);
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/features")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Feature createdFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        assertThat(createdFeature).isNotNull();
+        assertThat(createdFeature.getId()).isNotNull();
+        assertThat(createdFeature.getName()).isEqualTo(newFeature.getName());
+        assertThat(createdFeature.getDescription()).isEqualTo(newFeature.getDescription());
+        assertThat(createdFeature.getProtocolId()).isNotEqualTo(newFeature.getProtocolId());
+    }
+
+    @Test
+    public void updateFeatureDoesNewVersionGetCreated() throws Exception {
+        Feature newFeature = new Feature();
+        newFeature.setName("A new feature");
+        newFeature.setId(1000L);
+        newFeature.setProtocolId(1000L);
+
+        // Update the feature
+        String requestBody = this.objectMapper.writeValueAsString(newFeature);
+        MvcResult mvcResult = this.mockMvc.perform(put("/features").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
+        assertThat(updatedFeature).isNotNull();
+        assertThat(updatedFeature.getName()).isEqualTo(newFeature.getName());
+        assertThat(updatedFeature.getProtocolId()).isNotEqualTo(newFeature.getProtocolId());
+
+        //Get features for new protocol
+        MvcResult res = this.mockMvc.perform(get("/protocols/{protocolId}/features", updatedFeature.getProtocolId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<Feature> features = this.objectMapper.readValue(res.getResponse().getContentAsString(), List.class);
+        assertThat(features.size()).isEqualTo(6);
     }
 }

@@ -40,7 +40,10 @@ public class Protocol {
     private String lowWelltype;
     @Column("high_welltype")
     private String highWelltype;
-
+    @Column("previous_version")
+    private String previousVersion;
+    @Column("version_number")
+    private String versionNumber;
     @Column("created_on")
     private Date createdOn;
     @Column("created_by")

@@ -42,7 +42,9 @@ public class ProtocolDTO {
     
     private String lowWelltype;
     private String highWelltype;
-    
+    private String previousVersion;
+    private String versionNumber;
+
     private Date createdOn;
     private String createdBy;
     private Date updatedOn;
