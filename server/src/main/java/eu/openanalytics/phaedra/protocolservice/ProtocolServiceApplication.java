@@ -49,7 +49,7 @@ import io.swagger.v3.oas.models.servers.Server;
 @EnableDiscoveryClient
 @EnableScheduling
 public class ProtocolServiceApplication {
-	
+
     private final Environment environment;
     private final ServletContext servletContext;
 
@@ -92,10 +92,10 @@ public class ProtocolServiceApplication {
 
     @Bean
 	public OpenAPI customOpenAPI() {
-        Server server = new Server().url(servletContext.getContextPath()).description("Default Server URL");
+        Server server = new Server().url(environment.getProperty("API_URL")).description("Default Server URL");
     	return new OpenAPI().addServersItem(server);
 	}
-    
+
 	@Bean
 	public IAuthorizationService authService() {
 		return AuthorizationServiceFactory.create();
