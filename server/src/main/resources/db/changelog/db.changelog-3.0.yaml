@@ -41,5 +41,20 @@ databaseChangeLog:
               - column:
                   name: version_number
                   type: TEXT
-                  constraints:
-                    - nullable: false
+  - changeSet:
+      id: 4
+      author: sberberovic
+      changes:
+        - insert:
+            tableName: protocol
+            columns:
+              - column:
+                  name: version_number
+                  value: 1.0.0
+  - changeSet:
+      id: 5
+      author: sberberovic
+      changes:
+        - addNotNullConstraint:
+            tableName: protocol
+            columnName: version_number
