@@ -55,6 +55,16 @@ databaseChangeLog:
       id: 5
       author: sberberovic
       changes:
+        - update:
+            tableName: protocol
+            columns:
+              - column:
+                  name: version_number
+                  value: 1.0.0
+  - changeSet:
+      id: 6
+      author: sberberovic
+      changes:
         - addNotNullConstraint:
             tableName: protocol
             columnName: version_number
