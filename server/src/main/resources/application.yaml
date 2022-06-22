@@ -9,11 +9,6 @@ spring:
       enabled: false
   application:
     name: phaedra-protocol-service
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=protocols
-#    username: phaedra_usr
-#    password: phaedra_usr
   liquibase:
     enabled: false
   security:

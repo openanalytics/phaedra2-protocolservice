@@ -82,36 +82,24 @@ public class ProtocolController {
     public ResponseEntity<List<ProtocolDTO>> getProtocols() {
         log.info("Get all protocols");
         List<ProtocolDTO> response = protocolService.getProtocols();
-        if (isNotEmpty(response))
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/protocols", params = {"tag"})
     public ResponseEntity<List<ProtocolDTO>> getProtocolByTag(@RequestParam(value = "tag", required = false) String tag) {
         List<ProtocolDTO> response = protocolService.getProtocolByTag(tag);
-        if (isNotEmpty(response))
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/protocols/{protocolId}")
     public ResponseEntity<ProtocolDTO> getProtocol(@PathVariable Long protocolId) {
         ProtocolDTO response = protocolService.getProtocolById(protocolId);
-        if (response != null)
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/protocols/{protocolId}/features")
     public ResponseEntity<List<FeatureDTO>> getProtocolFeatures(@PathVariable Long protocolId) {
         List<FeatureDTO> response = featureService.findFeaturesByProtocolId(protocolId);
-        if (isNotEmpty(response))
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
