@@ -47,17 +47,17 @@ public class ModelMapper {
                 .setDestinationNameTransformer(NameTransformers.builder())
                 .setDestinationNamingConvention(NamingConventions.builder());
 
-        modelMapper.createTypeMap(Protocol.class, ProtocolDTO.class)
-                .setPropertyCondition(Conditions.isNotNull());
+//        modelMapper.createTypeMap(Protocol.class, ProtocolDTO.class)
+//                .setPropertyCondition(Conditions.isNotNull());
+//
+//        modelMapper.createTypeMap(ProtocolDTO.class, Protocol.class)
+//                .setPropertyCondition(Conditions.isNotNull());
 
-        modelMapper.createTypeMap(ProtocolDTO.class, Protocol.class)
-                .setPropertyCondition(Conditions.isNotNull());
-
-        modelMapper.createTypeMap(Feature.class, FeatureDTO.class)
-                .setPropertyCondition(Conditions.isNotNull());
-
-        modelMapper.createTypeMap(FeatureDTO.class, Feature.class)
-                .setPropertyCondition(Conditions.isNotNull());
+//        modelMapper.createTypeMap(Feature.class, FeatureDTO.class)
+//                .setPropertyCondition(Conditions.isNotNull());
+//
+//        modelMapper.createTypeMap(FeatureDTO.class, Feature.class)
+//                .setPropertyCondition(Conditions.isNotNull());
 
         modelMapper.createTypeMap(CalculationInputValueDTO.class, CalculationInputValue.CalculationInputValueBuilder.class, builderConfiguration);
 
@@ -96,7 +96,7 @@ public class ModelMapper {
     public Protocol map(ProtocolDTO protocolDTO) {
         return modelMapper.map(protocolDTO, Protocol.class);
     }
-    
+
     /**
      * Maps a {@link ProtocolDTO} to an existing {@link Protocol}, omitting null fields.
      */
@@ -111,14 +111,37 @@ public class ModelMapper {
      * Maps a {@link Protocol} to a {@link ProtocolDTO}.
      */
     public ProtocolDTO map(Protocol protocol) {
-        return modelMapper.map(protocol, ProtocolDTO.class);
+        ProtocolDTO protocolDTO = new ProtocolDTO();
+        protocolDTO.setId(protocol.getId());
+        protocolDTO.setName(protocol.getName());
+        protocolDTO.setDescription(protocol.getDescription());
+        protocolDTO.setLowWelltype(protocol.getLowWelltype());
+        protocolDTO.setHighWelltype(protocol.getHighWelltype());
+        protocolDTO.setPreviousVersion(protocol.getPreviousVersion());
+        protocolDTO.setVersionNumber(protocol.getVersionNumber());
+        protocolDTO.setCreatedOn(protocol.getCreatedOn());
+        protocolDTO.setCreatedBy(protocol.getCreatedBy());
+        protocolDTO.setUpdatedOn(protocol.getUpdatedOn());
+        protocolDTO.setUpdatedBy(protocol.getUpdatedBy());
+        return protocolDTO;
     }
 
     /**
      * Maps a {@link FeatureDTO} to a {@link Feature}.
      */
     public Feature map(FeatureDTO featureDTO) {
-        return modelMapper.map(featureDTO, Feature.class);
+        Feature feature = new Feature();
+        feature.setId(featureDTO.getId());
+        feature.setProtocolId(featureDTO.getProtocolId());
+        feature.setFormulaId(featureDTO.getFormulaId());
+        feature.setName(featureDTO.getName());
+        feature.setDescription(featureDTO.getDescription());
+        feature.setAlias(featureDTO.getAlias());
+        feature.setSequence(featureDTO.getSequence());
+        feature.setFormat(featureDTO.getFormat());
+        feature.setTrigger(featureDTO.getTrigger());
+        feature.setFeatureType(featureDTO.getType());
+        return feature;
     }
 
     /**
@@ -130,12 +153,23 @@ public class ModelMapper {
     		.setPropertyCondition(Conditions.isNotNull())
     		.map(sourceFeatureDTO, targetFeature);
     }
-    
+
     /**
      * Maps a {@link Feature} to a {@link FeatureDTO}.
      */
     public FeatureDTO map(Feature feature) {
-        return modelMapper.map(feature, FeatureDTO.class);
+        FeatureDTO featureDTO = new FeatureDTO();
+        featureDTO.setId(feature.getId());
+        featureDTO.setProtocolId(feature.getProtocolId());
+        featureDTO.setFormulaId(feature.getFormulaId());
+        featureDTO.setName(feature.getName());
+        featureDTO.setDescription(feature.getDescription());
+        featureDTO.setAlias(feature.getAlias());
+        featureDTO.setSequence(feature.getSequence());
+        featureDTO.setFormat(feature.getFormat());
+        featureDTO.setTrigger(feature.getTrigger());
+        featureDTO.setType(feature.getFeatureType());
+        return featureDTO;
     }
 
     /**

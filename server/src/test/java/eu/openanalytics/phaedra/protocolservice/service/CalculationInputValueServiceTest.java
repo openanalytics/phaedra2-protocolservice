@@ -23,6 +23,8 @@ package eu.openanalytics.phaedra.protocolservice.service;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
 import eu.openanalytics.phaedra.protocolservice.repository.CalculationInputValueRepository;
+import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
+import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,13 +53,13 @@ public class CalculationInputValueServiceTest {
     private CalculationInputValueService calculationInputValueService;
 
     @Autowired
-    private FeatureService featureService;
+    private FeatureRepository featureRepository;
 
     @Autowired
     private CalculationInputValueRepository calculationInputValueRepository;
 
     @Autowired
-    private ProtocolService protocolService;
+    private ProtocolRepository protocolRepository;
 
     private static final eu.openanalytics.phaedra.protocolservice.service.ModelMapper modelMapperInit = new ModelMapper();
 
@@ -77,7 +79,7 @@ public class CalculationInputValueServiceTest {
 
     @BeforeEach
     void before() {
-        this.calculationInputValueService = new CalculationInputValueService(this.protocolService, this.featureService, this.calculationInputValueRepository, this.modelMapperInit);
+        this.calculationInputValueService = new CalculationInputValueService(this.protocolRepository, this.featureRepository, this.calculationInputValueRepository, this.modelMapperInit);
     }
 
     @Test

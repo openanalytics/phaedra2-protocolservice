@@ -40,7 +40,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 public class FeatureService {
-	
+
     private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String FEATURE_OBJECT_CLASS = "FEATURE";
 
@@ -48,15 +48,15 @@ public class FeatureService {
     private final RestTemplate restTemplate;
     private final FeatureRepository featureRepository;
     private final FeatureStatService featureStatService;
-    private final ProtocolService protocolService;
+//    private final ProtocolService protocolService;
 
-    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository, 
-    		FeatureStatService featureStatService, ProtocolService protocolService) {
+    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
+    		FeatureStatService featureStatService) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
         this.featureStatService = featureStatService;
-        this.protocolService = protocolService;
+//        this.protocolService = protocolService;
     }
 
     /**
@@ -65,8 +65,8 @@ public class FeatureService {
      * @param featureDTO New feature
      */
     public FeatureDTO create(FeatureDTO featureDTO) {
-    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
-    	
+//    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
+
         Feature newFeature = modelMapper.map(featureDTO);
 
         var resFeature = featureRepository.save(newFeature);
@@ -81,8 +81,8 @@ public class FeatureService {
      * @param featureDTO Feature updates
      */
     public FeatureDTO update(FeatureDTO featureDTO, Long newProtocolId) {
-    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
-    	
+//    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
+
         return featureRepository.findById(featureDTO.getId())
         	.map(feature -> {
 	            modelMapper.map(featureDTO, feature);
@@ -101,9 +101,9 @@ public class FeatureService {
      * @param featureId The feature id
      */
     public void delete(Long featureId) {
-    	Optional.ofNullable(findFeatureById(featureId))
-    		.ifPresent(feature -> protocolService.performOwnershipCheck(feature.getProtocolId()));
-    	
+//    	Optional.ofNullable(findFeatureById(featureId))
+//    		.ifPresent(feature -> protocolService.performOwnershipCheck(feature.getProtocolId()));
+
         featureRepository.deleteById(featureId);
     }
 
@@ -114,9 +114,9 @@ public class FeatureService {
      * @param tagName   A tag string
      */
     public void tagFeature(Long featureId, String tagName) {
-    	Optional.ofNullable(findFeatureById(featureId))
-			.ifPresent(feature -> protocolService.performOwnershipCheck(feature.getProtocolId()));
-    	
+//    	Optional.ofNullable(findFeatureById(featureId))
+//			.ifPresent(feature -> protocolService.performOwnershipCheck(feature.getProtocolId()));
+
         StringBuilder urlBuilder = new StringBuilder(PHAEDRA_METADATA_SERVICE);
         urlBuilder.append("/tags");
 

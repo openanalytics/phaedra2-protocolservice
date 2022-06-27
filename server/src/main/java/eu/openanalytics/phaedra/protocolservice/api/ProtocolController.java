@@ -24,6 +24,11 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.util.List;
 
+import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationInputValueException;
+import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
+import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,15 +52,33 @@ public class ProtocolController {
 
     private final ProtocolService protocolService;
     private final FeatureService featureService;
+    private final CalculationInputValueService calculationInputValueService;
 
-    public ProtocolController(ProtocolService protocolService, FeatureService featureService) {
+    public ProtocolController(ProtocolService protocolService, FeatureService featureService,
+                              CalculationInputValueService calculationInputValueService) {
         this.protocolService = protocolService;
         this.featureService = featureService;
+        this.calculationInputValueService = calculationInputValueService;
     }
 
     @PostMapping("/protocols")
-    public ResponseEntity<ProtocolDTO> createProtocol(@RequestBody ProtocolDTO newProtocol) {
+    public ResponseEntity<ProtocolDTO> createProtocol(@RequestBody ProtocolDTO newProtocol) throws DuplicateCalculationInputValueException, FeatureNotFoundException {
         ProtocolDTO savedProtocol = protocolService.create(newProtocol);
+
+        if (isNotEmpty(newProtocol.getFeatures())) {
+            for (FeatureDTO featureDTO: newProtocol.getFeatures()) {
+                featureDTO.setProtocolId(savedProtocol.getId());
+                FeatureDTO savedFeature = featureService.create(featureDTO);
+
+                if (featureDTO.getFormula() != null
+                        && isNotEmpty(featureDTO.getFormula().getCivs())) {
+                    for (CalculationInputValueDTO civ: featureDTO.getFormula().getCivs()) {
+                        calculationInputValueService.create(savedFeature.getId(), civ);
+                    }
+                }
+            }
+        }
+
         return new ResponseEntity<>(savedProtocol, HttpStatus.CREATED);
     }
 

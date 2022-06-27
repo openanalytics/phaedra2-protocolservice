@@ -23,6 +23,8 @@ package eu.openanalytics.phaedra.protocolservice.service;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
+import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
@@ -37,15 +39,15 @@ import eu.openanalytics.phaedra.protocolservice.repository.CalculationInputValue
 @Service
 public class CalculationInputValueService {
 
-    private final ProtocolService protocolService;
-    private final FeatureService featureService;
+    private final ProtocolRepository protocolRepository;
+    private final FeatureRepository featureRepository;
     private final CalculationInputValueRepository calculationInputValueRepository;
     private final ModelMapper modelMapper;
 
-    public CalculationInputValueService(ProtocolService protocolService, FeatureService featureService,
+    public CalculationInputValueService(ProtocolRepository protocolRepository, FeatureRepository featureRepository,
     		CalculationInputValueRepository calculationInputValueRepository, ModelMapper modelMapper) {
-        this.protocolService = protocolService;
-        this.featureService = featureService;
+        this.protocolRepository = protocolRepository;
+        this.featureRepository = featureRepository;
         this.calculationInputValueRepository = calculationInputValueRepository;
         this.modelMapper = modelMapper;
     }
@@ -60,11 +62,11 @@ public class CalculationInputValueService {
      * @throws DuplicateCalculationInputValueException when a CalculationInputValue for this feature already exists with the given values
      */
     public CalculationInputValueDTO create(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
-        var feature = featureService.findFeatureById(featureId);
-        if (feature == null) {
+        var feature = featureRepository.findById(featureId);
+        if (feature.isEmpty()) {
             throw new FeatureNotFoundException(featureId);
         }
-        protocolService.performOwnershipCheck(feature.getProtocolId());
+//        protocolRepository.performOwnershipCheck(feature.getProtocolId());
 
         CalculationInputValue calculationInputValue = modelMapper.map(calculationInputValueDTO)
                 .featureId(featureId)
@@ -74,12 +76,12 @@ public class CalculationInputValueService {
     }
 
     public CalculationInputValueDTO update(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
-    	var feature = featureService.findFeatureById(featureId);
-    	if (feature == null) {
+    	var feature = featureRepository.findById(featureId);
+    	if (feature.isEmpty()) {
             throw new FeatureNotFoundException(featureId);
         }
-    	protocolService.performOwnershipCheck(feature.getProtocolId());
-    	
+//    	protocolService.performOwnershipCheck(feature.getProtocolId());
+
         Optional<CalculationInputValue> calculationInputValue = calculationInputValueRepository.findById(calculationInputValueDTO.getId());
         calculationInputValue.ifPresent(c -> {
             c = modelMapper.map(calculationInputValueDTO).build();
@@ -101,8 +103,8 @@ public class CalculationInputValueService {
      * @throws FeatureNotFoundException when the feature is not found
      */
     public List<CalculationInputValueDTO> getByFeatureId(Long featureId) throws FeatureNotFoundException {
-    	var feature = featureService.findFeatureById(featureId);
-    	if (feature == null) {
+    	var feature = featureRepository.findById(featureId);
+    	if (feature.isEmpty()) {
             throw new FeatureNotFoundException(featureId);
         }
 
@@ -120,8 +122,8 @@ public class CalculationInputValueService {
      * @throws ProtocolNotFoundException when the protocol is not found
      */
     public List<CalculationInputValueDTO> getByProtocolId(Long protocolId) throws ProtocolNotFoundException {
-    	var protocol = protocolService.getProtocolById(protocolId);
-        if (protocol == null) {
+    	var protocol = protocolRepository.findById(protocolId);
+        if (protocol.isEmpty()) {
             throw new ProtocolNotFoundException(protocolId);
         }
 

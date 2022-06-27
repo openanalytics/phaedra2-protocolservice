@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.protocolservice.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -35,15 +36,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProtocolDTO {
-	
+
     private Long id;
     private String name;
     private String description;
-    
+
     private String lowWelltype;
     private String highWelltype;
     private String previousVersion;
     private String versionNumber;
+
+    private List<FeatureDTO> features;
 
     private Date createdOn;
     private String createdBy;

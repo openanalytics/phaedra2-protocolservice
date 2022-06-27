@@ -80,7 +80,7 @@ public class ProtocolControllerTest {
         newProtocol.setDescription("Newly created protocol");
         newProtocol.setLowWelltype("LC");
         newProtocol.setHighWelltype("HC");
-        newProtocol.setVersionNumber("1.0");
+        newProtocol.setVersionNumber("1.0.0");
 
         String requestBody = objectMapper.writeValueAsString(newProtocol);
         MvcResult mvcResult = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -91,7 +91,30 @@ public class ProtocolControllerTest {
         assertThat(protocolDTO).isNotNull();
         assertThat(protocolDTO.getId()).isEqualTo(1);
         assertThat(protocolDTO.getPreviousVersion()).isNull();
-        assertThat(protocolDTO.getVersionNumber().split("-")[0]).isEqualTo("1.0");
+        assertThat(protocolDTO.getVersionNumber().split("-")[0]).isEqualTo("1.0.0");
+    }
+
+    @Test
+    public void createProtocolWithFeatures() throws Exception {
+        String requestBody = "{\"name\":\"Test\",\"description\":\"test\",\"lowWelltype\":\"LC\",\"highWellType\":null,\"versionNumber\":\"1.0.0\",\"features\":[{\"name\":\"F1\",\"alias\":\"Feature 1\",\"description\":null,\"format\":\"#.##\",\"type\":\"CALCULATION\",\"sequence\":0,\"protocolId\":null,\"formulaId\":24,\"formula\":{\"id\":24,\"name\":\"adder\",\"description\":null,\"category\":\"CALCULATION\",\"formula\":\"output <- input$dup_abc + input$dup_xyz + input$abc_xyz\",\"language\":\"R\",\"scope\":\"WELL\",\"previousVersion\":null,\"versionNumber\":\"1.0.0\",\"createdBy\":\"Anonymous\",\"createdOn\":\"2021-10-01T10:28:47.941165\",\"updatedBy\":null,\"updatedOn\":null,\"civs\":[{\"variableName\":\"abc_xyz\",\"sourceInput\":\"MEASUREMENT\",\"sourceMeasColName\":\"p1\"},{\"variableName\":\"dup_abc\",\"sourceInput\":\"MEASUREMENT\",\"sourceMeasColName\":\"p2\"},{\"variableName\":\"dup_xyz\",\"sourceInput\":\"MEASUREMENT\",\"sourceMeasColName\":\"p3\"}]},\"trigger\":null}],\"tags\":[],\"properties\":[],\"highWelltype\":\"HC\",\"createdOn\":\"2022-06-24T13:50:43.297Z\"}";
+        ProtocolDTO newProtocolDTO = objectMapper.readValue(requestBody, ProtocolDTO.class);
+
+        assertThat(newProtocolDTO.getFeatures().size()).isEqualTo(1);
+        assertThat(newProtocolDTO.getFeatures().get(0).getFormula()).isNotNull();
+        assertThat(newProtocolDTO.getFeatures().get(0).getFormula().getCivs().size()).isEqualTo(3);
+
+        requestBody = objectMapper.writeValueAsString(newProtocolDTO);
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        ProtocolDTO protocolDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
+        assertThat(protocolDTO).isNotNull();
+        assertThat(protocolDTO.getId()).isEqualTo(1);
+        assertThat(protocolDTO.getPreviousVersion()).isNull();
+        assertThat(protocolDTO.getVersionNumber().split("-")[0]).isEqualTo("1.0.0");
     }
 
     @Test

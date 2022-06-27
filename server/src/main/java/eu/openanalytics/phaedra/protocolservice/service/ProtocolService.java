@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,7 +47,7 @@ import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class ProtocolService {
-	
+
     private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String PROTOCOL_OBJECT_CLASS = "PROTOCOL";
 
@@ -53,8 +55,10 @@ public class ProtocolService {
     private final ProtocolRepository protocolRepository;
     private final ModelMapper modelMapper;
     private final IAuthorizationService authService;
-    
-    public ProtocolService(RestTemplate restTemplate, ProtocolRepository protocolRepository, ModelMapper modelMapper, IAuthorizationService authService) {
+
+
+    public ProtocolService(RestTemplate restTemplate, ProtocolRepository protocolRepository,
+                           ModelMapper modelMapper, IAuthorizationService authService) {
         this.restTemplate = restTemplate;
         this.protocolRepository = protocolRepository;
         this.modelMapper = modelMapper;
@@ -69,14 +73,15 @@ public class ProtocolService {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
 
         Protocol newProtocol = modelMapper.map(protocolDTO);
-
         Date currentDate = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
         newProtocol.setPreviousVersion(null);
         newProtocol.setVersionNumber(newProtocol.getVersionNumber()+"-"+format.format(currentDate));
         newProtocol.setCreatedBy(authService.getCurrentPrincipalName());
         newProtocol.setCreatedOn(currentDate);
-        return modelMapper.map(protocolRepository.save(newProtocol));
+        ProtocolDTO result = modelMapper.map(protocolRepository.save(newProtocol));
+
+        return result;
     }
 
     /**
@@ -88,7 +93,7 @@ public class ProtocolService {
         return protocolRepository.findById(protocolDTO.getId())
         	.map(protocol -> {
         		performOwnershipCheck(protocol.getId());
-        		
+
         		modelMapper.map(protocolDTO, protocol);
 
                 Date currentDate = new Date();
@@ -128,7 +133,7 @@ public class ProtocolService {
     /**
      * Performs an ownership check on a protocol, if the provided ID is not null
      * and points to a valid protocol.
-     * 
+     *
      * @param protocolId The ID of the protocol to check against.
      */
     public void performOwnershipCheck(Long protocolId) {
@@ -136,7 +141,7 @@ public class ProtocolService {
     		.map(id -> getProtocolById(id))
     		.ifPresent(protocol -> authService.performOwnershipCheck(protocol.getCreatedBy()));
     }
-    
+
     /**
      * Add a tag to a protocol
      * @param protocolId Protocol to be tagged
@@ -144,7 +149,7 @@ public class ProtocolService {
      */
     public void tagProtocol(Long protocolId, String tag) {
     	performOwnershipCheck(protocolId);
-    	
+
         StringBuilder urlBuilder = new StringBuilder(PHAEDRA_METADATA_SERVICE);
         urlBuilder.append("/tags");
 
