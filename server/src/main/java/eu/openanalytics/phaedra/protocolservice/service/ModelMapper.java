@@ -148,10 +148,18 @@ public class ModelMapper {
      * Maps a {@link FeatureDTO} to an existing {@link Feature}, omitting null fields.
      */
     public void map(FeatureDTO sourceFeatureDTO, Feature targetFeature) {
-    	modelMapper
-    		.typeMap(FeatureDTO.class, Feature.class)
-    		.setPropertyCondition(Conditions.isNotNull())
-    		.map(sourceFeatureDTO, targetFeature);
+//    	modelMapper
+//    		.typeMap(FeatureDTO.class, Feature.class)
+//    		.setPropertyCondition(Conditions.isNotNull())
+//    		.map(sourceFeatureDTO, targetFeature);
+        targetFeature.setFormulaId(sourceFeatureDTO.getFormulaId());
+        targetFeature.setName(sourceFeatureDTO.getName());
+        targetFeature.setDescription(sourceFeatureDTO.getDescription());
+        targetFeature.setAlias(sourceFeatureDTO.getAlias());
+        targetFeature.setSequence(sourceFeatureDTO.getSequence());
+        targetFeature.setFormat(sourceFeatureDTO.getFormat());
+        targetFeature.setTrigger(sourceFeatureDTO.getTrigger());
+        targetFeature.setFeatureType(sourceFeatureDTO.getType());
     }
 
     /**
