@@ -36,3 +36,6 @@ application.yml
 /server/target/
 /dto/target/
 /client/target/
+/dto/phaedra2-protocolservice-dto.iml
+/client/phaedra2-protocolservice-client.iml
+/server/phaedra2-protocolservice-server.iml
