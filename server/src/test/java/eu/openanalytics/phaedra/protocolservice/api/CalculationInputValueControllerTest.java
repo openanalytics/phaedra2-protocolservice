@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
@@ -152,11 +153,11 @@ public class CalculationInputValueControllerTest {
 
         MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+featureId+"/calculationinputvalue"))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
 
-        List<CalculationInputValueDTO> body2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
-        assertThat(body2.size()).isEqualTo(0);
+        List<CalculationInputValueDTO> body2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), new TypeReference<List<CalculationInputValueDTO>>() {});
+        assertThat(body2).isEmpty();
     }
 
     @Test
@@ -199,7 +200,7 @@ public class CalculationInputValueControllerTest {
                 .andExpect(status().isNotFound())
                 .andReturn();
 
-        List<CalculationInputValueDTO> body2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
-        assertThat(body2.size()).isEqualTo(0);
+        List<CalculationInputValueDTO> body2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), new TypeReference<List<CalculationInputValueDTO>>() {});
+        assertThat(body2).isEmpty();
     }
 }
