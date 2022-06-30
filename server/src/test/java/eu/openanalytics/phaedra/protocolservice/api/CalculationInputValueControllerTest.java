@@ -197,7 +197,7 @@ public class CalculationInputValueControllerTest {
 
         MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+protocolId+"/calculationinputvalue"))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
 
         List<CalculationInputValueDTO> body2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), new TypeReference<List<CalculationInputValueDTO>>() {});
