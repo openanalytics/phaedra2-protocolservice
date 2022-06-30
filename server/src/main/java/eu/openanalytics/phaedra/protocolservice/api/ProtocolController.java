@@ -72,8 +72,9 @@ public class ProtocolController {
 
                 if (featureDTO.getFormula() != null
                         && isNotEmpty(featureDTO.getFormula().getCivs())) {
-                    for (CalculationInputValueDTO civ: featureDTO.getFormula().getCivs()) {
-                        calculationInputValueService.create(savedFeature.getId(), civ);
+                    for (CalculationInputValueDTO civDTO: featureDTO.getFormula().getCivs()) {
+                        civDTO.withFeatureId(featureDTO.getId());
+                        CalculationInputValueDTO savedCIV = calculationInputValueService.create(savedFeature.getId(), civDTO);
                     }
                 }
             }

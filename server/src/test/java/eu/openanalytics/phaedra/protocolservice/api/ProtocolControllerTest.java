@@ -22,6 +22,8 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
@@ -97,24 +99,42 @@ public class ProtocolControllerTest {
     @Test
     public void createProtocolWithFeatures() throws Exception {
         String requestBody = "{\"name\":\"Test\",\"description\":\"test\",\"lowWelltype\":\"LC\",\"highWellType\":null,\"versionNumber\":\"1.0.0\",\"features\":[{\"name\":\"F1\",\"alias\":\"Feature 1\",\"description\":null,\"format\":\"#.##\",\"type\":\"CALCULATION\",\"sequence\":0,\"protocolId\":null,\"formulaId\":24,\"formula\":{\"id\":24,\"name\":\"adder\",\"description\":null,\"category\":\"CALCULATION\",\"formula\":\"output <- input$dup_abc + input$dup_xyz + input$abc_xyz\",\"language\":\"R\",\"scope\":\"WELL\",\"previousVersion\":null,\"versionNumber\":\"1.0.0\",\"createdBy\":\"Anonymous\",\"createdOn\":\"2021-10-01T10:28:47.941165\",\"updatedBy\":null,\"updatedOn\":null,\"civs\":[{\"variableName\":\"abc_xyz\",\"sourceInput\":\"MEASUREMENT\",\"sourceMeasColName\":\"p1\"},{\"variableName\":\"dup_abc\",\"sourceInput\":\"MEASUREMENT\",\"sourceMeasColName\":\"p2\"},{\"variableName\":\"dup_xyz\",\"sourceInput\":\"MEASUREMENT\",\"sourceMeasColName\":\"p3\"}]},\"trigger\":null}],\"tags\":[],\"properties\":[],\"highWelltype\":\"HC\",\"createdOn\":\"2022-06-24T13:50:43.297Z\"}";
-        ProtocolDTO newProtocolDTO = objectMapper.readValue(requestBody, ProtocolDTO.class);
+        ProtocolDTO newProtocolDTO = this.objectMapper.readValue(requestBody, ProtocolDTO.class);
 
         assertThat(newProtocolDTO.getFeatures().size()).isEqualTo(1);
         assertThat(newProtocolDTO.getFeatures().get(0).getFormula()).isNotNull();
         assertThat(newProtocolDTO.getFeatures().get(0).getFormula().getCivs().size()).isEqualTo(3);
 
-        requestBody = objectMapper.writeValueAsString(newProtocolDTO);
+        requestBody = this.objectMapper.writeValueAsString(newProtocolDTO);
 
-        MvcResult mvcResult = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult pResponse = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        ProtocolDTO protocolDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
+        ProtocolDTO protocolDTO = this.objectMapper.readValue(pResponse.getResponse().getContentAsString(), ProtocolDTO.class);
         assertThat(protocolDTO).isNotNull();
         assertThat(protocolDTO.getId()).isEqualTo(1);
         assertThat(protocolDTO.getPreviousVersion()).isNull();
         assertThat(protocolDTO.getVersionNumber().split("-")[0]).isEqualTo("1.0.0");
+
+        MvcResult fResponse = this.mockMvc.perform(get("/protocols/" + protocolDTO.getId() + "/features"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<FeatureDTO> featureList = this.objectMapper.readValue(fResponse.getResponse().getContentAsString(), new TypeReference<List<FeatureDTO>>() {});
+
+        for (FeatureDTO featureDTO: featureList) {
+            MvcResult civResponse = this.mockMvc.perform(get("/features/" + featureDTO.getId() + "/calculationinputvalue"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            List<CalculationInputValueDTO> civList = this.objectMapper.readValue(civResponse.getResponse().getContentAsString(), new TypeReference<List<CalculationInputValueDTO>>() {});
+            assertThat(civList).isNotEmpty();
+        }
+
     }
 
     @Test

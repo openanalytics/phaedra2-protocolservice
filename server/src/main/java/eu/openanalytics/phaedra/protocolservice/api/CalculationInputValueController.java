@@ -67,19 +67,13 @@ public class CalculationInputValueController implements MethodArgumentNotValidEx
     @GetMapping("/features/{featureId}/calculationinputvalue")
     public ResponseEntity<List<CalculationInputValueDTO>> getCalculationInputValue(@PathVariable Long featureId) throws UserVisibleException {
         var res = calculationInputValueService.getByFeatureId(featureId);
-        if (res.size() != 0)
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/protocols/{protocolId}/calculationinputvalue")
     public ResponseEntity<List<CalculationInputValueDTO>> getCalculationInputValueByProtocolIds(@PathVariable Long protocolId) throws UserVisibleException {
         var res = calculationInputValueService.getByProtocolId(protocolId);
-        if (res.size() != 0)
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
 }
