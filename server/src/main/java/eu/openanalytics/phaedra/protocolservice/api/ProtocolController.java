@@ -24,6 +24,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.util.List;
 
+import eu.openanalytics.phaedra.protocolservice.FormulaDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationInputValueException;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
@@ -66,13 +67,12 @@ public class ProtocolController {
         ProtocolDTO savedProtocol = protocolService.create(newProtocol);
 
         if (isNotEmpty(newProtocol.getFeatures())) {
-            for (FeatureDTO featureDTO: newProtocol.getFeatures()) {
+            for (FeatureDTO featureDTO : newProtocol.getFeatures()) {
                 featureDTO.setProtocolId(savedProtocol.getId());
                 FeatureDTO savedFeature = featureService.create(featureDTO);
 
-                if (featureDTO.getFormula() != null
-                        && isNotEmpty(featureDTO.getFormula().getCivs())) {
-                    for (CalculationInputValueDTO civDTO: featureDTO.getFormula().getCivs()) {
+                if (isNotEmpty(featureDTO.getCivs())) {
+                    for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
                         civDTO.withFeatureId(featureDTO.getId());
                         CalculationInputValueDTO savedCIV = calculationInputValueService.create(savedFeature.getId(), civDTO);
                     }
@@ -117,13 +117,33 @@ public class ProtocolController {
 
     @GetMapping("/protocols/{protocolId}")
     public ResponseEntity<ProtocolDTO> getProtocol(@PathVariable Long protocolId) {
-        ProtocolDTO response = protocolService.getProtocolById(protocolId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        ProtocolDTO protocol = protocolService.getProtocolById(protocolId);
+
+        List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocolId);
+        protocol.setFeatures(features);
+
+        for (FeatureDTO f: features) {
+            try {
+                List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(f.getId());
+                f.setCivs(civs);
+            } catch (FeatureNotFoundException e) {
+
+            }
+        }
+        return new ResponseEntity<>(protocol, HttpStatus.OK);
     }
 
     @GetMapping("/protocols/{protocolId}/features")
     public ResponseEntity<List<FeatureDTO>> getProtocolFeatures(@PathVariable Long protocolId) {
-        List<FeatureDTO> response = featureService.findFeaturesByProtocolId(protocolId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocolId);
+        for (FeatureDTO f: features) {
+            try {
+                List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(f.getId());
+                f.setCivs(civs);
+            } catch (FeatureNotFoundException e) {
+
+            }
+        }
+        return new ResponseEntity<>(features, HttpStatus.OK);
     }
 }

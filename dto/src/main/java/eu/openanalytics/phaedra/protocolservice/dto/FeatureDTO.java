@@ -28,6 +28,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
@@ -44,5 +46,6 @@ public class FeatureDTO {
     private Long protocolId;
     private Long formulaId;
     private FormulaDTO formula;
+    private List<CalculationInputValueDTO> civs;
     private String trigger;
 }
