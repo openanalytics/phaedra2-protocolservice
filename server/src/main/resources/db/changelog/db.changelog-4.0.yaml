@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - addColumn:
+            tableName: calculation_input_value
+            columns:
+              - column:
+                  name: input_source
+                  type: TEXT
+  - changeSet:
+      id: 2
+      author: sberberovic
+      changes:
+        - update:
+            tableName: calculation_input_value
+            columns:
+              - column:
+                  name: input_source
+                  value: MEASUREMENT
+            where: source_meas_col_name is not null
+        - update:
+            tableName: calculation_input_value
+            columns:
+              - column:
+                  name: input_source
+                  value: FEATURE
+            where: source_feature_id is not null

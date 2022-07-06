@@ -20,12 +20,14 @@
  */
 package eu.openanalytics.phaedra.protocolservice.model;
 
+import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
 @Value
 @Builder
@@ -39,4 +41,6 @@ public class CalculationInputValue {
     String sourceMeasColName;
     Long sourceFeatureId;
     String variableName;
+    @Column("input_source")
+    InputSource inputSource;
 }

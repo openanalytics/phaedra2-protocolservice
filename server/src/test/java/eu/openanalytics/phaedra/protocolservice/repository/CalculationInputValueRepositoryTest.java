@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.protocolservice.repository;
 
+import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
 import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+//TODO: Update tests that includes tests for inputSource
 @Testcontainers
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
@@ -69,7 +71,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void createCalculationInputValue() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1");
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.MEASUREMENT);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -79,7 +81,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void deleteCalculationInputValue() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1");
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -96,14 +98,14 @@ public class CalculationInputValueRepositoryTest {
     @Test
     public void updateCalculationInputValue() {
         //Add new civ
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1");
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getVariableName()).isEqualTo(calculationInputValue.getVariableName());
 
-        CalculationInputValue updated = new CalculationInputValue(saved.getId(),saved.getFeatureId(),"Column2",saved.getSourceFeatureId(),"col2");
+        CalculationInputValue updated = new CalculationInputValue(saved.getId(),saved.getFeatureId(),"Column2",saved.getSourceFeatureId(),"col2", InputSource.FEATURE);
         CalculationInputValue saved2 = calculationInputValueRepository.save(updated);
 
         assertThat(saved2).isNotNull();
@@ -114,7 +116,7 @@ public class CalculationInputValueRepositoryTest {
     @Test
     public void getCalculatioInputValueById() {
         //Add new civ
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1");
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -129,7 +131,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void getCalculationInputValueByFeatureId() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1");
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -146,7 +148,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void getCalculationInputValueByProtocolId() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1");
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();

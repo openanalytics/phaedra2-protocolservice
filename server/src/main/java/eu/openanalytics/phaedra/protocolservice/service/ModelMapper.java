@@ -47,18 +47,6 @@ public class ModelMapper {
                 .setDestinationNameTransformer(NameTransformers.builder())
                 .setDestinationNamingConvention(NamingConventions.builder());
 
-//        modelMapper.createTypeMap(Protocol.class, ProtocolDTO.class)
-//                .setPropertyCondition(Conditions.isNotNull());
-//
-//        modelMapper.createTypeMap(ProtocolDTO.class, Protocol.class)
-//                .setPropertyCondition(Conditions.isNotNull());
-
-//        modelMapper.createTypeMap(Feature.class, FeatureDTO.class)
-//                .setPropertyCondition(Conditions.isNotNull());
-//
-//        modelMapper.createTypeMap(FeatureDTO.class, Feature.class)
-//                .setPropertyCondition(Conditions.isNotNull());
-
         modelMapper.createTypeMap(CalculationInputValueDTO.class, CalculationInputValue.CalculationInputValueBuilder.class, builderConfiguration);
 
         modelMapper.createTypeMap(CalculationInputValue.class, CalculationInputValueDTO.CalculationInputValueDTOBuilder.class, builderConfiguration);
@@ -148,10 +136,6 @@ public class ModelMapper {
      * Maps a {@link FeatureDTO} to an existing {@link Feature}, omitting null fields.
      */
     public void map(FeatureDTO sourceFeatureDTO, Feature targetFeature) {
-//    	modelMapper
-//    		.typeMap(FeatureDTO.class, Feature.class)
-//    		.setPropertyCondition(Conditions.isNotNull())
-//    		.map(sourceFeatureDTO, targetFeature);
         targetFeature.setFormulaId(sourceFeatureDTO.getFormulaId());
         targetFeature.setName(sourceFeatureDTO.getName());
         targetFeature.setDescription(sourceFeatureDTO.getDescription());

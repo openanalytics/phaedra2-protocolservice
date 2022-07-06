@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.protocolservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +54,8 @@ public class CalculationInputValueDTO {
     String sourceMeasColName;
 
     Long sourceFeatureId;
+
+    InputSource inputSource;
 
     @JsonIgnore
     @AssertTrue(message = "Only one of sourceMeansColumnName or sourceFeatureId may be specified (not both).")
