@@ -21,9 +21,7 @@
 package eu.openanalytics.phaedra.protocolservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import eu.openanalytics.phaedra.protocolservice.FormulaDTO;
 import eu.openanalytics.phaedra.protocolservice.enumeration.FeatureType;
-import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,15 +35,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FeatureDTO {
-    private Long id;
-    private String name;
-    private String alias;
-    private String description;
-    private String format;
-    private FeatureType type;
-    private Integer sequence;
-    private Long protocolId;
-    private Long formulaId;
-    private List<CalculationInputValueDTO> civs;
-    private String trigger;
+    Long id;
+    String name;
+    String alias;
+    String description;
+    String format;
+    FeatureType type;
+    Integer sequence;
+    Long protocolId;
+    Long formulaId;
+    List<CalculationInputValueDTO> civs;
+    DRCModelDTO drcModel;
+    String trigger;
 }

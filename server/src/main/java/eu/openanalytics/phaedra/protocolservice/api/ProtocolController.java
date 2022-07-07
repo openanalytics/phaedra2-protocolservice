@@ -20,32 +20,23 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-
-import java.util.List;
-
-import eu.openanalytics.phaedra.protocolservice.FormulaDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationInputValueException;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueService;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.service.DoseResponseCurvePropertyService;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @RestController
 @Slf4j
@@ -54,12 +45,15 @@ public class ProtocolController {
     private final ProtocolService protocolService;
     private final FeatureService featureService;
     private final CalculationInputValueService calculationInputValueService;
+    private final DoseResponseCurvePropertyService drcSettingsService;
 
     public ProtocolController(ProtocolService protocolService, FeatureService featureService,
-                              CalculationInputValueService calculationInputValueService) {
+                              CalculationInputValueService calculationInputValueService,
+                              DoseResponseCurvePropertyService drcSettingsService) {
         this.protocolService = protocolService;
         this.featureService = featureService;
         this.calculationInputValueService = calculationInputValueService;
+        this.drcSettingsService = drcSettingsService;
     }
 
     @PostMapping("/protocols")
@@ -76,6 +70,10 @@ public class ProtocolController {
                         civDTO.withFeatureId(featureDTO.getId());
                         CalculationInputValueDTO savedCIV = calculationInputValueService.create(savedFeature.getId(), civDTO);
                     }
+                }
+
+                if (featureDTO.getDrcModel() != null) {
+                    drcSettingsService.create(savedFeature.getId(), featureDTO.getDrcModel());
                 }
             }
         }

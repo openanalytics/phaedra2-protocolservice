@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: dose_response_curve_property_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: feature_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: TEXT
+              - column:
+                  name: value
+                  type: TEXT
+            tableName: dose_response_curve_property
+  - changeSet:
+      id: 2
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: feature_id
+            baseTableName: dose_response_curve_property
+            constraintName: dose_response_curve_property_feature_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: feature
+            validate: true
