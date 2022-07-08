@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.protocolservice.api;
 
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationInputValueException;
@@ -58,20 +59,23 @@ public class ProtocolController {
 
     @PostMapping("/protocols")
     public ResponseEntity<ProtocolDTO> createProtocol(@RequestBody ProtocolDTO newProtocol) throws DuplicateCalculationInputValueException, FeatureNotFoundException {
+        // 1ste -> create a protocol
         ProtocolDTO savedProtocol = protocolService.create(newProtocol);
 
         if (isNotEmpty(newProtocol.getFeatures())) {
             for (FeatureDTO featureDTO : newProtocol.getFeatures()) {
+                // 2de -> set the newly created protocol id to feature dto and create a feature
                 featureDTO.setProtocolId(savedProtocol.getId());
                 FeatureDTO savedFeature = featureService.create(featureDTO);
 
                 if (isNotEmpty(featureDTO.getCivs())) {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
-                        civDTO.withFeatureId(featureDTO.getId());
-                        CalculationInputValueDTO savedCIV = calculationInputValueService.create(savedFeature.getId(), civDTO);
+                        // 3rd -> for every feature create the calculation input values
+                        calculationInputValueService.create(savedFeature.getId(), civDTO);
                     }
                 }
 
+                // 4th -> if a dose response curve model is defined create the drc model
                 if (featureDTO.getDrcModel() != null) {
                     drcSettingsService.create(savedFeature.getId(), featureDTO.getDrcModel());
                 }
@@ -138,6 +142,9 @@ public class ProtocolController {
             try {
                 List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(f.getId());
                 f.setCivs(civs);
+
+                DRCModelDTO drcModel = drcSettingsService.getByFeatureId(f.getId());
+                f.setDrcModel(drcModel);
             } catch (FeatureNotFoundException e) {
 
             }

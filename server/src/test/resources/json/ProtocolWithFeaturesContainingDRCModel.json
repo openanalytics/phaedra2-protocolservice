@@ -1,0 +1,117 @@
+{
+  "id": null,
+  "name": "NewProtocol",
+  "description": null,
+  "lowWelltype": "LC",
+  "highWelltype": "HC",
+  "previousVersion": null,
+  "versionNumber": "1.0.0",
+  "features": [
+    {
+      "id": null,
+      "name": "Feature1",
+      "alias": "F1",
+      "description": null,
+      "format": "#.##",
+      "type": "CALCULATION",
+      "sequence": 0,
+      "protocolId": null,
+      "formulaId": 20,
+      "civs": [
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "Var1",
+          "sourceMeasColName": "Meas_col_1",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        },
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "Var2",
+          "sourceMeasColName": "Meas_col_2",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        },
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "Var3",
+          "sourceMeasColName": "Meas_col_3",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        }
+      ],
+      "drcModel": {
+        "featureId": null,
+        "name": "receptor2",
+        "description": "receptor2",
+        "method": "tukey",
+        "inputParameters": {
+          "Fixed Top": "3",
+          "Confidence Level": "0.9",
+          "Fixed Bottom": "2",
+          "Fixed Slope": "1",
+          "Slope": "free"
+        }
+      },
+      "trigger": null
+    },
+    {
+      "id": null,
+      "name": "Feature2",
+      "alias": "F2",
+      "description": null,
+      "format": "#.##",
+      "type": "CALCULATION",
+      "sequence": 0,
+      "protocolId": null,
+      "formulaId": 20,
+      "civs": [
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "Var4",
+          "sourceMeasColName": "Meas_col_4",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        },
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "Var5",
+          "sourceMeasColName": "Meas_col_5",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        },
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "Var6",
+          "sourceMeasColName": "Meas_col_6",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        }
+      ],
+      "drcModel": {
+        "featureId": null,
+        "name": "receptor2",
+        "description": "receptor2",
+        "method": "mean",
+        "inputParameters": {
+          "Fixed Top": "1",
+          "Confidence Level": "0.5",
+          "Fixed Bottom": "-1",
+          "Fixed Slope": "1",
+          "Slope": "descending"
+        }
+      },
+      "trigger": null
+    }
+  ],
+  "createdOn": null,
+  "createdBy": "sberberovic",
+  "updatedOn": null,
+  "updatedBy": null
+}

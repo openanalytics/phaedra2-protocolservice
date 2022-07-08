@@ -79,9 +79,9 @@ public class ProtocolService {
         newProtocol.setVersionNumber(newProtocol.getVersionNumber()+"-"+format.format(currentDate));
         newProtocol.setCreatedBy(authService.getCurrentPrincipalName());
         newProtocol.setCreatedOn(currentDate);
-        ProtocolDTO result = modelMapper.map(protocolRepository.save(newProtocol));
+        protocolDTO.setId(protocolRepository.save(newProtocol).getId());
 
-        return result;
+        return protocolDTO;
     }
 
     /**
@@ -92,20 +92,26 @@ public class ProtocolService {
     public ProtocolDTO update(ProtocolDTO protocolDTO) {
         return protocolRepository.findById(protocolDTO.getId())
         	.map(protocol -> {
+                // Check the ownership of the protocol
         		performOwnershipCheck(protocol.getId());
 
+                // Map the ProtocolDTO to Protocol model object
         		modelMapper.map(protocolDTO, protocol);
 
+                // Update the version number and updated by and on properties
                 Date currentDate = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
                 protocol.setVersionNumber(protocol.getVersionNumber()+"-"+format.format(currentDate));
                 protocol.setUpdatedBy(authService.getCurrentPrincipalName());
 				protocol.setUpdatedOn(currentDate);
 
-				//Delete id to create a new copy of the protocol in the DB
+				// Delete id to create a new copy of the protocol in the DB
 				protocol.setId(null);
 				protocol = protocolRepository.save(protocol);
-				return modelMapper.map(protocol);
+
+                // Update the ProtocolDTO id
+                protocolDTO.setId(protocol.getId());
+                return protocolDTO;
         	})
         	.orElse(null);
     }

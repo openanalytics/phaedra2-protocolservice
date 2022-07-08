@@ -5,6 +5,8 @@ import eu.openanalytics.phaedra.protocolservice.model.DoseResponseCurveProperty;
 import eu.openanalytics.phaedra.protocolservice.repository.DoseResponseCurvePropertyRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DoseResponseCurvePropertyService {
 
@@ -41,5 +43,20 @@ public class DoseResponseCurvePropertyService {
             property.setValue(drcModel.getInputParameters().get(propertyName));
             drcPropertyRepository.save(property);
         }
+    }
+
+    public DRCModelDTO getByFeatureId(Long featureId) {
+        DRCModelDTO drcModelDTO = new DRCModelDTO();
+        drcModelDTO.setFeatureId(featureId);
+
+        List<DoseResponseCurveProperty> drcProperties = drcPropertyRepository.findAllByFeatureId(featureId);
+        for (DoseResponseCurveProperty drcProp: drcProperties) {
+            if (drcProp.getName().equalsIgnoreCase("model")) drcModelDTO.setName(drcProp.getValue());
+            else if (drcProp.getName().equalsIgnoreCase("description")) drcModelDTO.setDescription(drcProp.getValue());
+            else if (drcProp.getName().equalsIgnoreCase("method")) drcModelDTO.setMethod(drcProp.getValue());
+            else drcModelDTO.getInputParameters().put(drcProp.getName(), drcProp.getValue());
+        }
+
+        return drcModelDTO;
     }
 }

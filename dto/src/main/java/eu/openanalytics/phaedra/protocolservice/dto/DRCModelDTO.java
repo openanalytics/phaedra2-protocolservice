@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -18,5 +19,5 @@ public class DRCModelDTO {
     String name;
     String description;
     String method;
-    Map<String, String> inputParameters;
+    Map<String, String> inputParameters = new HashMap<>();
 }

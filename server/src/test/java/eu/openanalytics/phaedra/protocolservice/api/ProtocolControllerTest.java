@@ -28,7 +28,6 @@ import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -44,13 +43,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -264,5 +261,30 @@ public class ProtocolControllerTest {
         List<Feature> features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(features).isNotNull();
         assertThat(features.stream().allMatch(f -> f.getProtocolId().equals(1L))).isTrue();
+    }
+
+    @Test
+    public void createNewProtocolWithFeaturesContainingDRCModel() throws Exception {
+        String path = "src/test/resources/json/ProtocolWithFeaturesContainingDRCModel.json";
+        File file = new File(path);
+
+        ProtocolDTO protocolDTO = this.objectMapper.readValue(file, ProtocolDTO.class);
+        assertThat(protocolDTO).isNotNull();
+
+        String requestBody = objectMapper.writeValueAsString(protocolDTO);
+        MvcResult mvcResult = this.mockMvc.perform(post("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+        ProtocolDTO created = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
+        assertThat(created).isNotNull();
+        assertThat(created.getId()).isNotNull();
+
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", created.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<FeatureDTO> featureDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<FeatureDTO>>() {});
+        assertThat(featureDTOs).isNotEmpty();
     }
 }

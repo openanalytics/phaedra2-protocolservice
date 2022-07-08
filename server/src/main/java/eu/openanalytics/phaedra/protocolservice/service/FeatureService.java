@@ -67,12 +67,16 @@ public class FeatureService {
     public FeatureDTO create(FeatureDTO featureDTO) {
 //    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
 
+        // Map FeatureDTO to Feature
         Feature newFeature = modelMapper.map(featureDTO);
 
+        // Save new Feature and create default feature stats
         var resFeature = featureRepository.save(newFeature);
         featureStatService.createDefaultsForFeature(resFeature);
 
-        return modelMapper.map(resFeature);
+        // Update input FeatureDTO with the newly created feature id and return the updated FeatureDTO
+        featureDTO.setId(resFeature.getId());
+        return featureDTO;
     }
 
     /**
