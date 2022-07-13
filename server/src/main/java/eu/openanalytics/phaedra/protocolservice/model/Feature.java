@@ -47,6 +47,7 @@ public class Feature {
     private Integer sequence;
     @Column("calc_trigger")
     private String trigger;
+    //TODO: Add updatedBy and updatedOn properties
 
     public Feature(Long protocolId) {
         this.protocolId = protocolId;

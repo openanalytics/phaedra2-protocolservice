@@ -55,24 +55,20 @@ public class CalculationInputValueService {
     /**
      * Create a CalculationInputValue
      *
-     * @param featureId
      * @param calculationInputValueDTO the CalculationInputValue to create
      * @return the resulting DTO
      * @throws FeatureNotFoundException                when the given feature is not found
      * @throws DuplicateCalculationInputValueException when a CalculationInputValue for this feature already exists with the given values
      */
-    public CalculationInputValueDTO create(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
-        var feature = featureRepository.findById(featureId);
-        if (feature.isEmpty()) {
-            throw new FeatureNotFoundException(featureId);
-        }
-//        protocolRepository.performOwnershipCheck(feature.getProtocolId());
+    public CalculationInputValueDTO create(CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
+        var feature = featureRepository.findById(calculationInputValueDTO.getFeatureId());
+        if (feature.isEmpty())
+            throw new FeatureNotFoundException(calculationInputValueDTO.getFeatureId());
 
-        CalculationInputValue calculationInputValue = modelMapper.map(calculationInputValueDTO)
-                .featureId(featureId)
-                .build();
+        CalculationInputValue civ = modelMapper.map(calculationInputValueDTO).build();
+        CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
 
-        return save(calculationInputValue);
+        return calculationInputValueDTO.withId(newCiv.getId());
     }
 
     public CalculationInputValueDTO update(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
@@ -133,19 +129,19 @@ public class CalculationInputValueService {
                 .toList();
     }
 
-    /**
-     * Saves a {@link CalculationInputValue} and returns the resulting corresponding {@link CalculationInputValueDTO}.
-     */
-    private CalculationInputValueDTO save(CalculationInputValue civ) throws DuplicateCalculationInputValueException {
-        try {
-            CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
-            return modelMapper.map(newCiv).build();
-        } catch (DbActionExecutionException ex) {
-            if (ex.getCause() instanceof DuplicateKeyException) {
-                throw new DuplicateCalculationInputValueException();
-            }
-            throw ex;
-        }
-    }
+//    /**
+//     * Saves a {@link CalculationInputValue} and returns the resulting corresponding {@link CalculationInputValueDTO}.
+//     */
+//    private CalculationInputValueDTO save(CalculationInputValue civ) throws DuplicateCalculationInputValueException {
+//        try {
+//            CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
+//            return modelMapper.map(newCiv).build();
+//        } catch (DbActionExecutionException ex) {
+//            if (ex.getCause() instanceof DuplicateKeyException) {
+//                throw new DuplicateCalculationInputValueException();
+//            }
+//            throw ex;
+//        }
+//    }
 
 }

@@ -26,6 +26,7 @@ import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationInputValueException;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
+import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueService;
 import eu.openanalytics.phaedra.protocolservice.service.DoseResponseCurvePropertyService;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
@@ -71,7 +72,8 @@ public class ProtocolController {
                 if (isNotEmpty(featureDTO.getCivs())) {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
                         // 3rd -> for every feature create the calculation input values
-                        calculationInputValueService.create(savedFeature.getId(), civDTO);
+                        civDTO = civDTO.withFeatureId(savedFeature.getId());
+                        calculationInputValueService.create(civDTO);
                     }
                 }
 
@@ -86,9 +88,28 @@ public class ProtocolController {
     }
 
     @PutMapping("/protocols")
-    public ResponseEntity<ProtocolDTO> updateProtocol(@RequestBody ProtocolDTO updateProtocol) {
+    public ResponseEntity<ProtocolDTO> updateProtocol(@RequestBody ProtocolDTO updateProtocol) throws DuplicateCalculationInputValueException, FeatureNotFoundException, ProtocolNotFoundException {
         ProtocolDTO updatedProtocol = protocolService.update(updateProtocol);
-        featureService.updateFeaturesToNewProtocol(updateProtocol.getId(), updatedProtocol.getId(), null);
+        if (isNotEmpty(updatedProtocol.getFeatures())) {
+            for (FeatureDTO featureDTO : updatedProtocol.getFeatures()) {
+                // 2de -> set the newly created protocol id to feature dto and create a feature
+                featureDTO.setProtocolId(updatedProtocol.getId());
+                FeatureDTO savedFeature = featureService.update(featureDTO);
+
+                if (isNotEmpty(featureDTO.getCivs())) {
+                    for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
+                        // 3rd -> for every feature create the calculation input values
+                        calculationInputValueService.update(savedFeature.getId(), civDTO);
+                    }
+                }
+
+                // 4th -> if a dose response curve model is defined create the drc model
+                if (featureDTO.getDrcModel() != null) {
+                    drcSettingsService.create(savedFeature.getId(), featureDTO.getDrcModel());
+                }
+            }
+        }
+//        featureService.updateFeaturesToNewProtocol(updateProtocol.getId(), updatedProtocol.getId(), null);
         return new ResponseEntity<>(updatedProtocol, HttpStatus.OK);
     }
 
@@ -107,14 +128,50 @@ public class ProtocolController {
     @GetMapping("/protocols")
     public ResponseEntity<List<ProtocolDTO>> getProtocols() {
         log.info("Get all protocols");
-        List<ProtocolDTO> response = protocolService.getProtocols();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        List<ProtocolDTO> allProtocols = protocolService.getProtocols();
+
+        for (ProtocolDTO protocol: allProtocols) {
+            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
+            protocol.setFeatures(features);
+
+            for (FeatureDTO feature : features) {
+                try {
+                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
+                    feature.setCivs(civs);
+
+                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
+                    feature.setDrcModel(drcModel);
+                } catch (FeatureNotFoundException e) {
+                    //TODO: Throw an appropriate error
+                }
+            }
+        }
+
+        return new ResponseEntity<>(allProtocols, HttpStatus.OK);
     }
 
     @GetMapping(value = "/protocols", params = {"tag"})
     public ResponseEntity<List<ProtocolDTO>> getProtocolByTag(@RequestParam(value = "tag", required = false) String tag) {
-        List<ProtocolDTO> response = protocolService.getProtocolByTag(tag);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        List<ProtocolDTO> protocolsByTag = protocolService.getProtocolByTag(tag);
+
+        for (ProtocolDTO protocol: protocolsByTag) {
+            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
+            protocol.setFeatures(features);
+
+            for (FeatureDTO feature : features) {
+                try {
+                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
+                    feature.setCivs(civs);
+
+                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
+                    feature.setDrcModel(drcModel);
+                } catch (FeatureNotFoundException e) {
+                    //TODO: Throw an appropriate error
+                }
+            }
+        }
+
+        return new ResponseEntity<>(protocolsByTag, HttpStatus.OK);
     }
 
     @GetMapping("/protocols/{protocolId}")
@@ -124,12 +181,15 @@ public class ProtocolController {
         List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocolId);
         protocol.setFeatures(features);
 
-        for (FeatureDTO f: features) {
+        for (FeatureDTO feature: features) {
             try {
-                List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(f.getId());
-                f.setCivs(civs);
-            } catch (FeatureNotFoundException e) {
+                List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
+                feature.setCivs(civs);
 
+                DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
+                feature.setDrcModel(drcModel);
+            } catch (FeatureNotFoundException e) {
+                //TODO: Throw an appropriate error
             }
         }
         return new ResponseEntity<>(protocol, HttpStatus.OK);
@@ -138,15 +198,15 @@ public class ProtocolController {
     @GetMapping("/protocols/{protocolId}/features")
     public ResponseEntity<List<FeatureDTO>> getProtocolFeatures(@PathVariable Long protocolId) {
         List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocolId);
-        for (FeatureDTO f: features) {
+        for (FeatureDTO feature: features) {
             try {
-                List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(f.getId());
-                f.setCivs(civs);
+                List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
+                feature.setCivs(civs);
 
-                DRCModelDTO drcModel = drcSettingsService.getByFeatureId(f.getId());
-                f.setDrcModel(drcModel);
+                DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
+                feature.setDrcModel(drcModel);
             } catch (FeatureNotFoundException e) {
-
+                //TODO: Throw an appropriate error
             }
         }
         return new ResponseEntity<>(features, HttpStatus.OK);

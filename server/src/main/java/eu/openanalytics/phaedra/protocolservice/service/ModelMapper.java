@@ -136,6 +136,8 @@ public class ModelMapper {
      * Maps a {@link FeatureDTO} to an existing {@link Feature}, omitting null fields.
      */
     public void map(FeatureDTO sourceFeatureDTO, Feature targetFeature) {
+        targetFeature.setId(sourceFeatureDTO.getId());
+        targetFeature.setProtocolId(sourceFeatureDTO.getProtocolId());
         targetFeature.setFormulaId(sourceFeatureDTO.getFormulaId());
         targetFeature.setName(sourceFeatureDTO.getName());
         targetFeature.setDescription(sourceFeatureDTO.getDescription());

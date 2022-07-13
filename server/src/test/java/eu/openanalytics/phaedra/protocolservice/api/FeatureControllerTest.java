@@ -22,8 +22,10 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
+import eu.openanalytics.phaedra.protocolservice.model.Protocol;
 import eu.openanalytics.phaedra.protocolservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +115,7 @@ public class FeatureControllerTest {
     public void updateFeature() throws Exception {
         Long featureId = 3000L;
 
+        // Retrieve the feature from the server
         MvcResult mvcResult = this.mockMvc.perform(get("/features/{featureId}", featureId))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -121,14 +124,24 @@ public class FeatureControllerTest {
         Feature feature = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(feature).isNotNull();
         assertThat(feature.getId()).isEqualTo(featureId);
+        assertThat(feature.getProtocolId()).isNotNull();
 
+        // Retrieve the protocol for the feature
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}", feature.getProtocolId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        ProtocolDTO protocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
+        assertThat(protocol).isNotNull();
+
+        // Update the feature name and description
         String updatedName = "Updated feature name";
         String updateDescription = "Update feature description";
         feature.setName(updatedName);
         feature.setDescription(updateDescription);
 
+        // Push the updated feature to the server
         String requestBody = objectMapper.writeValueAsString(feature);
-
         mvcResult = this.mockMvc.perform(put("/features").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -138,6 +151,17 @@ public class FeatureControllerTest {
         assertThat(updatedFeature).isNotNull();
         assertThat(updatedFeature.getName()).isEqualTo(feature.getName());
         assertThat(updatedFeature.getDescription()).isEqualTo(feature.getDescription());
+        assertThat(updatedFeature.getProtocolId()).isEqualTo(feature.getProtocolId());
+
+        // Get the protocol again from the server, this time the protocol update date and version should be different
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}", updatedFeature.getProtocolId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        ProtocolDTO updatedProtocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
+        assertThat(updatedProtocol.getVersionNumber()).isNotEqualTo(protocol.getVersionNumber());
+        assertThat(updatedProtocol.getPreviousVersion()).isEqualTo(protocol.getVersionNumber());
+        assertThat(updatedProtocol.getUpdatedBy()).isNotEqualTo(protocol.getUpdatedOn());
     }
 
     @Test
@@ -196,7 +220,7 @@ public class FeatureControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<FeatureStat> featureStats = this.objectMapper.readValue(res.getResponse().getContentAsString(), List.class);
+        List<FeatureStat> featureStats = this.objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(featureStats.size()).isNotEqualTo(0);
 
         this.mockMvc.perform(delete("/features/{featureId}", createdFeature.getId()))
@@ -236,7 +260,6 @@ public class FeatureControllerTest {
         assertThat(createdFeature.getId()).isNotNull();
         assertThat(createdFeature.getName()).isEqualTo(newFeature.getName());
         assertThat(createdFeature.getDescription()).isEqualTo(newFeature.getDescription());
-        assertThat(createdFeature.getProtocolId()).isNotEqualTo(newFeature.getProtocolId());
     }
 
     @Test
@@ -256,14 +279,14 @@ public class FeatureControllerTest {
         Feature updatedFeature = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Feature.class);
         assertThat(updatedFeature).isNotNull();
         assertThat(updatedFeature.getName()).isEqualTo(newFeature.getName());
-        assertThat(updatedFeature.getProtocolId()).isNotEqualTo(newFeature.getProtocolId());
+        assertThat(updatedFeature.getProtocolId()).isEqualTo(newFeature.getProtocolId());
 
         //Get features for new protocol
         MvcResult res = this.mockMvc.perform(get("/protocols/{protocolId}/features", updatedFeature.getProtocolId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<Feature> features = this.objectMapper.readValue(res.getResponse().getContentAsString(), List.class);
+        List<Feature> features = this.objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(features.size()).isEqualTo(6);
     }
 }

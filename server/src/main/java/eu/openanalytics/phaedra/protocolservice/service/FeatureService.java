@@ -84,19 +84,29 @@ public class FeatureService {
      *
      * @param featureDTO Feature updates
      */
-    public FeatureDTO update(FeatureDTO featureDTO, Long newProtocolId) {
+    public FeatureDTO update(FeatureDTO featureDTO) {
 //    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
 
-        return featureRepository.findById(featureDTO.getId())
-        	.map(feature -> {
-	            modelMapper.map(featureDTO, feature);
-	            //Remove id so new feature is created
-                feature.setId(null);
-                feature.setProtocolId(newProtocolId);
-	            featureRepository.save(feature);
-	            return modelMapper.map(feature);
-	        })
-        	.orElse(null);
+        // Map the featureDTO to a feature object
+        Feature feature = modelMapper.map(featureDTO);
+        //TODO: set updatedBy and updatedOn properties
+
+        // Save the feature
+        featureRepository.save(feature);
+
+        // Return updated featureDTO
+        return featureDTO;
+
+        //        return featureRepository.findById(featureDTO.getId())
+//        	.map(feature -> {
+//	            modelMapper.map(featureDTO, feature);
+//	            //Remove id so new feature is created
+//                feature.setId(null);
+//                feature.setProtocolId(newProtocolId);
+//	            featureRepository.save(feature);
+//	            return modelMapper.map(feature);
+//	        })
+//        	.orElse(null);
     }
 
     /**
@@ -201,7 +211,7 @@ public class FeatureService {
         List<FeatureDTO> featureDTOS = this.findFeaturesByProtocolId(oldProtocolId);
         for (FeatureDTO f : featureDTOS){
             // Skip the updated feature
-            if (updatedFeatureId != null && f.getId().equals(updatedFeatureId)){
+            if (f.getId().equals(updatedFeatureId)){
                 continue;
             }
             f.setId(null);

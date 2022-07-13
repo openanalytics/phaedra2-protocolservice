@@ -79,14 +79,18 @@ public class CalculationInputValueServiceTest {
 
     @BeforeEach
     void before() {
-        this.calculationInputValueService = new CalculationInputValueService(this.protocolRepository, this.featureRepository, this.calculationInputValueRepository, this.modelMapperInit);
+        this.calculationInputValueService = new CalculationInputValueService(this.protocolRepository, this.featureRepository, this.calculationInputValueRepository, modelMapperInit);
     }
 
     @Test
     public void createCalculationInputValueTest() throws Exception{
         Long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column1")
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -107,8 +111,12 @@ public class CalculationInputValueServiceTest {
     @Test
     public void createCalculationInputValueSourceFeatureIdTest() throws Exception{
         Long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceFeatureId(2L).variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceFeatureId(2L)
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -129,8 +137,12 @@ public class CalculationInputValueServiceTest {
     @Test
     public void updateCalculationInputValueTest() throws Exception{
         Long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column1")
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -159,8 +171,12 @@ public class CalculationInputValueServiceTest {
     @Test
     public void getByFeatureIdCalculationInputValueOneTest() throws Exception {
         Long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column1")
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -182,8 +198,12 @@ public class CalculationInputValueServiceTest {
     @Test
     public void getByFeatureIdCalculationInputValueMultipleTest() throws Exception {
         Long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column1")
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -191,8 +211,12 @@ public class CalculationInputValueServiceTest {
         assertThat(res.getVariableName()).isEqualTo(calculationInputValueDTO.getVariableName());
         assertThat(res.getSourceMeasColName()).isEqualTo(calculationInputValueDTO.getSourceMeasColName());
 
-        CalculationInputValueDTO calculationInputValueDTO2 = CalculationInputValueDTO.builder().sourceMeasColName("Column2").variableName("col2").build();
-        CalculationInputValueDTO res2 = calculationInputValueService.create(featureId,calculationInputValueDTO2);
+        CalculationInputValueDTO calculationInputValueDTO2 = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column2")
+                .variableName("col2")
+                .build();
+        CalculationInputValueDTO res2 = calculationInputValueService.create(calculationInputValueDTO2);
         //Check if returned value is the desired one
         assertThat(res2.getId()).isNotNull();
         assertThat(res2.getFeatureId()).isEqualTo(featureId);
@@ -222,8 +246,12 @@ public class CalculationInputValueServiceTest {
     @Test
     public void getByProtocolIdCalculationInputValueOneTest() throws Exception {
         Long featureId = 3000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column1")
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -245,8 +273,12 @@ public class CalculationInputValueServiceTest {
     @Test
     public void getByProtocolIdCalculationInputValueMultipleTest() throws Exception {
         Long featureId = 3000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
-        CalculationInputValueDTO res = calculationInputValueService.create(featureId,calculationInputValueDTO);
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column1")
+                .variableName("col1")
+                .build();
+        CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
         assertThat(res.getId()).isNotNull();
         assertThat(res.getFeatureId()).isEqualTo(featureId);
@@ -254,8 +286,12 @@ public class CalculationInputValueServiceTest {
         assertThat(res.getVariableName()).isEqualTo(calculationInputValueDTO.getVariableName());
         assertThat(res.getSourceMeasColName()).isEqualTo(calculationInputValueDTO.getSourceMeasColName());
 
-        CalculationInputValueDTO calculationInputValueDTO2 = CalculationInputValueDTO.builder().sourceMeasColName("Column2").variableName("col2").build();
-        CalculationInputValueDTO res2 = calculationInputValueService.create(featureId,calculationInputValueDTO2);
+        CalculationInputValueDTO calculationInputValueDTO2 = CalculationInputValueDTO.builder()
+                .featureId(featureId)
+                .sourceMeasColName("Column2")
+                .variableName("col2")
+                .build();
+        CalculationInputValueDTO res2 = calculationInputValueService.create(calculationInputValueDTO2);
         //Check if returned value is the desired one
         assertThat(res2.getId()).isNotNull();
         assertThat(res2.getFeatureId()).isEqualTo(featureId);

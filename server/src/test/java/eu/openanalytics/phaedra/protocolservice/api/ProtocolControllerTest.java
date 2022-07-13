@@ -120,7 +120,7 @@ public class ProtocolControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<FeatureDTO> featureList = this.objectMapper.readValue(fResponse.getResponse().getContentAsString(), new TypeReference<List<FeatureDTO>>() {});
+        List<FeatureDTO> featureList = this.objectMapper.readValue(fResponse.getResponse().getContentAsString(), new TypeReference<>() {});
 
         for (FeatureDTO featureDTO: featureList) {
             MvcResult civResponse = this.mockMvc.perform(get("/features/" + featureDTO.getId() + "/calculationinputvalue"))
@@ -128,7 +128,7 @@ public class ProtocolControllerTest {
                     .andExpect(status().isOk())
                     .andReturn();
 
-            List<CalculationInputValueDTO> civList = this.objectMapper.readValue(civResponse.getResponse().getContentAsString(), new TypeReference<List<CalculationInputValueDTO>>() {});
+            List<CalculationInputValueDTO> civList = this.objectMapper.readValue(civResponse.getResponse().getContentAsString(), new TypeReference<>() {});
             assertThat(civList).isNotEmpty();
         }
     }
@@ -150,7 +150,7 @@ public class ProtocolControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        Protocol protocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
+        ProtocolDTO protocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
         assertThat(protocol).isNotNull();
         assertThat(protocol.getId()).isEqualTo(protocolId);
 
@@ -158,9 +158,6 @@ public class ProtocolControllerTest {
         protocol.setName(newName);
         String newDescription = "New protocol description";
         protocol.setDescription(newDescription);
-        protocol.setPreviousVersion(protocol.getVersionNumber());
-        String newVersion = "2.0";
-        protocol.setVersionNumber(newVersion);
 
         //Check number of features
         mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", protocolId))
@@ -175,15 +172,15 @@ public class ProtocolControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}", 1L))
+        mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}", protocolId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        Protocol updatedProtocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Protocol.class);
+        ProtocolDTO updatedProtocol = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProtocolDTO.class);
         assertThat(updatedProtocol.getName()).isEqualTo(newName);
         assertThat(updatedProtocol.getDescription()).isEqualTo(newDescription);
-        assertThat(updatedProtocol.getPreviousVersion()).isEqualTo(protocol.getPreviousVersion());
-        assertThat(updatedProtocol.getVersionNumber().split("-")[0]).isEqualTo(newVersion);
+        assertThat(updatedProtocol.getVersionNumber()).isNotEqualTo(protocol.getVersionNumber());
+        assertThat(updatedProtocol.getPreviousVersion()).isEqualTo(protocol.getVersionNumber());
 
         //Check number of features
         mvcResult = this.mockMvc.perform(get("/protocols/{protocolId}/features", updatedProtocol.getId()))
@@ -250,7 +247,7 @@ public class ProtocolControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         Protocol updatedProtocol = objectMapper.readValue(res.getResponse().getContentAsString(), Protocol.class);
-        assertThat(updatedProtocol.getId()).isNotEqualTo(protocol.getId());
+        assertThat(updatedProtocol.getId()).isEqualTo(protocol.getId());
         assertThat(updatedProtocol.getName()).isEqualTo(protocol.getName());
         assertThat(updatedProtocol.getDescription()).isEqualTo(protocol.getDescription());
 
@@ -284,7 +281,7 @@ public class ProtocolControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<FeatureDTO> featureDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<FeatureDTO>>() {});
+        List<FeatureDTO> featureDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(featureDTOs).isNotEmpty();
     }
 }

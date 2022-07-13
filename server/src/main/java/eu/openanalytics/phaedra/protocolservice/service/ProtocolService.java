@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -89,31 +90,41 @@ public class ProtocolService {
      * @param protocolDTO Protocol to be updated
      */
     @CacheEvict(value = "protocols", key = "#protocolDTO?.id")
-    public ProtocolDTO update(ProtocolDTO protocolDTO) {
-        return protocolRepository.findById(protocolDTO.getId())
-        	.map(protocol -> {
-                // Check the ownership of the protocol
-        		performOwnershipCheck(protocol.getId());
+    public ProtocolDTO update(ProtocolDTO protocolDTO) throws ProtocolNotFoundException {
+        authService.performAccessCheck(p -> authService.hasUserAccess());
 
-                // Map the ProtocolDTO to Protocol model object
-        		modelMapper.map(protocolDTO, protocol);
+        // Map protocolDTO object to Protocol object and update protocol version
+        Protocol protocol = updateVersion(modelMapper.map(protocolDTO));
+        // Save the updated protocol
+        Protocol updated = protocolRepository.save(protocol);
 
-                // Update the version number and updated by and on properties
-                Date currentDate = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
-                protocol.setVersionNumber(protocol.getVersionNumber()+"-"+format.format(currentDate));
-                protocol.setUpdatedBy(authService.getCurrentPrincipalName());
-				protocol.setUpdatedOn(currentDate);
+        // Map updated protocol object to ProtocolDTO and return
+        return modelMapper.map(updated);
 
-				// Delete id to create a new copy of the protocol in the DB
-				protocol.setId(null);
-				protocol = protocolRepository.save(protocol);
-
-                // Update the ProtocolDTO id
-                protocolDTO.setId(protocol.getId());
-                return protocolDTO;
-        	})
-        	.orElse(null);
+//        return protocolRepository.findById(protocolDTO.getId())
+//        	.map(protocol -> {
+//                // Check the ownership of the protocol
+//        		performOwnershipCheck(protocol.getId());
+//
+//                // Map the ProtocolDTO to Protocol model object
+//        		modelMapper.map(protocolDTO, protocol);
+//
+//                // Update the version number and updated by and on properties
+//                Date currentDate = new Date();
+//                SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
+//                protocol.setVersionNumber(protocol.getVersionNumber()+"-"+format.format(currentDate));
+//                protocol.setUpdatedBy(authService.getCurrentPrincipalName());
+//				protocol.setUpdatedOn(currentDate);
+//
+//				// Delete id to create a new copy of the protocol in the DB
+//				protocol.setId(null);
+//				protocol = protocolRepository.save(protocol);
+//
+//                // Update the ProtocolDTO id
+//                protocolDTO.setId(protocol.getId());
+//                return protocolDTO;
+//        	})
+//        	.orElse(null);
     }
 
     /**
@@ -194,7 +205,7 @@ public class ProtocolService {
                 urlBuilder.toString(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<TaggedObjectDTO>>() {});
+                new ParameterizedTypeReference<>() {});
 
         List<ProtocolDTO> result = responseEntity.getBody().stream().map(to -> {
             Optional<Protocol> protocol = protocolRepository.findById(to.getObjectId());
@@ -206,4 +217,31 @@ public class ProtocolService {
         return result;
     }
 
+    /**
+     * Update protocol version
+     *
+     * @param protocolId
+     * @throws ProtocolNotFoundException
+     */
+    public void updateVersion(Long protocolId) throws ProtocolNotFoundException {
+        Optional<Protocol> result = protocolRepository.findById(protocolId);
+        if (result.isEmpty())
+            throw new ProtocolNotFoundException(protocolId);
+
+        Protocol protocol = updateVersion(result.get());
+        protocolRepository.save(protocol);
+    }
+
+    public Protocol updateVersion(Protocol protocol) {
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.hhmmss");
+        String newVersion = protocol.getVersionNumber().split("-")[0] + dateFormat.format(currentDate);
+
+        protocol.setUpdatedOn(currentDate);
+        protocol.setUpdatedBy(authService.getCurrentPrincipalName());
+        protocol.setPreviousVersion(protocol.getVersionNumber());
+        protocol.setVersionNumber(newVersion);
+
+        return protocol;
+    }
 }
