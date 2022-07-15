@@ -48,13 +48,6 @@ public class ProtocolRepositoryTest {
     @Autowired
     private ProtocolRepository protocolRepository;
 
-    @Container
-    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
-            .withDatabaseName("phaedra2")
-            .withUrlParam("currentSchema","protocols")
-            .withPassword("inmemory")
-            .withUsername("inmemory");
-
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
         registry.add("DB_URL", Containers.postgreSQLContainer::getJdbcUrl);
