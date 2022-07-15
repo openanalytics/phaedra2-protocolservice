@@ -60,18 +60,18 @@ public class ProtocolController {
 
     @PostMapping("/protocols")
     public ResponseEntity<ProtocolDTO> createProtocol(@RequestBody ProtocolDTO newProtocol) throws DuplicateCalculationInputValueException, FeatureNotFoundException {
-        // 1ste -> create a protocol
+        // step 1 -> create a protocol
         ProtocolDTO savedProtocol = protocolService.create(newProtocol);
 
         if (isNotEmpty(newProtocol.getFeatures())) {
             for (FeatureDTO featureDTO : newProtocol.getFeatures()) {
-                // 2de -> set the newly created protocol id to feature dto and create a feature
+                // step 2 -> set the newly created protocol id to feature dto and create the feature
                 featureDTO.setProtocolId(savedProtocol.getId());
                 FeatureDTO savedFeature = featureService.create(featureDTO);
 
                 if (isNotEmpty(featureDTO.getCivs())) {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
-                        // 3rd -> for every feature create the calculation input values
+                        // step 3 -> for every feature create the calculation input values
                         civDTO = civDTO.withFeatureId(savedFeature.getId());
                         calculationInputValueService.create(civDTO);
                     }

@@ -73,16 +73,10 @@ public class ProtocolService {
     public ProtocolDTO create(ProtocolDTO protocolDTO) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
 
-        Protocol newProtocol = modelMapper.map(protocolDTO);
-        Date currentDate = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
-        newProtocol.setPreviousVersion(null);
-        newProtocol.setVersionNumber(newProtocol.getVersionNumber()+"-"+format.format(currentDate));
-        newProtocol.setCreatedBy(authService.getCurrentPrincipalName());
-        newProtocol.setCreatedOn(currentDate);
-        protocolDTO.setId(protocolRepository.save(newProtocol).getId());
+        // Map protocolDTO object to Protocol object and update protocol version
+        Protocol newProtocol = updateVersion(modelMapper.map(protocolDTO));
 
-        return protocolDTO;
+        return modelMapper.map(protocolRepository.save(newProtocol));
     }
 
     /**
@@ -100,31 +94,6 @@ public class ProtocolService {
 
         // Map updated protocol object to ProtocolDTO and return
         return modelMapper.map(updated);
-
-//        return protocolRepository.findById(protocolDTO.getId())
-//        	.map(protocol -> {
-//                // Check the ownership of the protocol
-//        		performOwnershipCheck(protocol.getId());
-//
-//                // Map the ProtocolDTO to Protocol model object
-//        		modelMapper.map(protocolDTO, protocol);
-//
-//                // Update the version number and updated by and on properties
-//                Date currentDate = new Date();
-//                SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd.hhmmss");
-//                protocol.setVersionNumber(protocol.getVersionNumber()+"-"+format.format(currentDate));
-//                protocol.setUpdatedBy(authService.getCurrentPrincipalName());
-//				protocol.setUpdatedOn(currentDate);
-//
-//				// Delete id to create a new copy of the protocol in the DB
-//				protocol.setId(null);
-//				protocol = protocolRepository.save(protocol);
-//
-//                // Update the ProtocolDTO id
-//                protocolDTO.setId(protocol.getId());
-//                return protocolDTO;
-//        	})
-//        	.orElse(null);
     }
 
     /**
@@ -235,11 +204,13 @@ public class ProtocolService {
     public Protocol updateVersion(Protocol protocol) {
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.hhmmss");
-        String newVersion = protocol.getVersionNumber().split("-")[0] + dateFormat.format(currentDate);
+        String newVersion = protocol.getVersionNumber().split("-")[0] + "-" + dateFormat.format(currentDate);
 
-        protocol.setUpdatedOn(currentDate);
-        protocol.setUpdatedBy(authService.getCurrentPrincipalName());
-        protocol.setPreviousVersion(protocol.getVersionNumber());
+        if (protocol.getId() != null) {
+            protocol.setUpdatedOn(currentDate);
+            protocol.setUpdatedBy(authService.getCurrentPrincipalName());
+            protocol.setPreviousVersion(protocol.getVersionNumber());
+        }
         protocol.setVersionNumber(newVersion);
 
         return protocol;

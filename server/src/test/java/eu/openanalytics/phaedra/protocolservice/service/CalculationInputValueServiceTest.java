@@ -63,13 +63,6 @@ public class CalculationInputValueServiceTest {
 
     private static final eu.openanalytics.phaedra.protocolservice.service.ModelMapper modelMapperInit = new ModelMapper();
 
-    @Container
-    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
-            .withDatabaseName("phaedra2")
-            .withUrlParam("currentSchema", "plates")
-            .withPassword("inmemory")
-            .withUsername("inmemory");
-
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
         registry.add("DB_URL", Containers.postgreSQLContainer::getJdbcUrl);
