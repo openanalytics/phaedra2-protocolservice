@@ -32,7 +32,6 @@ public class Protocol {
 
 	@Id
     private Long id;
-    
 	private String name;
     private String description;
 
@@ -44,6 +43,7 @@ public class Protocol {
     private String previousVersion;
     @Column("version_number")
     private String versionNumber;
+
     @Column("created_on")
     private Date createdOn;
     @Column("created_by")

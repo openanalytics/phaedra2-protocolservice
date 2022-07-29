@@ -82,17 +82,36 @@ public class ModelMapper {
      * Maps a {@link ProtocolDTO} to a {@link Protocol}.
      */
     public Protocol map(ProtocolDTO protocolDTO) {
-        return modelMapper.map(protocolDTO, Protocol.class);
+        Protocol protocol = new Protocol();
+        protocol.setId(protocolDTO.getId());
+        protocol.setName(protocolDTO.getName());
+        protocol.setDescription(protocolDTO.getDescription());
+        protocol.setLowWelltype(protocolDTO.getLowWelltype());
+        protocol.setHighWelltype(protocolDTO.getHighWelltype());
+        protocol.setPreviousVersion(protocolDTO.getPreviousVersion());
+        protocol.setVersionNumber(protocolDTO.getVersionNumber());
+        protocol.setCreatedOn(protocolDTO.getCreatedOn());
+        protocol.setCreatedBy(protocolDTO.getCreatedBy());
+        protocol.setUpdatedOn(protocolDTO.getUpdatedOn());
+        protocol.setUpdatedBy(protocolDTO.getUpdatedBy());
+        return protocol;
     }
 
     /**
      * Maps a {@link ProtocolDTO} to an existing {@link Protocol}, omitting null fields.
      */
     public void map(ProtocolDTO sourceProtocolDTO, Protocol targetProtocol) {
-    	modelMapper
-    		.typeMap(ProtocolDTO.class, Protocol.class)
-    		.setPropertyCondition(Conditions.isNotNull())
-    		.map(sourceProtocolDTO, targetProtocol);
+        targetProtocol.setId(sourceProtocolDTO.getId());
+        targetProtocol.setName(sourceProtocolDTO.getName());
+        targetProtocol.setDescription(sourceProtocolDTO.getDescription());
+        targetProtocol.setLowWelltype(sourceProtocolDTO.getLowWelltype());
+        targetProtocol.setHighWelltype(sourceProtocolDTO.getHighWelltype());
+        targetProtocol.setPreviousVersion(sourceProtocolDTO.getPreviousVersion());
+        targetProtocol.setVersionNumber(sourceProtocolDTO.getVersionNumber());
+        targetProtocol.setCreatedOn(sourceProtocolDTO.getCreatedOn());
+        targetProtocol.setCreatedBy(sourceProtocolDTO.getCreatedBy());
+        targetProtocol.setUpdatedOn(sourceProtocolDTO.getUpdatedOn());
+        targetProtocol.setUpdatedBy(sourceProtocolDTO.getUpdatedBy());
     }
 
     /**
