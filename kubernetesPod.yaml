@@ -12,11 +12,11 @@ spec:
         privileged: true
      resources:
        requests:
-         cpu: 500m
-         memory: 1Gi
-         ephemeral-storage: "8Gi"
-       limits:
-         cpu: 500m
-         memory: 1Gi
          ephemeral-storage: "16Gi"
+         memory: "2Gi"
+         cpu: "1.0"
+       limits:
+         ephemeral-storage: "16Gi"
+         memory: "2Gi"
+         cpu: "1.0"
 
