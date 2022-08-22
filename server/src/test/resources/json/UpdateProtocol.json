@@ -1,0 +1,76 @@
+{
+  "id": 1000,
+  "name": "TestNewUI Update",
+  "lowWelltype": "LC",
+  "highWelltype": "HC",
+  "previousVersion": "1.0.0-20220720.100513",
+  "versionNumber": "1.0.0-20220720.101039",
+  "features": [
+    {
+      "id": 223,
+      "name": "F2",
+      "format": "#.##",
+      "type": "CALCULATION",
+      "sequence": 0,
+      "protocolId": 1000,
+      "formulaId": 69,
+      "civs": [
+        {
+          "id": 235,
+          "featureId": 223,
+          "variableName": "rawValue",
+          "sourceMeasColName": "v1",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        }
+      ],
+      "drcModel": {
+        "featureId": 223,
+        "inputParameters": {}
+      }
+    },
+    {
+      "id": 222,
+      "name": "F1",
+      "format": "#.##",
+      "type": "CALCULATION",
+      "sequence": 0,
+      "protocolId": 1000,
+      "formulaId": 20,
+      "civs": [
+        {
+          "id": 233,
+          "featureId": 222,
+          "variableName": "dup_abc",
+          "sourceMeasColName": "v2",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        },
+        {
+          "id": 232,
+          "featureId": 222,
+          "variableName": "abc_xyz",
+          "sourceMeasColName": "v1",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        },
+        {
+          "id": 234,
+          "featureId": 222,
+          "variableName": "dup_xyz",
+          "sourceMeasColName": "v4",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        }
+      ],
+      "drcModel": {
+        "featureId": 222,
+        "inputParameters": {}
+      }
+    }
+  ],
+  "createdOn": "2022-07-06T07:05:55.155+00:00",
+  "createdBy": "fcb35701-4d7f-4904-9585-2bcc830cf6d2",
+  "updatedOn": "2022-07-20T10:10:39.440+00:00",
+  "updatedBy": "fcb35701-4d7f-4904-9585-2bcc830cf6d2"
+}

@@ -64,7 +64,6 @@ public class ProtocolControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
         registry.add("DB_URL", Containers.postgreSQLContainer::getJdbcUrl);
@@ -189,6 +188,21 @@ public class ProtocolControllerTest {
                 .andReturn();
         features = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         assertThat(features.size()).isEqualTo(6);
+    }
+
+    @Test
+    public void updateProtocolName() throws Exception {
+        String path = "src/test/resources/json/UpdateProtocol.json";
+        File file = new File(path);
+
+        ProtocolDTO protocolDTO = this.objectMapper.readValue(file, ProtocolDTO.class);
+        assertThat(protocolDTO).isNotNull();
+
+        String requestBody = objectMapper.writeValueAsString(protocolDTO);
+        MvcResult mvcResult = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
     @Test
