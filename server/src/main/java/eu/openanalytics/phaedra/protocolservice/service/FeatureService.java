@@ -21,7 +21,6 @@
 package eu.openanalytics.phaedra.protocolservice.service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
@@ -64,49 +63,13 @@ public class FeatureService {
      *
      * @param featureDTO New feature
      */
-    public FeatureDTO create(FeatureDTO featureDTO) {
-//    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
-
-        // Map FeatureDTO to Feature
-        Feature newFeature = modelMapper.map(featureDTO);
-
-        // Save new Feature and create default feature stats
-        var resFeature = featureRepository.save(newFeature);
-        featureStatService.createDefaultsForFeature(resFeature);
-
-        // Update input FeatureDTO with the newly created feature id and return the updated FeatureDTO
-        featureDTO.setId(resFeature.getId());
-        return featureDTO;
-    }
-
-    /**
-     * Update an existing feature
-     *
-     * @param featureDTO Feature updates
-     */
-    public FeatureDTO update(FeatureDTO featureDTO) {
-//    	protocolService.performOwnershipCheck(featureDTO.getProtocolId());
-
-        // Map the featureDTO to a feature object
-        Feature feature = modelMapper.map(featureDTO);
+    public FeatureDTO save(FeatureDTO featureDTO) {
         //TODO: set updatedBy and updatedOn properties
-
-        // Save the feature
-        featureRepository.save(feature);
-
-        // Return updated featureDTO
-        return featureDTO;
-
-        //        return featureRepository.findById(featureDTO.getId())
-//        	.map(feature -> {
-//	            modelMapper.map(featureDTO, feature);
-//	            //Remove id so new feature is created
-//                feature.setId(null);
-//                feature.setProtocolId(newProtocolId);
-//	            featureRepository.save(feature);
-//	            return modelMapper.map(feature);
-//	        })
-//        	.orElse(null);
+        Feature feature = modelMapper.map(featureDTO);
+        var saved = featureRepository.save(feature);
+        if (featureDTO.getId() == null)
+            featureStatService.createDefaultsForFeature(saved);
+        return modelMapper.map(saved);
     }
 
     /**
@@ -115,9 +78,6 @@ public class FeatureService {
      * @param featureId The feature id
      */
     public void delete(Long featureId) {
-//    	Optional.ofNullable(findFeatureById(featureId))
-//    		.ifPresent(feature -> protocolService.performOwnershipCheck(feature.getProtocolId()));
-
         featureRepository.deleteById(featureId);
     }
 
@@ -216,7 +176,7 @@ public class FeatureService {
             }
             f.setId(null);
             f.setProtocolId(newProtocolId);
-            this.create(f);
+            this.save(f);
         }
     }
 

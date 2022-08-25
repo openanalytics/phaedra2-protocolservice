@@ -71,7 +71,7 @@ public class ProtocolController {
             for (FeatureDTO featureDTO : newProtocol.getFeatures()) {
                 // step 2 -> set the newly created protocol id to feature dto and create the feature
                 featureDTO.setProtocolId(savedProtocol.getId());
-                FeatureDTO savedFeature = featureService.create(featureDTO);
+                FeatureDTO savedFeature = featureService.save(featureDTO);
 
                 if (isNotEmpty(featureDTO.getCivs())) {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
@@ -100,7 +100,7 @@ public class ProtocolController {
             for (FeatureDTO featureDTO : updatedProtocol.getFeatures()) {
                 // 2de -> set the newly created protocol id to feature dto and create a feature
                 featureDTO.setProtocolId(updatedProtocol.getId());
-                FeatureDTO savedFeature = featureService.update(featureDTO);
+                FeatureDTO savedFeature = featureService.save(featureDTO);
 
                 if (isNotEmpty(featureDTO.getCivs())) {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {

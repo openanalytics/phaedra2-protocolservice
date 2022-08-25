@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
@@ -57,7 +56,7 @@ public class FeatureController {
         //create new protocol version
 //        ProtocolDTO newProtocol = createNewVersionProtocol(newFeature.getProtocolId(), null);
 //        newFeature.setProtocolId(newProtocol.getId());
-        FeatureDTO savedFeature = featureService.create(newFeature);
+        FeatureDTO savedFeature = featureService.save(newFeature);
         protocolService.updateVersion(savedFeature.getProtocolId());
 
         return new ResponseEntity<>(savedFeature, HttpStatus.CREATED);
@@ -69,7 +68,7 @@ public class FeatureController {
     public ResponseEntity<?> updateFeature(@RequestBody FeatureDTO updateFeature) throws ProtocolNotFoundException {
         //update new protocol version
         protocolService.updateVersion(updateFeature.getProtocolId());
-        FeatureDTO updatedFeature = featureService.update(updateFeature);
+        FeatureDTO updatedFeature = featureService.save(updateFeature);
         return new ResponseEntity<>(updatedFeature, HttpStatus.OK);
     }
 
