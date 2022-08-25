@@ -16,7 +16,7 @@ public class DoseResponseCurvePropertyService {
         this.drcPropertyRepository = drcPropertyRepository;
     }
 
-    public void create(Long featureId, DRCModelDTO drcModel) {
+    public void save(Long featureId, DRCModelDTO drcModel) {
         // Creete model name
         DoseResponseCurveProperty model = new DoseResponseCurveProperty();
         model.setFeatureId(featureId);

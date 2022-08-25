@@ -83,7 +83,7 @@ public class ProtocolController {
 
                 // 4th -> if a dose response curve model is defined create the drc model
                 if (featureDTO.getDrcModel() != null) {
-                    drcSettingsService.create(savedFeature.getId(), featureDTO.getDrcModel());
+                    drcSettingsService.save(savedFeature.getId(), featureDTO.getDrcModel());
                 }
             }
         }
@@ -106,6 +106,7 @@ public class ProtocolController {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
                         // 3rd -> for every feature create the calculation input values
                         log.info("Update existing protocol (save civs): " + new ObjectMapper().writeValueAsString(civDTO));
+                        civDTO = civDTO.withFeatureId(savedFeature.getId());
                         calculationInputValueService.update(savedFeature.getId(), civDTO);
                     }
                 }
@@ -113,7 +114,8 @@ public class ProtocolController {
                 // 4th -> if a dose response curve model is defined create the drc model
                 if (featureDTO.getDrcModel() != null) {
                     log.info("Update existing protocol (save drc model): " + new ObjectMapper().writeValueAsString(featureDTO.getDrcModel()));
-                    drcSettingsService.create(savedFeature.getId(), featureDTO.getDrcModel());
+                    featureDTO.getDrcModel().setFeatureId(savedFeature.getId());
+                    drcSettingsService.save(savedFeature.getId(), featureDTO.getDrcModel());
                 }
             }
         }

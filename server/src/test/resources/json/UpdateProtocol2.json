@@ -16,6 +16,16 @@
       "sequence": 0,
       "protocolId": 1000,
       "formulaId": 21,
+      "civs": [
+        {
+          "id": null,
+          "featureId": null,
+          "variableName": "abc",
+          "sourceMeasColName": "abc",
+          "sourceFeatureId": null,
+          "inputSource": "MEASUREMENT"
+        }
+      ],
       "drcModel": {
         "name": "PLOTONLY",
         "description": "Plots the data points but will not attempt any curve fitting",

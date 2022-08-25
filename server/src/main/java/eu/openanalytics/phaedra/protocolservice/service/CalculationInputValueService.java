@@ -77,6 +77,9 @@ public class CalculationInputValueService {
             throw new FeatureNotFoundException(featureId);
         }
 
+        if (calculationInputValueDTO.getId() == null)
+            return create(calculationInputValueDTO);
+
         Optional<CalculationInputValue> calculationInputValue = calculationInputValueRepository.findById(calculationInputValueDTO.getId());
         calculationInputValue.ifPresent(c -> {
             c = modelMapper.map(calculationInputValueDTO).build();
