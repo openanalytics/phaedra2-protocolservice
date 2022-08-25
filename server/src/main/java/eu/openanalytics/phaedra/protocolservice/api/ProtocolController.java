@@ -101,21 +101,22 @@ public class ProtocolController {
                 // 2de -> set the newly created protocol id to feature dto and create a feature
                 featureDTO.setProtocolId(updatedProtocol.getId());
                 FeatureDTO savedFeature = featureService.save(featureDTO);
-
+                log.info("Update existing protocol (save feature): " + new ObjectMapper().writeValueAsString(featureDTO));
                 if (isNotEmpty(featureDTO.getCivs())) {
                     for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
                         // 3rd -> for every feature create the calculation input values
+                        log.info("Update existing protocol (save civs): " + new ObjectMapper().writeValueAsString(civDTO));
                         calculationInputValueService.update(savedFeature.getId(), civDTO);
                     }
                 }
 
                 // 4th -> if a dose response curve model is defined create the drc model
                 if (featureDTO.getDrcModel() != null) {
+                    log.info("Update existing protocol (save drc model): " + new ObjectMapper().writeValueAsString(featureDTO.getDrcModel()));
                     drcSettingsService.create(savedFeature.getId(), featureDTO.getDrcModel());
                 }
             }
         }
-//        featureService.updateFeaturesToNewProtocol(updateProtocol.getId(), updatedProtocol.getId(), null);
         return new ResponseEntity<>(updatedProtocol, HttpStatus.OK);
     }
 
