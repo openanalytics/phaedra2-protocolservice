@@ -96,8 +96,8 @@ public class ProtocolController {
         log.info("Update existing protocol: " + new ObjectMapper().writeValueAsString(updateProtocol));
 
         ProtocolDTO updatedProtocol = protocolService.update(updateProtocol);
-        if (isNotEmpty(updatedProtocol.getFeatures())) {
-            for (FeatureDTO featureDTO : updatedProtocol.getFeatures()) {
+        if (isNotEmpty(updateProtocol.getFeatures())) {
+            for (FeatureDTO featureDTO : updateProtocol.getFeatures()) {
                 // 2de -> set the newly created protocol id to feature dto and create a feature
                 featureDTO.setProtocolId(updatedProtocol.getId());
                 FeatureDTO savedFeature = featureService.save(featureDTO);

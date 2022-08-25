@@ -7,64 +7,24 @@
   "versionNumber": "1.0.0-20220720.101039",
   "features": [
     {
-      "id": 223,
       "name": "F2",
       "format": "#.##",
       "type": "CALCULATION",
       "sequence": 0,
       "protocolId": 1000,
       "formulaId": 69,
-      "civs": [
-        {
-          "id": 235,
-          "featureId": 223,
-          "variableName": "rawValue",
-          "sourceMeasColName": "v1",
-          "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
-        }
-      ],
       "drcModel": {
-        "featureId": 223,
         "inputParameters": {}
       }
     },
     {
-      "id": 222,
       "name": "F1",
       "format": "#.##",
       "type": "CALCULATION",
       "sequence": 0,
       "protocolId": 1000,
       "formulaId": 20,
-      "civs": [
-        {
-          "id": 233,
-          "featureId": 222,
-          "variableName": "dup_abc",
-          "sourceMeasColName": "v2",
-          "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
-        },
-        {
-          "id": 232,
-          "featureId": 222,
-          "variableName": "abc_xyz",
-          "sourceMeasColName": "v1",
-          "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
-        },
-        {
-          "id": 234,
-          "featureId": 222,
-          "variableName": "dup_xyz",
-          "sourceMeasColName": "v4",
-          "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
-        }
-      ],
       "drcModel": {
-        "featureId": 222,
         "inputParameters": {}
       }
     }

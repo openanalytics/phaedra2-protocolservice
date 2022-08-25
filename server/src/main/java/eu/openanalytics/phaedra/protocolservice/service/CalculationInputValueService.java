@@ -76,7 +76,6 @@ public class CalculationInputValueService {
     	if (feature.isEmpty()) {
             throw new FeatureNotFoundException(featureId);
         }
-//    	protocolService.performOwnershipCheck(feature.getProtocolId());
 
         Optional<CalculationInputValue> calculationInputValue = calculationInputValueRepository.findById(calculationInputValueDTO.getId());
         calculationInputValue.ifPresent(c -> {

@@ -191,6 +191,21 @@ public class ProtocolControllerTest {
     }
 
     @Test
+    public void updateProtocol2() throws Exception {
+        String path = "src/test/resources/json/UpdateProtocol2.json";
+        File file = new File(path);
+
+        ProtocolDTO protocolDTO = this.objectMapper.readValue(file, ProtocolDTO.class);
+        assertThat(protocolDTO).isNotNull();
+
+        String requestBody = objectMapper.writeValueAsString(protocolDTO);
+        MvcResult mvcResult = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
     public void updateProtocolName() throws Exception {
         String path = "src/test/resources/json/UpdateProtocol.json";
         File file = new File(path);

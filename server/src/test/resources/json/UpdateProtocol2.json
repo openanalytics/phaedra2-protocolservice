@@ -1,0 +1,30 @@
+{
+  "id": 1000,
+  "name": "Sasa1",
+  "description": "Sasa's test protocol 1",
+  "lowWelltype": "LC",
+  "highWelltype": "HC",
+  "previousVersion": "1.1.1-20220825.072447",
+  "versionNumber": "1.1.1-20220825.073026",
+  "features": [
+    {
+      "name": "Feature 1",
+      "alias": "F1",
+      "description": "Feature 1",
+      "format": "#.##",
+      "type": "CALCULATION",
+      "sequence": 0,
+      "protocolId": 1000,
+      "formulaId": 21,
+      "drcModel": {
+        "name": "PLOTONLY",
+        "description": "Plots the data points but will not attempt any curve fitting",
+        "method": "CENS",
+        "inputParameters": {}
+      }
+    }
+  ],
+  "createdOn": 1661352917067,
+  "updatedOn": 1661412626676,
+  "updatedBy": "fcb35701-4d7f-4904-9585-2bcc830cf6d2"
+}
