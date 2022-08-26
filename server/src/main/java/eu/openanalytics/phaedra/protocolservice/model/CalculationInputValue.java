@@ -38,6 +38,7 @@ public class CalculationInputValue {
     @Id
     Long id;
     Long featureId;
+    Long formulaId;
     String sourceMeasColName;
     Long sourceFeatureId;
     String variableName;

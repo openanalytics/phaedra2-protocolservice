@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - addColumn:
+            tableName: calculation_input_value
+            columns:
+              - column:
+                  name: formula_id
+                  type: bigint

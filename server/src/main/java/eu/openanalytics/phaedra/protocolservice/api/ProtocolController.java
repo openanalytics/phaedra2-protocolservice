@@ -98,24 +98,27 @@ public class ProtocolController {
         ProtocolDTO updatedProtocol = protocolService.update(updateProtocol);
         if (isNotEmpty(updateProtocol.getFeatures())) {
             for (FeatureDTO featureDTO : updateProtocol.getFeatures()) {
-                // 2de -> set the newly created protocol id to feature dto and create a feature
-                featureDTO.setProtocolId(updatedProtocol.getId());
-                FeatureDTO savedFeature = featureService.save(featureDTO);
-                log.info("Update existing protocol (save feature): " + new ObjectMapper().writeValueAsString(featureDTO));
-                if (isNotEmpty(featureDTO.getCivs())) {
-                    for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
-                        // 3rd -> for every feature create the calculation input values
-                        log.info("Update existing protocol (save civs): " + new ObjectMapper().writeValueAsString(civDTO));
-                        civDTO = civDTO.withFeatureId(savedFeature.getId());
-                        calculationInputValueService.update(savedFeature.getId(), civDTO);
-                    }
-                }
 
-                // 4th -> if a dose response curve model is defined create the drc model
-                if (featureDTO.getDrcModel() != null) {
-                    log.info("Update existing protocol (save drc model): " + new ObjectMapper().writeValueAsString(featureDTO.getDrcModel()));
-                    featureDTO.getDrcModel().setFeatureId(savedFeature.getId());
-                    drcSettingsService.save(savedFeature.getId(), featureDTO.getDrcModel());
+                if (featureDTO.isDeleted()) {
+                    featureService.delete(featureDTO.getId());
+                } else {
+                    featureDTO.setProtocolId(updatedProtocol.getId());
+                    FeatureDTO savedFeature = featureService.save(featureDTO);
+                    log.info("Update existing protocol (save feature): " + new ObjectMapper().writeValueAsString(featureDTO));
+                    if (isNotEmpty(featureDTO.getCivs())) {
+                        for (CalculationInputValueDTO civDTO : featureDTO.getCivs()) {
+                            // 3rd -> for every feature create the calculation input values
+                            log.info("Update existing protocol (save civs): " + new ObjectMapper().writeValueAsString(civDTO));
+                            civDTO = civDTO.withFeatureId(savedFeature.getId());
+                            calculationInputValueService.update(savedFeature.getId(), civDTO);
+                        }
+                    }
+
+                    if (featureDTO.getDrcModel() != null) {
+                        log.info("Update existing protocol (save drc model): " + new ObjectMapper().writeValueAsString(featureDTO.getDrcModel()));
+                        featureDTO.getDrcModel().setFeatureId(savedFeature.getId());
+                        drcSettingsService.save(savedFeature.getId(), featureDTO.getDrcModel());
+                    }
                 }
             }
         }

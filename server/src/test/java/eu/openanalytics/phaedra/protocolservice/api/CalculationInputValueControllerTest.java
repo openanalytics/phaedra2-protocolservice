@@ -70,7 +70,7 @@ public class CalculationInputValueControllerTest {
     @Test
     public void CalculationInputValuePostTest() throws Exception {
         long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(1000L).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
         MvcResult mvcResult = this.mockMvc.perform(post("/features/" + featureId + "/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
@@ -87,7 +87,7 @@ public class CalculationInputValueControllerTest {
     @Test
     public void CalculationInputValuePutTest() throws Exception {
         long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(1000L).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
         MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
@@ -100,7 +100,7 @@ public class CalculationInputValueControllerTest {
         assertThat(body.getSourceMeasColName()).isEqualTo("Column1");
         assertThat(body.getVariableName()).isEqualTo("col1");
 
-        CalculationInputValueDTO changed = CalculationInputValueDTO.builder().id(1L).sourceMeasColName("Column2").variableName("col2").featureId(1000L).build();
+        CalculationInputValueDTO changed = CalculationInputValueDTO.builder().id(1L).formulaId(2000L).sourceMeasColName("Column2").variableName("col2").featureId(1000L).build();
         String requestBody2 = objectMapper.writeValueAsString(changed);
         MvcResult mvcResult2 = this.mockMvc.perform(put("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
                 .andDo(print())
@@ -117,7 +117,7 @@ public class CalculationInputValueControllerTest {
     @Test
     public void CalculationInputValueGetFoundTest() throws Exception {
         long featureId = 1000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(1000L).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
         MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
@@ -161,7 +161,7 @@ public class CalculationInputValueControllerTest {
     public void CalculationInputValueGetByProtocolIdFoundTest() throws Exception {
         long protocolId = 1000L;
         long featureId = 3000L;
-        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().sourceMeasColName("Column1").variableName("col1").build();
+        CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(1000L).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
         MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())

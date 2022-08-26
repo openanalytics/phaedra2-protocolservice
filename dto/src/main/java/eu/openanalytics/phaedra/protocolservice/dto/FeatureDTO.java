@@ -47,4 +47,6 @@ public class FeatureDTO {
     List<CalculationInputValueDTO> civs;
     DRCModelDTO drcModel;
     String trigger;
+    String status;
+    boolean deleted = false;
 }

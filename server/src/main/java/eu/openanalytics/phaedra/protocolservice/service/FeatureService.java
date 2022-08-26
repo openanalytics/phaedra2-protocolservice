@@ -47,7 +47,6 @@ public class FeatureService {
     private final RestTemplate restTemplate;
     private final FeatureRepository featureRepository;
     private final FeatureStatService featureStatService;
-//    private final ProtocolService protocolService;
 
     public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
     		FeatureStatService featureStatService) {
@@ -55,7 +54,6 @@ public class FeatureService {
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
         this.featureStatService = featureStatService;
-//        this.protocolService = protocolService;
     }
 
     /**

@@ -44,17 +44,14 @@ public class CalculationInputValueDTO {
 
     @Null
     Long id;
-
     @Null
     Long featureId;
-
+    @NotNull
+    Long formulaId;
     @NotNull
     String variableName;
-
     String sourceMeasColName;
-
     Long sourceFeatureId;
-
     InputSource inputSource;
 
     @JsonIgnore

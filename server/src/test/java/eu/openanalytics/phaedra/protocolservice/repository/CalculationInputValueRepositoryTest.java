@@ -64,7 +64,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void createCalculationInputValue() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.MEASUREMENT);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.MEASUREMENT);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -74,7 +74,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void deleteCalculationInputValue() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -91,14 +91,14 @@ public class CalculationInputValueRepositoryTest {
     @Test
     public void updateCalculationInputValue() {
         //Add new civ
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getVariableName()).isEqualTo(calculationInputValue.getVariableName());
 
-        CalculationInputValue updated = new CalculationInputValue(saved.getId(),saved.getFeatureId(),"Column2",saved.getSourceFeatureId(),"col2", InputSource.FEATURE);
+        CalculationInputValue updated = new CalculationInputValue(saved.getId(),saved.getFeatureId(), 1000L,"Column2",saved.getSourceFeatureId(),"col2", InputSource.FEATURE);
         CalculationInputValue saved2 = calculationInputValueRepository.save(updated);
 
         assertThat(saved2).isNotNull();
@@ -109,7 +109,7 @@ public class CalculationInputValueRepositoryTest {
     @Test
     public void getCalculatioInputValueById() {
         //Add new civ
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -124,7 +124,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void getCalculationInputValueByFeatureId() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
@@ -141,7 +141,7 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void getCalculationInputValueByProtocolId() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L,"Column1",1000L,"col1", InputSource.FEATURE);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.FEATURE);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
