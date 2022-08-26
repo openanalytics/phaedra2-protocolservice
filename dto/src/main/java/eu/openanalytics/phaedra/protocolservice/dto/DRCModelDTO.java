@@ -19,5 +19,6 @@ public class DRCModelDTO {
     String name;
     String description;
     String method;
+    String slope;
     Map<String, String> inputParameters = new HashMap<>();
 }
