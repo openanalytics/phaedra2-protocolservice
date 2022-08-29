@@ -100,6 +100,7 @@ public class ProtocolController {
             for (FeatureDTO featureDTO : updateProtocol.getFeatures()) {
 
                 if (featureDTO.isDeleted()) {
+                    log.info("Delete existing protocol (delete feature): " + new ObjectMapper().writeValueAsString(featureDTO));
                     featureService.delete(featureDTO.getId());
                 } else {
                     featureDTO.setProtocolId(updatedProtocol.getId());

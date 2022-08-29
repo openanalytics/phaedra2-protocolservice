@@ -36,6 +36,12 @@ public class DoseResponseCurvePropertyService {
         description.setValue(drcModel.getDescription());
         drcPropertyRepository.save(description);
 
+        DoseResponseCurveProperty slope = new DoseResponseCurveProperty();
+        slope.setFeatureId(featureId);
+        slope.setName("slope");
+        slope.setValue(drcModel.getSlope());
+        drcPropertyRepository.save(slope);
+
         for (String propertyName : drcModel.getInputParameters().keySet()) {
             DoseResponseCurveProperty property = new DoseResponseCurveProperty();
             property.setFeatureId(featureId);
