@@ -60,6 +60,7 @@ public class DoseResponseCurvePropertyService {
             if (drcProp.getName().equalsIgnoreCase("model")) drcModelDTO.setName(drcProp.getValue());
             else if (drcProp.getName().equalsIgnoreCase("description")) drcModelDTO.setDescription(drcProp.getValue());
             else if (drcProp.getName().equalsIgnoreCase("method")) drcModelDTO.setMethod(drcProp.getValue());
+            else if (drcProp.getName().equalsIgnoreCase("slope")) drcModelDTO.setSlope(drcProp.getValue());
             else drcModelDTO.getInputParameters().put(drcProp.getName(), drcProp.getValue());
         }
 
