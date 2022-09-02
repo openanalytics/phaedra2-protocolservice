@@ -82,6 +82,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column1")
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -108,6 +109,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceFeatureId(2L)
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -134,6 +136,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column1")
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -168,6 +171,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column1")
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -195,6 +199,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column1")
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -208,6 +213,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column2")
                 .variableName("col2")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res2 = calculationInputValueService.create(calculationInputValueDTO2);
         //Check if returned value is the desired one
@@ -243,6 +249,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column1")
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -270,6 +277,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column1")
                 .variableName("col1")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res = calculationInputValueService.create(calculationInputValueDTO);
         //Check if returned value is the desired one
@@ -283,6 +291,7 @@ public class CalculationInputValueServiceTest {
                 .featureId(featureId)
                 .sourceMeasColName("Column2")
                 .variableName("col2")
+                .formulaId(1000L)
                 .build();
         CalculationInputValueDTO res2 = calculationInputValueService.create(calculationInputValueDTO2);
         //Check if returned value is the desired one

@@ -106,7 +106,7 @@ public class CalculationInputValueService {
             throw new FeatureNotFoundException(featureId);
         }
 
-        return calculationInputValueRepository.findByFeatureId(featureId)
+        return calculationInputValueRepository.findByFeatureIdAndFormulaId(featureId, feature.get().getFormulaId())
                 .stream()
                 .map((f) -> modelMapper.map(f).build())
                 .toList();

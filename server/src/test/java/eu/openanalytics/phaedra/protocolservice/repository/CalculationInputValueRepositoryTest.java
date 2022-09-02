@@ -131,7 +131,7 @@ public class CalculationInputValueRepositoryTest {
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getVariableName()).isEqualTo(calculationInputValue.getVariableName());
 
-        List<CalculationInputValue> get = calculationInputValueRepository.findByFeatureId(saved.getFeatureId());
+        List<CalculationInputValue> get = calculationInputValueRepository.findByFeatureIdAndFormulaId(saved.getFeatureId(), saved.getFormulaId());
         assertThat(get).isNotNull();
         assertThat(get.size()).isEqualTo(1);
         assertThat(get.get(0).getId()).isNotNull();
