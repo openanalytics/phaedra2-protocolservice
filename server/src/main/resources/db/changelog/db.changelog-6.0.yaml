@@ -16,8 +16,10 @@ databaseChangeLog:
         - dropUniqueConstraint:
             constraintName: calculation_input_value_feature_id_source_meas_col_name_key
             tableName: calculation_input_value
-            columns:
-              - column:
-                  name: formula_id
-                  type: bigint
-
+  - changeSet:
+      id: 3
+      author: sberberovic
+      changes:
+        - dropUniqueConstraint:
+            constraintName: calculation_input_value_feature_id_source_feature_id_key
+            tableName: calculation_input_value
