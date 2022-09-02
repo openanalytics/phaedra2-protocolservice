@@ -155,8 +155,8 @@ public class CalculationInputValueServiceTest {
         assertThat(converted.getVariableName()).isEqualTo(calculationInputValueDTO.getVariableName());
         assertThat(converted.getSourceMeasColName()).isEqualTo(calculationInputValueDTO.getSourceMeasColName());
 
-        CalculationInputValueDTO edited = CalculationInputValueDTO.builder().id(1L).sourceMeasColName("Column2").variableName("col2").featureId(featureId).build();
-        CalculationInputValueDTO res3 = calculationInputValueService.update(featureId,edited);
+        CalculationInputValueDTO edited = converted.withSourceMeasColName("Column2");
+        CalculationInputValueDTO res3 = calculationInputValueService.update(featureId, edited);
         assertThat(res3.getId()).isNotNull();
         assertThat(res3.getFeatureId()).isEqualTo(featureId);
         assertThat(res3.getSourceFeatureId()).isEqualTo(edited.getSourceFeatureId());

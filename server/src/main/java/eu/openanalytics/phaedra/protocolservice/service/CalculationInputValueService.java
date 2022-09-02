@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class CalculationInputValueService {
         CalculationInputValue civ = modelMapper.map(calculationInputValueDTO).build();
         CalculationInputValue newCiv = calculationInputValueRepository.save(civ);
 
-        return calculationInputValueDTO.withId(newCiv.getId());
+        return modelMapper.map(newCiv).build();
     }
 
     public CalculationInputValueDTO update(Long featureId, CalculationInputValueDTO calculationInputValueDTO) throws FeatureNotFoundException, DuplicateCalculationInputValueException {
@@ -77,15 +78,12 @@ public class CalculationInputValueService {
             throw new FeatureNotFoundException(featureId);
         }
 
-        if (calculationInputValueDTO.getId() == null)
+        CalculationInputValue civ = calculationInputValueRepository.findByFeatureIdAndFormulaIdAndVariableName(featureId, calculationInputValueDTO.getFormulaId(), calculationInputValueDTO.getVariableName());
+        if (civ == null)
             return create(calculationInputValueDTO);
 
-        Optional<CalculationInputValue> calculationInputValue = calculationInputValueRepository.findById(calculationInputValueDTO.getId());
-        calculationInputValue.ifPresent(c -> {
-            c = modelMapper.map(calculationInputValueDTO).build();
-            calculationInputValueRepository.save(c);
-        });
-        return calculationInputValueDTO;
+        CalculationInputValue updated = modelMapper.map(calculationInputValueDTO).build().withId(civ.getId());
+        return modelMapper.map(calculationInputValueRepository.save(updated)).build();
     }
 
     public void delete(Long calculationInputValueId) {

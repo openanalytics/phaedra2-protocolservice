@@ -20,6 +20,7 @@
         {
           "id": null,
           "featureId": null,
+          "formulaId": 21,
           "variableName": "abc",
           "sourceMeasColName": "abc",
           "sourceFeatureId": null,

@@ -31,7 +31,9 @@ import java.util.List;
 @Repository
 public interface CalculationInputValueRepository extends CrudRepository<CalculationInputValue, Long> {
 
+    List<CalculationInputValue> findByFeatureId(Long featureId);
     List<CalculationInputValue> findByFeatureIdAndFormulaId(Long featureId, Long formulaId);
+    CalculationInputValue findByFeatureIdAndFormulaIdAndVariableName(long featureId, long formulaId, String variableName);
 
     @Query("SELECT civ.* FROM calculation_input_value as civ" +
             " JOIN feature as feat ON feat.id = civ.feature_id AND feat.formula_id = civ.formula_id" +

@@ -111,7 +111,7 @@ public class ProtocolController {
                             // 3rd -> for every feature create the calculation input values
                             log.info("Update existing protocol (save civs): " + new ObjectMapper().writeValueAsString(civDTO));
                             civDTO = civDTO.withFeatureId(savedFeature.getId());
-                            calculationInputValueService.update(savedFeature.getId(), civDTO);
+                            civDTO = calculationInputValueService.update(savedFeature.getId(), civDTO);
                         }
                     }
 
