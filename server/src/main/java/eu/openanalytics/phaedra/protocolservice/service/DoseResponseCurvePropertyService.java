@@ -52,10 +52,13 @@ public class DoseResponseCurvePropertyService {
     }
 
     public DRCModelDTO getByFeatureId(Long featureId) {
+        List<DoseResponseCurveProperty> drcProperties = drcPropertyRepository.findAllByFeatureId(featureId);
+        if (drcProperties.isEmpty())
+            return null;
+
         DRCModelDTO drcModelDTO = new DRCModelDTO();
         drcModelDTO.setFeatureId(featureId);
 
-        List<DoseResponseCurveProperty> drcProperties = drcPropertyRepository.findAllByFeatureId(featureId);
         for (DoseResponseCurveProperty drcProp: drcProperties) {
             if (drcProp.getName().equalsIgnoreCase("model")) drcModelDTO.setName(drcProp.getValue());
             else if (drcProp.getName().equalsIgnoreCase("description")) drcModelDTO.setDescription(drcProp.getValue());
