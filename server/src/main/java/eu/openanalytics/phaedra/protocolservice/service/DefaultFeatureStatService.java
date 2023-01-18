@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -52,14 +52,14 @@ public class DefaultFeatureStatService {
 
     public DefaultFeatureStatDTO create(DefaultFeatureStatDTO defaultFeatureStatDTO) throws FeatureNotFoundException, DuplicateFeatureStatException {
     	authService.performAccessCheck(p -> authService.hasAdminAccess());
-    	
+
         DefaultFeatureStat defaultFeatureStat = modelMapper.map(defaultFeatureStatDTO).build();
         return save(defaultFeatureStat);
     }
 
     public DefaultFeatureStatDTO update(DefaultFeatureStatDTO defaultFeatureStatDTO) throws UserVisibleException {
     	authService.performAccessCheck(p -> authService.hasAdminAccess());
-    	
+
         Optional<DefaultFeatureStat> existingDefaultFeatureStat = defaultFeatureStatRepository.findById(defaultFeatureStatDTO.getId());
         if (existingDefaultFeatureStat.isEmpty()) {
             throw new DefaultFeatureStatNotFoundException(defaultFeatureStatDTO.getId());
@@ -83,7 +83,7 @@ public class DefaultFeatureStatService {
 
     public void delete(Long defaultFeatureStatId) throws UserVisibleException {
     	authService.performAccessCheck(p -> authService.hasAdminAccess());
-    	
+
         Optional<DefaultFeatureStat> featureStat = defaultFeatureStatRepository.findById(defaultFeatureStatId);
         if (featureStat.isEmpty()) {
             throw new DefaultFeatureStatNotFoundException(defaultFeatureStatId);

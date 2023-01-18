@@ -18,30 +18,20 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.protocolservice.model;
+package eu.openanalytics.phaedra.protocolservice.dto.validation;
 
-import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Value;
-import lombok.With;
-import lombok.experimental.NonFinal;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
-@Value
-@Builder
-@With
-@AllArgsConstructor
-@NonFinal
-public class CalculationInputValue {
-    @Id
+import javax.validation.constraints.NotNull;
+
+@Data
+@NoArgsConstructor
+public class DRCPropertyDTO {
     Long id;
     Long featureId;
-    Long formulaId;
-    String sourceMeasColName;
-    Long sourceFeatureId;
-    String variableName;
-    @Column("input_source")
-    InputSource inputSource;
+    String name;
+    String value;
 }

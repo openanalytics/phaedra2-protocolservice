@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -48,7 +48,7 @@ public class FeatureStatService {
     private final ModelMapper modelMapper;
     private final ProtocolService protocolService;
     private final DefaultFeatureStatService defaultFeatureStatService;
-    
+
     public FeatureStatService(FeatureStatRepository featureStatRepository, FeatureRepository featureRepository, ModelMapper modelMapper,
     		ProtocolService protocolService, DefaultFeatureStatService defaultFeatureStatService) {
         this.featureStatRepository = featureStatRepository;
@@ -84,7 +84,7 @@ public class FeatureStatService {
 
         var feature = featureRepository.findById(featureStatDTO.getFeatureId());
         protocolService.performOwnershipCheck(feature.get().getProtocolId());
-        
+
         FeatureStat updatedFeatureStat = modelMapper.map(featureStatDTO).build();
         return save(updatedFeatureStat);
     }
@@ -110,10 +110,10 @@ public class FeatureStatService {
         if (!Objects.equals(featureStat.get().getFeatureId(), featureId)) {
             throw new UserVisibleException("The provided featureId is not equal to the actual featureId of the FeatureStat");
         }
-        
+
         var feature = featureRepository.findById(featureId);
         protocolService.performOwnershipCheck(feature.get().getProtocolId());
-        
+
         featureStatRepository.deleteById(featureStatId);
     }
 
