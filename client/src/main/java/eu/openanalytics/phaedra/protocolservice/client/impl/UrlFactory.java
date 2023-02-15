@@ -43,4 +43,8 @@ public class UrlFactory {
     public static String featureStats(long protocolId) {
         return String.format("%s/protocols/%s/featurestat", PROTOCOL_SERVICE, protocolId);
     }
+
+    public static String feature(long featureId) {
+        return String.format("%s/features/%s", PROTOCOL_SERVICE, featureId);
+    }
 }

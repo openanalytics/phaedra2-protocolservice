@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.protocolservice.client.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import eu.openanalytics.phaedra.protocolservice.client.exception.FeatureUnresolvableException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -46,7 +47,7 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
 
     private final RestTemplate restTemplate;
     private final IAuthorizationService authService;
-    
+
     public HttpProtocolServiceClient(PhaedraRestTemplate restTemplate, IAuthorizationService authService) {
         this.restTemplate = restTemplate;
         this.authService = authService;
@@ -134,6 +135,22 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
             throw new DefaultFeatureStatUnresolvableException("FeatureStats not found");
         } catch (HttpClientErrorException ex) {
             throw new DefaultFeatureStatUnresolvableException("Error while fetching FeatureStats");
+        }
+    }
+
+    @Override
+    public FeatureDTO getFeature(long featureId) throws FeatureUnresolvableException {
+        try {
+            HttpEntity<String> httpEntity = new HttpEntity<>(makeHttpHeaders());
+            var res = restTemplate.exchange(UrlFactory.feature(featureId), HttpMethod.GET, httpEntity, FeatureDTO.class);
+            if (res == null) {
+                throw new FeatureUnresolvableException("Feature could not be converted");
+            }
+            return res.getBody();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new FeatureUnresolvableException("Feature not found");
+        } catch (HttpClientErrorException ex) {
+            throw new FeatureUnresolvableException("Error while fetching feature");
         }
     }
 
