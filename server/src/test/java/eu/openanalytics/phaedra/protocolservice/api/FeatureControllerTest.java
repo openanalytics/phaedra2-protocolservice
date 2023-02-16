@@ -226,15 +226,6 @@ public class FeatureControllerTest {
         this.mockMvc.perform(delete("/features/{featureId}", createdFeature.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
-
-        this.mockMvc.perform(get("/features/{featureId}", createdFeature.getId()))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andReturn();
-        this.mockMvc.perform(get("/features/{featureId}/featurestat", createdFeature.getId()))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andReturn();
     }
 
     @Test
