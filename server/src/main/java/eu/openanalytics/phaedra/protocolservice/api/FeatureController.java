@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.protocolservice.api;
 import java.util.List;
 
 import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,9 +93,13 @@ public class FeatureController {
 
     @GetMapping("/features/{featureId}")
     public ResponseEntity<?> getFeatureById(@PathVariable Long featureId) {
-        FeatureDTO result = featureService.findFeatureById(featureId);
-        if (result == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        else return new ResponseEntity<>(result, HttpStatus.OK);
+        FeatureDTO result = null;
+        try {
+            result = featureService.findFeatureById(featureId);
+        } catch (FeatureNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/features/{featureId}/tag")

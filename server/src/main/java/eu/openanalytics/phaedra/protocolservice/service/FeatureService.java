@@ -20,8 +20,10 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
+import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
+import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
 import org.springframework.core.ParameterizedTypeReference;
@@ -47,13 +49,17 @@ public class FeatureService {
     private final RestTemplate restTemplate;
     private final FeatureRepository featureRepository;
     private final FeatureStatService featureStatService;
+    private final DoseResponseCurvePropertyService drcPropertyService;
+    private final CalculationInputValueService civService;
 
     public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
-    		FeatureStatService featureStatService) {
+                          FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService, CalculationInputValueService civService) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
         this.featureStatService = featureStatService;
+        this.drcPropertyService = drcPropertyService;
+        this.civService = civService;
     }
 
     /**
@@ -104,9 +110,16 @@ public class FeatureService {
      *
      * @param featureId The feature id
      */
-    public FeatureDTO findFeatureById(Long featureId) {
+    public FeatureDTO findFeatureById(Long featureId) throws FeatureNotFoundException {
         Optional<Feature> feature = featureRepository.findById(featureId);
-        return feature.map(modelMapper::map).orElse(null);
+        FeatureDTO featureDTO = feature.map(modelMapper::map).orElse(null);
+
+        if (featureDTO != null) {
+            featureDTO.setDrcModel(drcPropertyService.getByFeatureId(featureId));
+            featureDTO.setCivs(civService.getByFeatureId(featureId));
+        }
+
+        return featureDTO;
     }
 
     /**
