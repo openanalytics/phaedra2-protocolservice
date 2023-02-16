@@ -35,4 +35,12 @@ public interface DoseResponseCurvePropertyRepository extends CrudRepository<Dose
      * @return list of dose response curve properties
      */
     List<DoseResponseCurveProperty> findAllByFeatureId(Long featureId);
+
+    /**
+     * Retrieve a specific property by featureId and name
+     * @param featureId The feature id
+     * @param name The drc property name
+     * @return
+     */
+    DoseResponseCurveProperty findAllByFeatureIdAndName(Long featureId, String name);
 }

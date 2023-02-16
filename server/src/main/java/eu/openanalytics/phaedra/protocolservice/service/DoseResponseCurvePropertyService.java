@@ -38,35 +38,30 @@ public class DoseResponseCurvePropertyService {
 
     public void save(Long featureId, DRCModelDTO drcModel) {
         // Creete model name
-        DoseResponseCurveProperty model = new DoseResponseCurveProperty();
-        model.setFeatureId(featureId);
-        model.setName("model");
-        model.setValue(drcModel.getName());
+        DoseResponseCurveProperty model = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "model");
+        if (model != null) model.setValue(drcModel.getName());
+        else model = new DoseResponseCurveProperty(featureId, "model", drcModel.getName());
         drcPropertyRepository.save(model);
 
-        DoseResponseCurveProperty method = new DoseResponseCurveProperty();
-        method.setFeatureId(featureId);
-        method.setName("method");
-        method.setValue(drcModel.getMethod());
+        DoseResponseCurveProperty method = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "method");
+        if (method != null) method.setValue(drcModel.getMethod());
+        else method = new DoseResponseCurveProperty(featureId, "method", drcModel.getMethod());
         drcPropertyRepository.save(method);
 
-        DoseResponseCurveProperty description = new DoseResponseCurveProperty();
-        description.setFeatureId(featureId);
-        description.setName("description");
-        description.setValue(drcModel.getDescription());
+        DoseResponseCurveProperty description = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "description");
+        if (description != null) description.setValue(drcModel.getDescription());
+        else description = new DoseResponseCurveProperty(featureId, "description", drcModel.getDescription());
         drcPropertyRepository.save(description);
 
-        DoseResponseCurveProperty slope = new DoseResponseCurveProperty();
-        slope.setFeatureId(featureId);
-        slope.setName("slope");
-        slope.setValue(drcModel.getSlope());
+        DoseResponseCurveProperty slope = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "slope");
+        if (slope != null) slope.setValue(drcModel.getSlope());
+        else slope = new DoseResponseCurveProperty(featureId, "slope", drcModel.getSlope());
         drcPropertyRepository.save(slope);
 
         for (String propertyName : drcModel.getInputParameters().keySet()) {
-            DoseResponseCurveProperty property = new DoseResponseCurveProperty();
-            property.setFeatureId(featureId);
-            property.setName(propertyName);
-            property.setValue(drcModel.getInputParameters().get(propertyName));
+            DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, propertyName);
+            if (property != null) property.setValue(drcModel.getInputParameters().get(propertyName));
+            else property = new DoseResponseCurveProperty(featureId, propertyName, drcModel.getInputParameters().get(propertyName));
             drcPropertyRepository.save(property);
         }
     }

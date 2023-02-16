@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class DoseResponseCurveProperty {
+
     @Id
     Long id;
     @NotNull
@@ -37,4 +38,10 @@ public class DoseResponseCurveProperty {
     Long featureId;
     String name;
     String value;
+
+    public DoseResponseCurveProperty(Long featureId, String name, String value) {
+        this.featureId = featureId;
+        this.name = name;
+        this.value = value;
+    }
 }
