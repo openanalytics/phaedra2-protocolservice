@@ -24,7 +24,7 @@
           "variableName": "Var1",
           "sourceMeasColName": "Meas_col_1",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         },
         {
           "id": null,
@@ -32,7 +32,7 @@
           "variableName": "Var2",
           "sourceMeasColName": "Meas_col_2",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         },
         {
           "id": null,
@@ -40,7 +40,7 @@
           "variableName": "Var3",
           "sourceMeasColName": "Meas_col_3",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         }
       ],
       "drcModel": {
@@ -75,7 +75,7 @@
           "variableName": "Var4",
           "sourceMeasColName": "Meas_col_4",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         },
         {
           "id": null,
@@ -83,7 +83,7 @@
           "variableName": "Var5",
           "sourceMeasColName": "Meas_col_5",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         },
         {
           "id": null,
@@ -91,7 +91,7 @@
           "variableName": "Var6",
           "sourceMeasColName": "Meas_col_6",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         }
       ],
       "drcModel": {

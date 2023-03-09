@@ -24,7 +24,7 @@
           "variableName": "abc",
           "sourceMeasColName": "abc",
           "sourceFeatureId": null,
-          "inputSource": "MEASUREMENT"
+          "inputSource": "MEASUREMENT_WELL_COLUMN"
         }
       ],
       "drcModel": {
