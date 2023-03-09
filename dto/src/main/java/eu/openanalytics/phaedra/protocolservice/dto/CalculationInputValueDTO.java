@@ -20,7 +20,10 @@
  */
 package eu.openanalytics.phaedra.protocolservice.dto;
 
+import javax.validation.constraints.AssertTrue;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,10 +33,6 @@ import lombok.Value;
 import lombok.With;
 import lombok.experimental.NonFinal;
 
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-
 @Value
 @Builder
 @With
@@ -42,13 +41,9 @@ import javax.validation.constraints.Null;
 @NonFinal
 public class CalculationInputValueDTO {
 
-    @Null
     Long id;
-    @Null
     Long featureId;
-    @NotNull
     Long formulaId;
-    @NotNull
     String variableName;
     String sourceMeasColName;
     Long sourceFeatureId;

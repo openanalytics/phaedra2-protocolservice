@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TaggedObjectDTO {
+
     private Long objectId;
     private String objectClass;
     private String tag;

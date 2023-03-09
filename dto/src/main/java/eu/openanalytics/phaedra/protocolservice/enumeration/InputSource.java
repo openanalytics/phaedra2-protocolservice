@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.protocolservice.enumeration;
 
 public enum InputSource {
-    MEASUREMENT,
+    MEASUREMENT_WELL_COLUMN,
+    MEASUREMENT_SUBWELL_COLUMN,
     FEATURE
 }

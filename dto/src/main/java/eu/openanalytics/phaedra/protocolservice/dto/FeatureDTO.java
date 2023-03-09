@@ -35,6 +35,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FeatureDTO {
+	
     Long id;
     String name;
     String alias;
@@ -48,5 +49,8 @@ public class FeatureDTO {
     DRCModelDTO drcModel;
     String trigger;
     String status;
+    
+    @Builder.Default
     boolean deleted = false;
+
 }

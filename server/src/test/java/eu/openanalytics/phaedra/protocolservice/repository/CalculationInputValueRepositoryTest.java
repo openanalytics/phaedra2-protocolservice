@@ -20,9 +20,11 @@
  */
 package eu.openanalytics.phaedra.protocolservice.repository;
 
-import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
-import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
-import eu.openanalytics.phaedra.protocolservice.support.Containers;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,15 +32,11 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.JdbcDatabaseContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import eu.openanalytics.phaedra.protocolservice.enumeration.InputSource;
+import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
+import eu.openanalytics.phaedra.protocolservice.support.Containers;
 
 //TODO: Update tests that includes tests for inputSource
 @Testcontainers
@@ -64,7 +62,8 @@ public class CalculationInputValueRepositoryTest {
 
     @Test
     public void createCalculationInputValue() {
-        CalculationInputValue calculationInputValue = new CalculationInputValue(null,1000L, 1000L,"Column1",1000L,"col1", InputSource.MEASUREMENT);
+        CalculationInputValue calculationInputValue = new CalculationInputValue(
+        		null,1000L, 1000L,"Column1",1000L,"col1", InputSource.MEASUREMENT_WELL_COLUMN);
 
         CalculationInputValue saved = calculationInputValueRepository.save(calculationInputValue);
         assertThat(saved).isNotNull();
