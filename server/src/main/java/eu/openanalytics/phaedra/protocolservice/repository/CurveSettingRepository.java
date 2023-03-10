@@ -20,21 +20,21 @@
  */
 package eu.openanalytics.phaedra.protocolservice.repository;
 
-import eu.openanalytics.phaedra.protocolservice.model.DoseResponseCurveProperty;
+import eu.openanalytics.phaedra.protocolservice.model.CurveSetting;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface DoseResponseCurvePropertyRepository extends CrudRepository<DoseResponseCurveProperty, Long> {
+public interface CurveSettingRepository extends CrudRepository<CurveSetting, Long> {
 
     /**
      * Retrieve all dose response curve properties for a specific feature
      * @param featureId
      * @return list of dose response curve properties
      */
-    List<DoseResponseCurveProperty> findAllByFeatureId(Long featureId);
+    List<CurveSetting> findAllByFeatureId(Long featureId);
 
     /**
      * Retrieve a specific property by featureId and name
@@ -42,5 +42,5 @@ public interface DoseResponseCurvePropertyRepository extends CrudRepository<Dose
      * @param name The drc property name
      * @return
      */
-    DoseResponseCurveProperty findAllByFeatureIdAndName(Long featureId, String name);
+    CurveSetting findAllByFeatureIdAndName(Long featureId, String name);
 }

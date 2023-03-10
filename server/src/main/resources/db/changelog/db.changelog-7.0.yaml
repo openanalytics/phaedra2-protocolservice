@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - sql:
+            sql: alter table dose_response_curve_property rename to curve_setting
+
+
+

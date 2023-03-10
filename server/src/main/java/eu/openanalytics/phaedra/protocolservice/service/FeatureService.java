@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
-import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
@@ -49,11 +48,11 @@ public class FeatureService {
     private final RestTemplate restTemplate;
     private final FeatureRepository featureRepository;
     private final FeatureStatService featureStatService;
-    private final DoseResponseCurvePropertyService drcPropertyService;
+    private final CurveSettingService drcPropertyService;
     private final CalculationInputValueService civService;
 
     public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
-                          FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService, CalculationInputValueService civService) {
+                          FeatureStatService featureStatService, CurveSettingService drcPropertyService, CalculationInputValueService civService) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;

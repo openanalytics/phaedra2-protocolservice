@@ -21,7 +21,6 @@
 package eu.openanalytics.phaedra.protocolservice.model;
 
 import lombok.*;
-import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -29,7 +28,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class DoseResponseCurveProperty {
+public class CurveSetting {
 
     @Id
     Long id;
@@ -39,7 +38,7 @@ public class DoseResponseCurveProperty {
     String name;
     String value;
 
-    public DoseResponseCurveProperty(Long featureId, String name, String value) {
+    public CurveSetting(Long featureId, String name, String value) {
         this.featureId = featureId;
         this.name = name;
         this.value = value;

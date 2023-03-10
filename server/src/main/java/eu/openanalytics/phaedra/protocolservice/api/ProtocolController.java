@@ -30,7 +30,7 @@ import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationIn
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueService;
-import eu.openanalytics.phaedra.protocolservice.service.DoseResponseCurvePropertyService;
+import eu.openanalytics.phaedra.protocolservice.service.CurveSettingService;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,11 +49,11 @@ public class ProtocolController {
     private final ProtocolService protocolService;
     private final FeatureService featureService;
     private final CalculationInputValueService calculationInputValueService;
-    private final DoseResponseCurvePropertyService drcSettingsService;
+    private final CurveSettingService drcSettingsService;
 
     public ProtocolController(ProtocolService protocolService, FeatureService featureService,
                               CalculationInputValueService calculationInputValueService,
-                              DoseResponseCurvePropertyService drcSettingsService) {
+                              CurveSettingService drcSettingsService) {
         this.protocolService = protocolService;
         this.featureService = featureService;
         this.calculationInputValueService = calculationInputValueService;
