@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
+import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
