@@ -296,7 +296,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        var res1 = performRequest(post("/features/42/featurestat", input1), HttpStatus.NOT_FOUND);
+        var res1 = performRequest(post("/features/42/featurestats", input1), HttpStatus.NOT_FOUND);
         Assertions.assertEquals("{\"error\":\"Feature with id 42 not found!\",\"status\":\"error\"}", res1);
 
         // 2. create simple feature
@@ -315,7 +315,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
         // 3. test missing fields
         var input3 = FeatureStatDTO.builder().build();
 
-        var res3 = performRequest(post("/features/1/featurestat", input3), HttpStatus.BAD_REQUEST);
+        var res3 = performRequest(post("/features/1/featurestats", input3), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"Validation error\",\"malformed_fields\":{" +
                 "\"formulaId\":\"FormulaId is mandatory\"," +
                 "\"name\":\"Name is mandatory\"," +
@@ -333,7 +333,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        var res4 = performRequest(post("/features/1/featurestat", input4), HttpStatus.BAD_REQUEST);
+        var res4 = performRequest(post("/features/1/featurestats", input4), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"Validation error\",\"malformed_fields\":{" +
                 "\"featureId\":\"FeatureId must be specified in URL and not repeated in body\"," +
                 "\"id\":\"Id must be null when creating a FeatureStat\"},\"status\":\"error\"}", res4);
@@ -346,7 +346,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        var res5 = performRequest(post("/features/1/featurestat", input5), HttpStatus.BAD_REQUEST);
+        var res5 = performRequest(post("/features/1/featurestats", input5), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"Validation error\",\"malformed_fields\":{\"valid\":\"Both plateStat and welltypeStat cannot be false\"},\"status\":\"error\"}", res5);
 
         // 6. duplicate by name for the same featureId
@@ -357,7 +357,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        performRequest(post("/features/1/featurestat", input6), HttpStatus.CREATED);
+        performRequest(post("/features/1/featurestats", input6), HttpStatus.CREATED);
 
         var input7= FeatureStatDTO.builder()
                 .formulaId(1L)
@@ -366,7 +366,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        var res7 = performRequest(post("/features/1/featurestat", input7), HttpStatus.BAD_REQUEST);
+        var res7 = performRequest(post("/features/1/featurestats", input7), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"FeatureStat with one of these parameters already exists!\",\"status\":\"error\"}", res7);
     }
 
@@ -381,7 +381,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .welltypeStat(false)
                 .name("count")
                 .build();
-        var res1 = performRequest(put("/features/1/featurestat/1", input1), HttpStatus.BAD_REQUEST);
+        var res1 = performRequest(put("/features/1/featurestats/1", input1), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"The featureStatId provided in the URL is not equal to the id provided in the body\",\"status\":\"error\"}", res1);
 
         // 2. mismatch between featureId in URL and body
@@ -393,7 +393,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .welltypeStat(false)
                 .name("count")
                 .build();
-        var res2 = performRequest(put("/features/1/featurestat/1", input2), HttpStatus.BAD_REQUEST);
+        var res2 = performRequest(put("/features/1/featurestats/1", input2), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"The featureId provided in the URL is not equal to the featureId provided in the body\",\"status\":\"error\"}", res2);
 
         // 3. create simple Feature
@@ -417,11 +417,11 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        performRequest(post("/features/1/featurestat", input4), HttpStatus.CREATED, FeatureStatDTO.class);
+        performRequest(post("/features/1/featurestats", input4), HttpStatus.CREATED, FeatureStatDTO.class);
 
         // 5. missing fields
         var input5 = FeatureStatDTO.builder().build();
-        var res5 = performRequest(put("/features/1/featurestat/1", input5), HttpStatus.BAD_REQUEST);
+        var res5 = performRequest(put("/features/1/featurestats/1", input5), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"Validation error\",\"malformed_fields\":{" +
                 "\"featureId\":\"FeatureId must be specified when updating a FeatureStat\"," +
                 "\"formulaId\":\"FormulaId is mandatory\"," +
@@ -441,7 +441,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .welltypeStat(false)
                 .name("count")
                 .build();
-        var res6 = performRequest(put("/features/10/featurestat/10", input6), HttpStatus.NOT_FOUND);
+        var res6 = performRequest(put("/features/10/featurestats/10", input6), HttpStatus.NOT_FOUND);
         Assertions.assertEquals("{\"error\":\"FeatureStat with id 10 not found!\",\"status\":\"error\"}", res6);
 
         // 7. try to change featureId
@@ -453,13 +453,13 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .welltypeStat(false)
                 .name("count")
                 .build();
-        var res7 = performRequest(put("/features/10/featurestat/1", input7), HttpStatus.BAD_REQUEST);
+        var res7 = performRequest(put("/features/10/featurestats/1", input7), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"The featureId of a FeatureStat cannot be changed\",\"status\":\"error\"}", res7);
     }
 
     @Test
     public void deleteNonExistingFeatureStatTest() throws Exception {
-        var res1 = performRequest(delete("/features/10/featurestat/10"), HttpStatus.NOT_FOUND);
+        var res1 = performRequest(delete("/features/10/featurestats/10"), HttpStatus.NOT_FOUND);
         Assertions.assertEquals("{\"error\":\"FeatureStat with id 10 not found!\",\"status\":\"error\"}", res1);
     }
 
@@ -486,10 +486,10 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        performRequest(post("/features/1/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
+        performRequest(post("/features/1/featurestats", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
         // 3. delete with wrong featureId
-        var res3 = performRequest(delete("/features/10/featurestat/1"), HttpStatus.BAD_REQUEST);
+        var res3 = performRequest(delete("/features/10/featurestats/1"), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals("{\"error\":\"The provided featureId is not equal to the actual featureId of the FeatureStat\",\"status\":\"error\"}", res3);
     }
 
