@@ -104,7 +104,7 @@ public class CalculationInputValueControllerTest {
 
         CalculationInputValueDTO changed = CalculationInputValueDTO.builder().id(1L).formulaId(2000L).sourceMeasColName("Column2").variableName("col2").featureId(1000L).build();
         String requestBody2 = objectMapper.writeValueAsString(changed);
-        MvcResult mvcResult2 = this.mockMvc.perform(put("/features/"+featureId+"/calculationinputvalues").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+        MvcResult mvcResult2 = this.mockMvc.perform(put("/features/"+featureId+"/calculationinputvalues/1").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
