@@ -39,7 +39,7 @@ public class Containers {
     public static final PostgreSQLContainer<?> postgreSQLContainer;
 
     static {
-        postgreSQLContainer = new PostgreSQLContainer<>("postgres:13-alpine")
+        postgreSQLContainer = new PostgreSQLContainer<>("registry.openanalytics.eu/library/postgres:13-alpine")
                 .withUrlParam("currentSchema","protocols");
 
         postgreSQLContainer.start();
