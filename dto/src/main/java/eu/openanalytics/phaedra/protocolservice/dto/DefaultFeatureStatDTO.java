@@ -20,7 +20,12 @@
  */
 package eu.openanalytics.phaedra.protocolservice.dto;
 
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import eu.openanalytics.phaedra.protocolservice.dto.validation.OnCreate;
 import eu.openanalytics.phaedra.protocolservice.dto.validation.OnUpdate;
 import lombok.AccessLevel;
@@ -30,10 +35,6 @@ import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.With;
 import lombok.experimental.NonFinal;
-
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Value
 @Builder

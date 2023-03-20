@@ -52,7 +52,7 @@ public class FeatureStatController implements MethodArgumentNotValidExceptionHan
         this.featureStatService = featureStatService;
     }
 
-    @PostMapping("/features/{featureId}/featurestat")
+    @PostMapping("/features/{featureId}/featurestats")
     @ResponseStatus(HttpStatus.CREATED)
     public FeatureStatDTO createFeatureStat(@PathVariable Long featureId,
                                             @Validated(OnCreate.class) @RequestBody FeatureStatDTO featureStatDTO) throws UserVisibleException {
@@ -63,7 +63,7 @@ public class FeatureStatController implements MethodArgumentNotValidExceptionHan
      * Performs an update of the FeatureStat, replacing the FeatureStat (not patching it!).
      * This corresponds to the idea of RESTFUL: https://stackoverflow.com/a/19736570/1393103
      */
-    @PutMapping("/features/{featureId}/featurestat/{featureStatId}")
+    @PutMapping("/features/{featureId}/featurestats/{featureStatId}")
     @ResponseStatus(HttpStatus.OK)
     public FeatureStatDTO updateFeatureStat(@PathVariable Long featureId,
                                             @PathVariable Long featureStatId,
@@ -80,27 +80,27 @@ public class FeatureStatController implements MethodArgumentNotValidExceptionHan
         return featureStatService.update(featureStatDTO);
     }
 
-    @DeleteMapping("/features/{featureId}/featurestat/{featureStatId}")
+    @DeleteMapping("/features/{featureId}/featurestats/{featureStatId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFeatureStat(@PathVariable Long featureId,
                                   @PathVariable Long featureStatId) throws UserVisibleException {
         featureStatService.delete(featureId, featureStatId);
     }
 
-    @GetMapping("/features/{featureId}/featurestat/{featureStatId}")
+    @GetMapping("/features/{featureId}/featurestats/{featureStatId}")
     @ResponseStatus(HttpStatus.OK)
     public FeatureStatDTO getFeatureStat(@PathVariable Long featureId,
                                          @PathVariable Long featureStatId) throws UserVisibleException {
         return featureStatService.get(featureId, featureStatId);
     }
 
-    @GetMapping("/features/{featureId}/featurestat")
+    @GetMapping("/features/{featureId}/featurestats")
     @ResponseStatus(HttpStatus.OK)
     public List<FeatureStatDTO> getFeatureStatByFeatureId(@PathVariable Long featureId) throws UserVisibleException {
         return featureStatService.getByFeatureId(featureId);
     }
 
-    @GetMapping("/protocols/{protocolId}/featurestat")
+    @GetMapping("/protocols/{protocolId}/featurestats")
     @ResponseStatus(HttpStatus.OK)
     public List<FeatureStatDTO> getFeatureStatByProtocolId(@PathVariable Long protocolId) throws UserVisibleException {
         return featureStatService.getByProtocolId(protocolId);

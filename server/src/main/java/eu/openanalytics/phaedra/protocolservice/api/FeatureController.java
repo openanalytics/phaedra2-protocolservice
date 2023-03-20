@@ -22,10 +22,6 @@ package eu.openanalytics.phaedra.protocolservice.api;
 
 import java.util.List;
 
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
-import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
-import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
-import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +31,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
+import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
+import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 
 @RestController
+@RequestMapping("/features")
 public class FeatureController {
 
     @Autowired
@@ -49,49 +50,48 @@ public class FeatureController {
     @Autowired
     private ProtocolService protocolService;
 
-    // TODO creating feature with non-existing protocolId returns 500
-    // -> use rest URL? e.g. /protocol/10/feature ?
+    // TODO creating feature with non-existing protocolId returns 500 -> use rest URL? e.g. /protocol/10/feature ?
     // TODO it is possible to create features with the same name
-    @PostMapping("/features")
+    @PostMapping
     public ResponseEntity<FeatureDTO> createFeature(@RequestBody FeatureDTO newFeature) throws ProtocolNotFoundException {
         //create new protocol version
 //        ProtocolDTO newProtocol = createNewVersionProtocol(newFeature.getProtocolId(), null);
 //        newFeature.setProtocolId(newProtocol.getId());
         FeatureDTO savedFeature = featureService.save(newFeature);
         protocolService.updateVersion(savedFeature.getProtocolId());
-
         return new ResponseEntity<>(savedFeature, HttpStatus.CREATED);
     }
 
     // TODO use rest URL: PUT /features/1/ instead of PUT /features ? cfr .delete
     // TODO validate the feature exists (updating non-existent feature does nothing and returns 200)
-    @PutMapping("/features")
-    public ResponseEntity<?> updateFeature(@RequestBody FeatureDTO updateFeature) throws ProtocolNotFoundException {
+    @PutMapping("/{featureId}")
+    public ResponseEntity<?> updateFeature(@RequestBody FeatureDTO updateFeature, @PathVariable long featureId) throws ProtocolNotFoundException {
         //update new protocol version
+    	updateFeature.setId(featureId);
         protocolService.updateVersion(updateFeature.getProtocolId());
         FeatureDTO updatedFeature = featureService.save(updateFeature);
         return new ResponseEntity<>(updatedFeature, HttpStatus.OK);
     }
 
-    @DeleteMapping("/features/{featureId}")
+    @DeleteMapping("/{featureId}")
     public ResponseEntity<?> deleteFeature(@PathVariable Long featureId) {
         featureService.delete(featureId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/features")
+    @GetMapping
     public ResponseEntity<?> getFeatures() {
         List<FeatureDTO> response = featureService.findAllFeatures();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/features", params = {"tag"})
+    @GetMapping(params = {"tag"})
     public ResponseEntity<?> getFeaturesWithTag(@RequestParam(value = "tag", required = false) String tag) {
         List<FeatureDTO> response = featureService.findAllFeaturesWithTag(tag);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/features/{featureId}")
+    @GetMapping("/{featureId}")
     public ResponseEntity<?> getFeatureById(@PathVariable Long featureId) {
         FeatureDTO result = null;
         try {
@@ -102,27 +102,10 @@ public class FeatureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping("/features/{featureId}/tag")
+    @PutMapping("/{featureId}/tag")
     public ResponseEntity<?> addTagToFeature(@PathVariable ("featureId") Long featureId, @RequestParam("tag") String tag) {
         featureService.tagFeature(featureId, tag);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    /**
-     * Creates a new protocol version for the given protocol.
-     * @param protocolId The protocol to create a new version for.
-     * @param updatedFeatureId The feature that gets updated.
-     * @return protocolDTO The new protocol version.
-     */
-    private ProtocolDTO createNewVersionProtocol(Long protocolId, Long updatedFeatureId) throws ProtocolNotFoundException {
-        ProtocolDTO currentProtocolDTO = protocolService.getProtocolById(protocolId);
-        //Change versionNumber
-        Double newVersion = Double.parseDouble(currentProtocolDTO.getVersionNumber().split("-")[0])+0.01;
-        currentProtocolDTO.setPreviousVersion(currentProtocolDTO.getVersionNumber());
-        currentProtocolDTO.setVersionNumber(newVersion.toString());
-        ProtocolDTO newProtocol = protocolService.update(currentProtocolDTO);
-        //Duplicate current features
-        featureService.updateFeaturesToNewProtocol(protocolId,newProtocol.getId(), updatedFeatureId);
-        return newProtocol;
-    }
 }
