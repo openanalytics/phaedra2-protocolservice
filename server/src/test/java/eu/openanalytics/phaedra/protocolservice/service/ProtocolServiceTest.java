@@ -46,6 +46,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,8 +76,9 @@ public class ProtocolServiceTest {
     private ModelMapper modelMapper = new ModelMapper();
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private static DockerImageName pgImage = DockerImageName.parse("registry.openanalytics.eu/library/postgres:13-alpine").asCompatibleSubstituteFor("postgres");
     @Container
-    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(pgImage)
             .withDatabaseName("phaedra2")
             .withUrlParam("currentSchema", "plates")
             .withPassword("inmemory")
