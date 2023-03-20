@@ -66,7 +66,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        var res2 = performRequest(post("/features/" + featureDTO.getId() + "/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
+        var res2 = performRequest(post("/features/" + featureDTO.getId() + "/featurestats", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
         assertThat(res2.getId()).isNotNull();
         assertThat(res2.getFeatureId()).isEqualTo(featureDTO.getId());
@@ -76,7 +76,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
         assertThat(res2.getName()).isEqualTo(input2.getName());
 
         // 3. get specific FeatureStat
-        var res3 = performRequest(get("/features/" + featureDTO.getId() + "/featurestat/" + res2.getId()), HttpStatus.OK, FeatureStatDTO.class);
+        var res3 = performRequest(get("/features/" + featureDTO.getId() + "/featurestats/" + res2.getId()), HttpStatus.OK, FeatureStatDTO.class);
         assertThat(res3.getId()).isEqualTo(res2.getId());
         assertThat(res3.getFeatureId()).isEqualTo(featureDTO.getId());
         assertThat(res3.getPlateStat()).isTrue();
@@ -85,11 +85,11 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
         assertThat(res3.getName()).isEqualTo(res2.getName());
 
         // 4. Delete FeatureStat
-        performRequest(delete("/features/" + featureDTO.getId() + "/featurestat/" + res3.getId()), HttpStatus.NO_CONTENT);
+        performRequest(delete("/features/" + featureDTO.getId() + "/featurestats/" + res3.getId()), HttpStatus.NO_CONTENT);
 
         // 6. get FeatureStat again
         var featureStatId = 10;
-        var res5 = performRequest(get("/features/" + featureDTO.getId() + "/featurestat/" + featureStatId), HttpStatus.NOT_FOUND);
+        var res5 = performRequest(get("/features/" + featureDTO.getId() + "/featurestats/" + featureStatId), HttpStatus.NOT_FOUND);
         assertThat(res5).isEqualTo("{\"error\":\"FeatureStat with id " + featureStatId + " not found!\",\"status\":\"error\"}");
     }
 
@@ -116,7 +116,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .name("count")
                 .build();
 
-        var featureStatDTO1 = performRequest(post("/features/1/featurestat", input2), HttpStatus.CREATED, FeatureStatDTO.class);
+        var featureStatDTO1 = performRequest(post("/features/1/featurestats", input2), HttpStatus.CREATED, FeatureStatDTO.class);
 
         assertThat(featureStatDTO1.getId()).isNotNull();
         assertThat(featureStatDTO1.getFeatureId()).isEqualTo(featureDTO.getId());
@@ -134,7 +134,7 @@ public class FeatureStatIntegrationTest extends AbstractIntegrationTest {
                 .welltypeStat(true)
                 .name("count-updated")
                 .build();
-        var featureStatDTO2 = performRequest(put("/features/" + featureDTO.getId() + "/featurestat/" + featureStatDTO1.getId(), input3), HttpStatus.OK, FeatureStatDTO.class);
+        var featureStatDTO2 = performRequest(put("/features/" + featureDTO.getId() + "/featurestats/" + featureStatDTO1.getId(), input3), HttpStatus.OK, FeatureStatDTO.class);
 
         assertThat(featureStatDTO2.getId()).isEqualTo(featureStatDTO1.getId());
         assertThat(featureStatDTO2.getFeatureId()).isEqualTo(featureDTO.getId());

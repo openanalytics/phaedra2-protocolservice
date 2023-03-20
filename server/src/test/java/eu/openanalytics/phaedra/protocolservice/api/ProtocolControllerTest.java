@@ -276,7 +276,7 @@ public class ProtocolControllerTest {
 
         // update protocol
         String requestBody = objectMapper.writeValueAsString(protocol);
-        MvcResult res = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult res = this.mockMvc.perform(put("/protocols/{protocolId}", protocol.getId()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
