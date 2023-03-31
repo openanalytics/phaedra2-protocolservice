@@ -22,7 +22,7 @@ package eu.openanalytics.phaedra.protocolservice.client.impl;
 
 public class UrlFactory {
 
-    private static final String PROTOCOL_SERVICE = "http://phaedra-protocol-service/phaedra/protocol-service";
+    private static final String PROTOCOL_SERVICE = "http://phaedra-protocol-service:8080/phaedra/protocol-service";
 
     public static String protocol(long protocolId) {
         return String.format("%s/protocols/%s", PROTOCOL_SERVICE, protocolId);
