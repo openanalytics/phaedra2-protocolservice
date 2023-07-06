@@ -18,7 +18,7 @@
     <properties>
         <java.version>16</java.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
-        
+
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <docker.imageName>openanalytics/${project.parent.artifactId}</docker.imageName>
@@ -31,6 +31,7 @@
             <artifactId>phaedra2-protocolservice-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
         <!-- Spring Cloud dependencies -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -81,7 +82,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
@@ -120,7 +121,7 @@
 					</execution>
 				</executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
