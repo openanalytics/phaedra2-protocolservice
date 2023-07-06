@@ -60,20 +60,13 @@
                     </excludes>
                 </configuration>
                 <executions>
-                                        <execution>
-                                            <id>generate-copyright-headers</id>
-                                            <phase>process-sources</phase>
-                                            <goals>
-                                                <goal>format</goal>
-                                            </goals>
-                                        </execution>
-<!--                    <execution>-->
-<!--                        <id>check-copyright-headers</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
+                    <execution>
+                        <id>generate-copyright-headers</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
