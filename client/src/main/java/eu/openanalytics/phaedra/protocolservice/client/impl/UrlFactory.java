@@ -33,15 +33,15 @@ public class UrlFactory {
     }
 
     public static String protocolCiv(long protocolId) {
-        return String.format("%s/protocols/%s/calculationinputvalue", PROTOCOL_SERVICE, protocolId);
+        return String.format("%s/protocols/%s/calculationinputvalues", PROTOCOL_SERVICE, protocolId);
     }
 
     public static String defaultFeatureStat() {
-        return String.format("%s/defaultfeaturestat", PROTOCOL_SERVICE);
+        return String.format("%s/defaultfeaturestats", PROTOCOL_SERVICE);
     }
 
     public static String featureStats(long protocolId) {
-        return String.format("%s/protocols/%s/featurestat", PROTOCOL_SERVICE, protocolId);
+        return String.format("%s/protocols/%s/featurestats", PROTOCOL_SERVICE, protocolId);
     }
 
     public static String feature(long featureId) {

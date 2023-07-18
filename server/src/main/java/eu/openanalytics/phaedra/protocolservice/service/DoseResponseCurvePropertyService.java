@@ -21,60 +21,60 @@
 package eu.openanalytics.phaedra.protocolservice.service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
-import eu.openanalytics.phaedra.protocolservice.model.CurveSetting;
-import eu.openanalytics.phaedra.protocolservice.repository.CurveSettingRepository;
+import eu.openanalytics.phaedra.protocolservice.model.DoseResponseCurveProperty;
+import eu.openanalytics.phaedra.protocolservice.repository.DoseResponseCurvePropertyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class CurveSettingService {
+public class DoseResponseCurvePropertyService {
 
-    private final CurveSettingRepository drcPropertyRepository;
+    private final DoseResponseCurvePropertyRepository drcPropertyRepository;
 
-    public CurveSettingService(CurveSettingRepository drcPropertyRepository) {
+    public DoseResponseCurvePropertyService(DoseResponseCurvePropertyRepository drcPropertyRepository) {
         this.drcPropertyRepository = drcPropertyRepository;
     }
 
     public void save(Long featureId, DRCModelDTO drcModel) {
         // Creete model name
-        CurveSetting model = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "model");
+        DoseResponseCurveProperty model = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "model");
         if (model != null) model.setValue(drcModel.getName());
-        else model = new CurveSetting(featureId, "model", drcModel.getName());
+        else model = new DoseResponseCurveProperty(featureId, "model", drcModel.getName());
         drcPropertyRepository.save(model);
 
-        CurveSetting method = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "method");
+        DoseResponseCurveProperty method = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "method");
         if (method != null) method.setValue(drcModel.getMethod());
-        else method = new CurveSetting(featureId, "method", drcModel.getMethod());
+        else method = new DoseResponseCurveProperty(featureId, "method", drcModel.getMethod());
         drcPropertyRepository.save(method);
 
-        CurveSetting description = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "description");
+        DoseResponseCurveProperty description = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "description");
         if (description != null) description.setValue(drcModel.getDescription());
-        else description = new CurveSetting(featureId, "description", drcModel.getDescription());
+        else description = new DoseResponseCurveProperty(featureId, "description", drcModel.getDescription());
         drcPropertyRepository.save(description);
 
-        CurveSetting slope = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "slope");
+        DoseResponseCurveProperty slope = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "slope");
         if (slope != null) slope.setValue(drcModel.getSlope());
-        else slope = new CurveSetting(featureId, "slope", drcModel.getSlope());
+        else slope = new DoseResponseCurveProperty(featureId, "slope", drcModel.getSlope());
         drcPropertyRepository.save(slope);
 
         for (String propertyName : drcModel.getInputParameters().keySet()) {
-            CurveSetting property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, propertyName);
+            DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, propertyName);
             if (property != null) property.setValue(drcModel.getInputParameters().get(propertyName));
-            else property = new CurveSetting(featureId, propertyName, drcModel.getInputParameters().get(propertyName));
+            else property = new DoseResponseCurveProperty(featureId, propertyName, drcModel.getInputParameters().get(propertyName));
             drcPropertyRepository.save(property);
         }
     }
 
     public DRCModelDTO getByFeatureId(Long featureId) {
-        List<CurveSetting> drcProperties = drcPropertyRepository.findAllByFeatureId(featureId);
+        List<DoseResponseCurveProperty> drcProperties = drcPropertyRepository.findAllByFeatureId(featureId);
         if (drcProperties.isEmpty())
             return null;
 
         DRCModelDTO drcModelDTO = new DRCModelDTO();
         drcModelDTO.setFeatureId(featureId);
 
-        for (CurveSetting drcProp: drcProperties) {
+        for (DoseResponseCurveProperty drcProp: drcProperties) {
             if (drcProp.getName().equalsIgnoreCase("model")) drcModelDTO.setName(drcProp.getValue());
             else if (drcProp.getName().equalsIgnoreCase("description")) drcModelDTO.setDescription(drcProp.getValue());
             else if (drcProp.getName().equalsIgnoreCase("method")) drcModelDTO.setMethod(drcProp.getValue());

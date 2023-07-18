@@ -30,7 +30,7 @@ import eu.openanalytics.phaedra.protocolservice.exception.DuplicateCalculationIn
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueService;
-import eu.openanalytics.phaedra.protocolservice.service.CurveSettingService;
+import eu.openanalytics.phaedra.protocolservice.service.DoseResponseCurvePropertyService;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,24 +43,25 @@ import java.util.List;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @RestController
+@RequestMapping("/protocols")
 @Slf4j
 public class ProtocolController {
 
     private final ProtocolService protocolService;
     private final FeatureService featureService;
     private final CalculationInputValueService calculationInputValueService;
-    private final CurveSettingService drcSettingsService;
+    private final DoseResponseCurvePropertyService drcSettingsService;
 
     public ProtocolController(ProtocolService protocolService, FeatureService featureService,
                               CalculationInputValueService calculationInputValueService,
-                              CurveSettingService drcSettingsService) {
+                              DoseResponseCurvePropertyService drcSettingsService) {
         this.protocolService = protocolService;
         this.featureService = featureService;
         this.calculationInputValueService = calculationInputValueService;
         this.drcSettingsService = drcSettingsService;
     }
 
-    @PostMapping("/protocols")
+    @PostMapping
     public ResponseEntity<ProtocolDTO> createProtocol(@RequestBody ProtocolDTO newProtocol) throws DuplicateCalculationInputValueException, FeatureNotFoundException, JsonProcessingException {
         log.info("Create new protocol: " + new ObjectMapper().writeValueAsString(newProtocol));
 
@@ -91,11 +92,15 @@ public class ProtocolController {
         return new ResponseEntity<>(savedProtocol, HttpStatus.CREATED);
     }
 
-    @PutMapping("/protocols")
-    public ResponseEntity<ProtocolDTO> updateProtocol(@RequestBody ProtocolDTO updateProtocol) throws DuplicateCalculationInputValueException, FeatureNotFoundException, ProtocolNotFoundException, JsonProcessingException {
+    @PutMapping("/{protocolId}")
+    public ResponseEntity<ProtocolDTO> updateProtocol(@RequestBody ProtocolDTO updateProtocol, @PathVariable long protocolId)
+    		throws DuplicateCalculationInputValueException, FeatureNotFoundException, ProtocolNotFoundException, JsonProcessingException {
+
         log.info("Update existing protocol: " + new ObjectMapper().writeValueAsString(updateProtocol));
 
+        updateProtocol.setId(protocolId);
         ProtocolDTO updatedProtocol = protocolService.update(updateProtocol);
+
         if (isNotEmpty(updateProtocol.getFeatures())) {
             for (FeatureDTO featureDTO : updateProtocol.getFeatures()) {
 
@@ -126,13 +131,13 @@ public class ProtocolController {
         return new ResponseEntity<>(updatedProtocol, HttpStatus.OK);
     }
 
-    @PutMapping("/protocols/{protocolId}/tag")
+    @PutMapping("/{protocolId}/tag")
     public ResponseEntity<String> tagProtocol(@PathVariable Long protocolId, @RequestParam("tag") String tag) {
         protocolService.tagProtocol(protocolId, tag);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/protocols/{protocolId}")
+    @DeleteMapping("/{protocolId}")
     public ResponseEntity<String> deleteProtocol(@PathVariable Long protocolId) {
         log.info("Update existing protocol: id = " + protocolId);
 
@@ -140,7 +145,7 @@ public class ProtocolController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/protocols")
+    @GetMapping
     public ResponseEntity<List<ProtocolDTO>> getProtocols() {
         log.info("Get all protocols");
         List<ProtocolDTO> allProtocols = protocolService.getProtocols();
@@ -165,7 +170,7 @@ public class ProtocolController {
         return new ResponseEntity<>(allProtocols, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/protocols", params = {"tag"})
+    @GetMapping(params = {"tag"})
     public ResponseEntity<List<ProtocolDTO>> getProtocolByTag(@RequestParam(value = "tag", required = false) String tag) {
         log.info("Get protocols by tag: " + tag);
 
@@ -191,7 +196,7 @@ public class ProtocolController {
         return new ResponseEntity<>(protocolsByTag, HttpStatus.OK);
     }
 
-    @GetMapping("/protocols/{protocolId}")
+    @GetMapping("/{protocolId}")
     public ResponseEntity<ProtocolDTO> getProtocol(@PathVariable Long protocolId) {
         log.info("Get protocol by id: id = " + protocolId);
 
@@ -214,7 +219,7 @@ public class ProtocolController {
         return new ResponseEntity<>(protocol, HttpStatus.OK);
     }
 
-    @GetMapping("/protocols/{protocolId}/features")
+    @GetMapping("/{protocolId}/features")
     public ResponseEntity<List<FeatureDTO>> getProtocolFeatures(@PathVariable Long protocolId) {
         log.info("Get protocol features by protocol id: id = " + protocolId);
 

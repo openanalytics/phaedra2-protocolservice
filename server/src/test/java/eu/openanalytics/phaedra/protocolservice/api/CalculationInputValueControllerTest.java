@@ -73,7 +73,7 @@ public class CalculationInputValueControllerTest {
         long formulaId = 1000L;
         CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(formulaId).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
-        MvcResult mvcResult = this.mockMvc.perform(post("/features/" + featureId + "/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/features/" + featureId + "/calculationinputvalues").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -91,7 +91,7 @@ public class CalculationInputValueControllerTest {
         long formulaId = 1000L;
         CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(formulaId).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
-        MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalues").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -104,7 +104,7 @@ public class CalculationInputValueControllerTest {
 
         CalculationInputValueDTO changed = CalculationInputValueDTO.builder().id(1L).formulaId(2000L).sourceMeasColName("Column2").variableName("col2").featureId(1000L).build();
         String requestBody2 = objectMapper.writeValueAsString(changed);
-        MvcResult mvcResult2 = this.mockMvc.perform(put("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+        MvcResult mvcResult2 = this.mockMvc.perform(put("/features/"+featureId+"/calculationinputvalues/1").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -122,7 +122,7 @@ public class CalculationInputValueControllerTest {
         long formulaId = 1000L;
         CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(formulaId).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
-        MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalues").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -134,7 +134,7 @@ public class CalculationInputValueControllerTest {
         assertThat(body.getVariableName()).isEqualTo("col1");
         assertThat(body.getFormulaId()).isEqualTo(formulaId);
 
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+featureId+"/calculationinputvalue"))
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+featureId+"/calculationinputvalues"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -152,7 +152,7 @@ public class CalculationInputValueControllerTest {
     public void CalculationInputValueGetNotFoundTest() throws Exception {
         long featureId = 1000L;
 
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+featureId+"/calculationinputvalue"))
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+featureId+"/calculationinputvalues"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -168,7 +168,7 @@ public class CalculationInputValueControllerTest {
         long formulaId = 1000L;
         CalculationInputValueDTO calculationInputValueDTO = CalculationInputValueDTO.builder().formulaId(formulaId).sourceMeasColName("Column1").variableName("col1").build();
         String requestBody = objectMapper.writeValueAsString(calculationInputValueDTO);
-        MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalue").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/features/"+featureId+"/calculationinputvalues").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -179,7 +179,7 @@ public class CalculationInputValueControllerTest {
         assertThat(body.getSourceMeasColName()).isEqualTo("Column1");
         assertThat(body.getVariableName()).isEqualTo("col1");
 
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/protocols/"+protocolId+"/calculationinputvalue"))
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/protocols/"+protocolId+"/calculationinputvalues"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -197,7 +197,7 @@ public class CalculationInputValueControllerTest {
     public void CalculationInputValueGetByProtocolIdNotFoundTest() throws Exception {
         long protocolId = 1000L;
 
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+protocolId+"/calculationinputvalue"))
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/features/"+protocolId+"/calculationinputvalues"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

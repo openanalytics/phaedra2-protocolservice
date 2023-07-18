@@ -20,13 +20,16 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
-import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
-import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.support.Containers;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -42,15 +45,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.FeatureStat;
+import eu.openanalytics.phaedra.protocolservice.support.Containers;
 
 @Testcontainers
 @SpringBootTest
@@ -142,7 +143,7 @@ public class FeatureControllerTest {
 
         // Push the updated feature to the server
         String requestBody = objectMapper.writeValueAsString(feature);
-        mvcResult = this.mockMvc.perform(put("/features").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        mvcResult = this.mockMvc.perform(put("/features/{featureId}", featureId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -216,7 +217,7 @@ public class FeatureControllerTest {
         assertThat(createdFeature.getName()).isEqualTo(newFeature.getName());
         assertThat(createdFeature.getDescription()).isEqualTo(newFeature.getDescription());
 
-        MvcResult res = this.mockMvc.perform(get("/features/{featureId}/featurestat", createdFeature.getId()))
+        MvcResult res = this.mockMvc.perform(get("/features/{featureId}/featurestats", createdFeature.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -262,7 +263,7 @@ public class FeatureControllerTest {
 
         // Update the feature
         String requestBody = this.objectMapper.writeValueAsString(newFeature);
-        MvcResult mvcResult = this.mockMvc.perform(put("/features").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(put("/features/{featureId}", 1000L).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

@@ -44,7 +44,7 @@ public class CalculationInputValueController implements MethodArgumentNotValidEx
         this.calculationInputValueService = calculationInputValueService;
     }
 
-    @PostMapping("/features/{featureId}/calculationinputvalue")
+    @PostMapping("/features/{featureId}/calculationinputvalues")
     public ResponseEntity<CalculationInputValueDTO> createCalculationInputValue(@PathVariable Long featureId,
                                                                                 @Valid @RequestBody CalculationInputValueDTO calculationInputValueDTO) throws UserVisibleException {
         if (calculationInputValueDTO.getFeatureId() == null)
@@ -54,26 +54,27 @@ public class CalculationInputValueController implements MethodArgumentNotValidEx
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PutMapping("/features/{featureId}/calculationinputvalue")
+    @PutMapping("/features/{featureId}/calculationinputvalues/{calculationInputValueId}")
     public ResponseEntity<CalculationInputValueDTO> updateCalculationInputValue(@PathVariable Long featureId,
+    																			@PathVariable Long calculationInputValueId,
                                                                                 @RequestBody CalculationInputValueDTO calculationInputValueDTO) throws UserVisibleException {
         var res = calculationInputValueService.update(featureId, calculationInputValueDTO);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @DeleteMapping("/features/calculationinputvalue/{calculationInputValue}")
-    public ResponseEntity<?> deleteFeature(@PathVariable Long calculationInputValue) {
-        calculationInputValueService.delete(calculationInputValue);
+    @DeleteMapping("/features/{featureId}/calculationinputvalues/{calculationInputValueId}")
+    public ResponseEntity<?> deleteCalculationInputValue(@PathVariable Long featureId, @PathVariable Long calculationInputValueId) {
+        calculationInputValueService.delete(calculationInputValueId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/features/{featureId}/calculationinputvalue")
+    @GetMapping("/features/{featureId}/calculationinputvalues")
     public ResponseEntity<List<CalculationInputValueDTO>> getCalculationInputValue(@PathVariable Long featureId) throws UserVisibleException {
         var res = calculationInputValueService.getByFeatureId(featureId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("/protocols/{protocolId}/calculationinputvalue")
+    @GetMapping("/protocols/{protocolId}/calculationinputvalues")
     public ResponseEntity<List<CalculationInputValueDTO>> getCalculationInputValueByProtocolIds(@PathVariable Long protocolId) throws UserVisibleException {
         var res = calculationInputValueService.getByProtocolId(protocolId);
         return new ResponseEntity<>(res, HttpStatus.OK);

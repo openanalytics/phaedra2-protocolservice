@@ -49,11 +49,11 @@ public class FeatureService {
     private final RestTemplate restTemplate;
     private final FeatureRepository featureRepository;
     private final FeatureStatService featureStatService;
-    private final CurveSettingService drcPropertyService;
+    private final DoseResponseCurvePropertyService drcPropertyService;
     private final CalculationInputValueService civService;
 
     public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
-                          FeatureStatService featureStatService, CurveSettingService drcPropertyService, CalculationInputValueService civService) {
+                          FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService, CalculationInputValueService civService) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;

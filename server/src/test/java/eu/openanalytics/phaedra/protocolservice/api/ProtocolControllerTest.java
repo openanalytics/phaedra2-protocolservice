@@ -20,14 +20,17 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
-import eu.openanalytics.phaedra.protocolservice.model.Feature;
-import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.support.Containers;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.File;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -43,13 +46,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.util.List;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.model.Feature;
+import eu.openanalytics.phaedra.protocolservice.model.Protocol;
+import eu.openanalytics.phaedra.protocolservice.support.Containers;
 
 @Testcontainers
 @SpringBootTest
@@ -122,7 +127,7 @@ public class ProtocolControllerTest {
         List<FeatureDTO> featureList = this.objectMapper.readValue(fResponse.getResponse().getContentAsString(), new TypeReference<>() {});
 
         for (FeatureDTO featureDTO: featureList) {
-            MvcResult civResponse = this.mockMvc.perform(get("/features/" + featureDTO.getId() + "/calculationinputvalue"))
+            MvcResult civResponse = this.mockMvc.perform(get("/features/" + featureDTO.getId() + "/calculationinputvalues"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn();
@@ -167,7 +172,7 @@ public class ProtocolControllerTest {
         assertThat(features.size()).isEqualTo(6);
 
         String requestBody = objectMapper.writeValueAsString(protocol);
-        this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        this.mockMvc.perform(put("/protocols/{protocolId}", protocolId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -199,7 +204,7 @@ public class ProtocolControllerTest {
         assertThat(protocolDTO).isNotNull();
 
         String requestBody = objectMapper.writeValueAsString(protocolDTO);
-        MvcResult mvcResult = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(put("/protocols/{protocolId}", 1000L).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -214,7 +219,7 @@ public class ProtocolControllerTest {
         assertThat(protocolDTO).isNotNull();
 
         String requestBody = objectMapper.writeValueAsString(protocolDTO);
-        MvcResult mvcResult = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(put("/protocols/{protocolId}", 1000L).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -271,7 +276,7 @@ public class ProtocolControllerTest {
 
         // update protocol
         String requestBody = objectMapper.writeValueAsString(protocol);
-        MvcResult res = this.mockMvc.perform(put("/protocols").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult res = this.mockMvc.perform(put("/protocols/{protocolId}", protocol.getId()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
