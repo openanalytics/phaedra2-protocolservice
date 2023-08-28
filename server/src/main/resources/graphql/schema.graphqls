@@ -1,0 +1,75 @@
+scalar Date
+
+enum InputSource {
+    MEASUREMENT_WELL_COLUMN,
+    MEASUREMENT_SUBWELL_COLUMN,
+    FEATURE
+}
+
+enum FeatureType {
+    CALCULATION,
+    NORMALIZATION,
+    RAW
+}
+
+type CalculationInputValueDTO {
+    id: ID
+    featureId: ID
+    formulaId: ID
+    variableName: String
+    sourceMeasColName: String
+    sourceFeatureId: ID
+    inputSource: InputSource
+}
+
+type DRCModelDTO {
+    featureId: ID
+    name: String
+    description: String
+    method: String
+    slope: String
+    script: String
+}
+
+type FeatureDTO {
+    id: ID
+    name: String
+    alias: String
+    description: String
+    format: String
+    type: FeatureType
+    sequence: Int
+    protocolId: ID
+    formulaId: ID
+    civs: [CalculationInputValueDTO]
+    drcModel: DRCModelDTO
+    trigger: String
+    status: String
+
+    deleted: Boolean
+}
+
+type ProtocolDTO {
+    id: ID
+    name: String
+    description: String
+
+    lowWelltype: String
+    highWelltype: String
+    previousVersion: String
+    versionNumber: String
+
+    features: [FeatureDTO]
+
+    createdOn: Date
+    createdBy: String
+    updatedOn: Date
+    updatedBy: String
+}
+
+type Query {
+    getProtocols: [ProtocolDTO]
+    getProtocolById(protocolId: ID): ProtocolDTO
+    getProtocolsByTag(tag: String): [ProtocolDTO]
+    getFeaturesByProtocolId(protocolId: ID): [FeatureDTO]
+}
