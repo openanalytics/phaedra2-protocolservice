@@ -8,6 +8,9 @@ spring:
       enabled: true
   liquibase:
     enabled: false
+  graphql:
+    graphiql:
+      enabled: true
 
 eureka:
   client:
