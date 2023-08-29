@@ -99,7 +99,7 @@ public class ProtocolGraphQLController {
     }
 
     @QueryMapping
-    public ProtocolDTO getProtocolById(@Argument Long protocolId) {
+    public ProtocolDTO getProtocolById(@Argument long protocolId) {
         ProtocolDTO result = protocolService.getProtocolById(protocolId);
 
         List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocolId);
@@ -120,7 +120,7 @@ public class ProtocolGraphQLController {
     }
 
     @QueryMapping
-    public List<FeatureDTO> getFeaturesByProtocolId(@Argument Long protocolId) {
+    public List<FeatureDTO> getFeaturesByProtocolId(@Argument long protocolId) {
         List<FeatureDTO> result = featureService.findFeaturesByProtocolId(protocolId);
 
         result.forEach(feature -> {
@@ -134,6 +134,19 @@ public class ProtocolGraphQLController {
                 //TODO: Throw an appropriate error
             }
         });
+
+        return result;
+    }
+
+    @QueryMapping
+    public FeatureDTO getFeatureById(@Argument long featureId) throws FeatureNotFoundException {
+        FeatureDTO result = featureService.findFeatureById(featureId);
+
+        List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(featureId);
+        result.setCivs(civs);
+
+        DRCModelDTO drcModel = drcSettingsService.getByFeatureId(featureId);
+        result.setDrcModel(drcModel);
 
         return result;
     }

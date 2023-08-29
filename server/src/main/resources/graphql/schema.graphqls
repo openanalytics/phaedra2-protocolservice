@@ -72,4 +72,5 @@ type Query {
     getProtocolById(protocolId: ID): ProtocolDTO
     getProtocolsByTag(tag: String): [ProtocolDTO]
     getFeaturesByProtocolId(protocolId: ID): [FeatureDTO]
+    getFeatureById(featureId: ID): FeatureDTO
 }
