@@ -31,4 +31,9 @@ public class GraphQLScalarConfiguration {
     public GraphQLScalarType dateScalar() {
         return Scalars.dateType();
     }
+
+    @Bean
+    public GraphQLScalarType floatNaNScalar() {
+        return Scalars.floatNaNType();
+    }
 }

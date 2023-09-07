@@ -31,6 +31,7 @@ public class PostsRuntimeWiring implements RuntimeWiringConfigurer {
     public void configure(RuntimeWiring.Builder builder) {
         builder
                 .scalar(Scalars.dateType())
+                .scalar(Scalars.floatNaNType())
                 .build();
     }
 }
