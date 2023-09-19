@@ -33,6 +33,7 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -99,7 +100,7 @@ public class ProtocolGraphQLController {
     }
 
     @QueryMapping
-    public ProtocolDTO getProtocolById(@Argument long protocolId) {
+    public ProtocolDTO getProtocolById(@Argument Long protocolId) {
         ProtocolDTO result = protocolService.getProtocolById(protocolId);
 
         List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocolId);
@@ -120,8 +121,8 @@ public class ProtocolGraphQLController {
     }
 
     @QueryMapping
-    public List<FeatureDTO> getFeaturesByProtocolId(@Argument long protocolId) {
-        List<FeatureDTO> result = featureService.findFeaturesByProtocolId(protocolId);
+    public List<FeatureDTO> getFeaturesByProtocolId(@Argument Long protocolId) {
+        List<FeatureDTO> result = protocolId != null ? featureService.findFeaturesByProtocolId(protocolId) : new ArrayList<>();
 
         result.forEach(feature -> {
             try {
@@ -139,7 +140,7 @@ public class ProtocolGraphQLController {
     }
 
     @QueryMapping
-    public FeatureDTO getFeatureById(@Argument long featureId) throws FeatureNotFoundException {
+    public FeatureDTO getFeatureById(@Argument Long featureId) throws FeatureNotFoundException {
         FeatureDTO result = featureService.findFeatureById(featureId);
 
         List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(featureId);
