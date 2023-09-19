@@ -6,24 +6,17 @@
         <groupId>eu.openanalytics.phaedra</groupId>
         <artifactId>phaedra2-protocolservice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>phaedra2-protocolservice-client</artifactId>
     <name>phaedra2-protocolservice-client</name>
 
     <dependencies>
-
-        <!-- Dependency on DTO -->
         <dependency>
             <groupId>eu.openanalytics.phaedra</groupId>
             <artifactId>phaedra2-protocolservice-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
-
-    <properties>
-        <java.version>16</java.version>
-    </properties>
 
 </project>
