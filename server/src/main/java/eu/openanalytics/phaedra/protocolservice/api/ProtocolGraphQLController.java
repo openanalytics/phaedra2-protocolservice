@@ -57,21 +57,21 @@ public class ProtocolGraphQLController {
     public List<ProtocolDTO> getProtocols() {
         List<ProtocolDTO> result = protocolService.getProtocols();
 
-        result.forEach(protocol -> {
-            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
-            protocol.setFeatures(features);
-            features.forEach(feature -> {
-                try {
-                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
-                    feature.setCivs(civs);
-
-                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
-                    feature.setDrcModel(drcModel);
-                } catch (FeatureNotFoundException e) {
-                    //TODO: Throw an appropriate error
-                }
-            });
-        });
+//        result.forEach(protocol -> {
+//            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
+//            protocol.setFeatures(features);
+//            features.forEach(feature -> {
+//                try {
+//                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
+//                    feature.setCivs(civs);
+//
+//                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
+//                    feature.setDrcModel(drcModel);
+//                } catch (FeatureNotFoundException e) {
+//                    //TODO: Throw an appropriate error
+//                }
+//            });
+//        });
 
         return result;
     }
