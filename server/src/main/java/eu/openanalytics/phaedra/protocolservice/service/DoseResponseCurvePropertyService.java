@@ -20,12 +20,16 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.IterableUtils;
+import org.springframework.stereotype.Service;
+
 import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.model.DoseResponseCurveProperty;
 import eu.openanalytics.phaedra.protocolservice.repository.DoseResponseCurvePropertyRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class DoseResponseCurvePropertyService {
@@ -68,20 +72,37 @@ public class DoseResponseCurvePropertyService {
 
     public DRCModelDTO getByFeatureId(Long featureId) {
         List<DoseResponseCurveProperty> drcProperties = drcPropertyRepository.findAllByFeatureId(featureId);
-        if (drcProperties.isEmpty())
-            return null;
+        if (drcProperties.isEmpty()) return null;
 
         DRCModelDTO drcModelDTO = new DRCModelDTO();
         drcModelDTO.setFeatureId(featureId);
-
-        for (DoseResponseCurveProperty drcProp: drcProperties) {
-            if (drcProp.getName().equalsIgnoreCase("model")) drcModelDTO.setName(drcProp.getValue());
-            else if (drcProp.getName().equalsIgnoreCase("description")) drcModelDTO.setDescription(drcProp.getValue());
-            else if (drcProp.getName().equalsIgnoreCase("method")) drcModelDTO.setMethod(drcProp.getValue());
-            else if (drcProp.getName().equalsIgnoreCase("slope")) drcModelDTO.setSlope(drcProp.getValue());
-            else drcModelDTO.getInputParameters().put(drcProp.getName(), drcProp.getValue());
-        }
+        mapProperties(drcProperties, drcModelDTO);
 
         return drcModelDTO;
+    }
+    
+    public List<DRCModelDTO> getAll() {
+        List<DoseResponseCurveProperty> drcProperties = IterableUtils.toList(drcPropertyRepository.findAll());
+        
+        Map<Long, List<DoseResponseCurveProperty>> propsPerFeature = drcProperties.stream().collect(
+        		Collectors.groupingBy(DoseResponseCurveProperty::getFeatureId, 
+        		Collectors.toList()));
+        
+        return propsPerFeature.keySet().stream().map(featureId -> {
+        	DRCModelDTO model = new DRCModelDTO();
+            model.setFeatureId(featureId);
+            mapProperties(propsPerFeature.get(featureId), model);
+            return model;
+        }).toList();
+    }
+    
+    private void mapProperties(List<DoseResponseCurveProperty> properties, DRCModelDTO model) {
+    	for (DoseResponseCurveProperty prop: properties) {
+    		if (prop.getName().equalsIgnoreCase("model")) model.setName(prop.getValue());
+    		else if (prop.getName().equalsIgnoreCase("description")) model.setDescription(prop.getValue());
+    		else if (prop.getName().equalsIgnoreCase("method")) model.setMethod(prop.getValue());
+    		else if (prop.getName().equalsIgnoreCase("slope")) model.setSlope(prop.getValue());
+    		else model.getInputParameters().put(prop.getName(), prop.getValue());
+    	}
     }
 }

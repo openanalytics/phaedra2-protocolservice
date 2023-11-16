@@ -21,13 +21,8 @@
 package eu.openanalytics.phaedra.protocolservice.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.relational.core.conversion.DbActionExecutionException;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
@@ -36,6 +31,8 @@ import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundExcepti
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.model.CalculationInputValue;
 import eu.openanalytics.phaedra.protocolservice.repository.CalculationInputValueRepository;
+import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
+import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
 
 @Service
 public class CalculationInputValueService {
@@ -90,7 +87,12 @@ public class CalculationInputValueService {
         calculationInputValueRepository.deleteById(calculationInputValueId);
     }
 
-
+    public List<CalculationInputValueDTO> getAll() {
+    	return IterableUtils.toList(calculationInputValueRepository.findAll()).stream()
+    			.map((f) -> modelMapper.map(f).build())
+    			.toList();
+    }
+    
     /**
      * Get all {@link CalculationInputValueDTO} of a feature.
      *
