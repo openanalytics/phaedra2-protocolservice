@@ -148,22 +148,24 @@ public class ProtocolController {
     @GetMapping
     public ResponseEntity<List<ProtocolDTO>> getProtocols() {
         log.info("Get all protocols");
+        
         List<ProtocolDTO> allProtocols = protocolService.getProtocols();
-
+        List<FeatureDTO> allFeatures = featureService.findAllFeatures();
+        List<CalculationInputValueDTO> allCivs = calculationInputValueService.getAll();
+        List<DRCModelDTO> allDRCModels = drcSettingsService.getAll();
+        
         for (ProtocolDTO protocol: allProtocols) {
-            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
+            List<FeatureDTO> features = allFeatures.stream().filter(f -> f.getProtocolId() == protocol.getId()).toList();
             protocol.setFeatures(features);
 
             for (FeatureDTO feature : features) {
-                try {
-                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
-                    feature.setCivs(civs);
+                List<CalculationInputValueDTO> civs = allCivs.stream()
+                		.filter(civ -> civ.getFeatureId() == feature.getId() && civ.getFormulaId() == feature.getFormulaId())
+                		.toList();
+                feature.setCivs(civs);
 
-                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
-                    feature.setDrcModel(drcModel);
-                } catch (FeatureNotFoundException e) {
-                    //TODO: Throw an appropriate error
-                }
+                DRCModelDTO drcModel = allDRCModels.stream().filter(m -> m.getFeatureId() == feature.getId()).findAny().orElse(null);
+                feature.setDrcModel(drcModel);
             }
         }
 
