@@ -50,6 +50,9 @@ public class FeatureDTO {
     String trigger;
     String status;
 
+    List<String> tags;
+    List<PropertyDTO> properties;
+
     @Builder.Default
     boolean deleted = false;
 

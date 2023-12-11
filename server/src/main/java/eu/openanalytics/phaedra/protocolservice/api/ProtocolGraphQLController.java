@@ -20,6 +20,10 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
@@ -43,35 +47,26 @@ public class ProtocolGraphQLController {
     private final FeatureService featureService;
     private final CalculationInputValueService calculationInputValueService;
     private final DoseResponseCurvePropertyService drcSettingsService;
+    private final MetadataServiceClient metadataServiceClient;
 
     public ProtocolGraphQLController(ProtocolService protocolService, FeatureService featureService,
                                      CalculationInputValueService calculationInputValueService,
-                                     DoseResponseCurvePropertyService drcSettingsService) {
+                                     DoseResponseCurvePropertyService drcSettingsService,
+                                     MetadataServiceClient metadataServiceClient) {
         this.protocolService = protocolService;
         this.featureService = featureService;
         this.calculationInputValueService = calculationInputValueService;
         this.drcSettingsService = drcSettingsService;
+        this.metadataServiceClient = metadataServiceClient;
     }
 
     @QueryMapping
     public List<ProtocolDTO> getProtocols() {
         List<ProtocolDTO> result = protocolService.getProtocols();
 
-//        result.forEach(protocol -> {
-//            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
-//            protocol.setFeatures(features);
-//            features.forEach(feature -> {
-//                try {
-//                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
-//                    feature.setCivs(civs);
-//
-//                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
-//                    feature.setDrcModel(drcModel);
-//                } catch (FeatureNotFoundException e) {
-//                    //TODO: Throw an appropriate error
-//                }
-//            });
-//        });
+        result.forEach(protocol -> {
+            addProtocolMetadata(protocol);
+        });
 
         return result;
     }
@@ -90,10 +85,14 @@ public class ProtocolGraphQLController {
 
                     DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
                     feature.setDrcModel(drcModel);
+
+                    addFeatureMetadata(feature);
                 } catch (FeatureNotFoundException e) {
                     //TODO: Throw an appropriate error
                 }
             });
+
+            addProtocolMetadata(protocol);
         });
 
         return result;
@@ -117,6 +116,9 @@ public class ProtocolGraphQLController {
                 //TODO: Throw an appropriate error
             }
         });
+
+        addProtocolMetadata(result);
+
         return result;
     }
 
@@ -131,6 +133,8 @@ public class ProtocolGraphQLController {
 
                 DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
                 feature.setDrcModel(drcModel);
+
+                addFeatureMetadata(feature);
             } catch (FeatureNotFoundException e) {
                 //TODO: Throw an appropriate error
             }
@@ -150,5 +154,21 @@ public class ProtocolGraphQLController {
         result.setDrcModel(drcModel);
 
         return result;
+    }
+
+    private void addProtocolMetadata(ProtocolDTO protocolDTO) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PROTOCOL, protocolDTO.getId());
+        protocolDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getPorperties(ObjectClass.PROTOCOL, protocolDTO.getId());
+        protocolDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
+    }
+
+    private void addFeatureMetadata(FeatureDTO featureDTO) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.FEATURE, featureDTO.getId());
+        featureDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getPorperties(ObjectClass.FEATURE, featureDTO.getId());
+        featureDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 }

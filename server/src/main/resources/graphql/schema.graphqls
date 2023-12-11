@@ -12,6 +12,11 @@ enum FeatureType {
     RAW
 }
 
+type PropertyDTO {
+    propertyName: String
+    propertyValue: String
+}
+
 type CalculationInputValueDTO {
     id: ID
     featureId: ID
@@ -46,6 +51,9 @@ type FeatureDTO {
     trigger: String
     status: String
 
+    tags: [String]
+    properties: [PropertyDTO]
+
     deleted: Boolean
 }
 
@@ -58,6 +66,9 @@ type ProtocolDTO {
     highWelltype: String
     previousVersion: String
     versionNumber: String
+
+    tags: [String]
+    properties: [PropertyDTO]
 
     features: [FeatureDTO]
 
