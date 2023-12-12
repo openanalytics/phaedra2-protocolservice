@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import eu.openanalytics.phaedra.protocolservice.record.InputParameter;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 
@@ -62,12 +63,19 @@ public class DoseResponseCurvePropertyService {
         else slope = new DoseResponseCurveProperty(featureId, "slope", drcModel.getSlope());
         drcPropertyRepository.save(slope);
 
-        for (String propertyName : drcModel.getInputParameters().keySet()) {
-            DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, propertyName);
-            if (property != null) property.setValue(drcModel.getInputParameters().get(propertyName));
-            else property = new DoseResponseCurveProperty(featureId, propertyName, drcModel.getInputParameters().get(propertyName));
+//        for (String propertyName : drcModel.getInputParameters().keySet()) {
+//        DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, propertyName);
+//        if (property != null) property.setValue(drcModel.getInputParameters().get(propertyName));
+//        else property = new DoseResponseCurveProperty(featureId, propertyName, drcModel.getInputParameters().get(propertyName));
+//        drcPropertyRepository.save(property);
+//    }
+        drcModel.getInputParameters().stream().forEach(inputParameter -> {
+            DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, inputParameter.name());
+            if (property != null) property.setValue(inputParameter.value());
+            else property = new DoseResponseCurveProperty(featureId, inputParameter.name(), inputParameter.value());
             drcPropertyRepository.save(property);
-        }
+        });
+
     }
 
     public DRCModelDTO getByFeatureId(Long featureId) {
@@ -80,14 +88,14 @@ public class DoseResponseCurvePropertyService {
 
         return drcModelDTO;
     }
-    
+
     public List<DRCModelDTO> getAll() {
         List<DoseResponseCurveProperty> drcProperties = IterableUtils.toList(drcPropertyRepository.findAll());
-        
+
         Map<Long, List<DoseResponseCurveProperty>> propsPerFeature = drcProperties.stream().collect(
-        		Collectors.groupingBy(DoseResponseCurveProperty::getFeatureId, 
+        		Collectors.groupingBy(DoseResponseCurveProperty::getFeatureId,
         		Collectors.toList()));
-        
+
         return propsPerFeature.keySet().stream().map(featureId -> {
         	DRCModelDTO model = new DRCModelDTO();
             model.setFeatureId(featureId);
@@ -95,14 +103,14 @@ public class DoseResponseCurvePropertyService {
             return model;
         }).toList();
     }
-    
+
     private void mapProperties(List<DoseResponseCurveProperty> properties, DRCModelDTO model) {
     	for (DoseResponseCurveProperty prop: properties) {
     		if (prop.getName().equalsIgnoreCase("model")) model.setName(prop.getValue());
     		else if (prop.getName().equalsIgnoreCase("description")) model.setDescription(prop.getValue());
     		else if (prop.getName().equalsIgnoreCase("method")) model.setMethod(prop.getValue());
     		else if (prop.getName().equalsIgnoreCase("slope")) model.setSlope(prop.getValue());
-    		else model.getInputParameters().put(prop.getName(), prop.getValue());
+    		else model.getInputParameters().add(new InputParameter(prop.getName(), prop.getValue()));
     	}
     }
 }

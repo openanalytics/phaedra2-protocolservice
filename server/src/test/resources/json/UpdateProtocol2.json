@@ -31,7 +31,7 @@
         "name": "PLOTONLY",
         "description": "Plots the data points but will not attempt any curve fitting",
         "method": "CENS",
-        "inputParameters": {}
+        "inputParameters": []
       }
     }
   ],

@@ -27,6 +27,11 @@ type CalculationInputValueDTO {
     inputSource: InputSource
 }
 
+type InputParameter {
+    name: String
+    value: String
+}
+
 type DRCModelDTO {
     featureId: ID
     name: String
@@ -34,6 +39,7 @@ type DRCModelDTO {
     method: String
     slope: String
     script: String
+    inputParameters: [InputParameter]
 }
 
 type FeatureDTO {

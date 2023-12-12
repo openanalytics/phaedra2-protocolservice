@@ -20,15 +20,15 @@
  */
 package eu.openanalytics.phaedra.protocolservice.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
+import eu.openanalytics.phaedra.protocolservice.record.InputParameter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -43,7 +43,5 @@ public class DRCModelDTO {
     String slope;
 
     String script;
-    Map<String, String> inputParameters = new HashMap<>();
-
-    Map<String, String> outputParameters = new HashMap<>();
+    List<InputParameter> inputParameters = new ArrayList<>();
 }
