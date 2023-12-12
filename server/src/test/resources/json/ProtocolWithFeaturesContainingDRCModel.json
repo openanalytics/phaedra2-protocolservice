@@ -47,8 +47,11 @@
         "featureId": null,
         "name": "receptor2",
         "description": "receptor2",
-        "method": "tukey",
         "inputParameters": [
+          {
+            "name": "method",
+            "value": "tukey"
+          },
           {
             "name": "Fixed Top",
             "value": "3"
@@ -113,8 +116,11 @@
         "featureId": null,
         "name": "receptor2",
         "description": "receptor2",
-        "method": "mean",
         "inputParameters": [
+          {
+            "name": "method",
+            "value": "mean"
+          },
           {
             "name": "Fixed Top",
             "value": "1"

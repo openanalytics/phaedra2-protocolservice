@@ -39,9 +39,7 @@ public class DRCModelDTO {
     Long featureId;
     String name;
     String description;
-    String method;
-    String slope;
-
     String script;
+
     List<InputParameter> inputParameters = new ArrayList<>();
 }

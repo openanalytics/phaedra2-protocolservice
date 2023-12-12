@@ -48,27 +48,11 @@ public class DoseResponseCurvePropertyService {
         else model = new DoseResponseCurveProperty(featureId, "model", drcModel.getName());
         drcPropertyRepository.save(model);
 
-        DoseResponseCurveProperty method = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "method");
-        if (method != null) method.setValue(drcModel.getMethod());
-        else method = new DoseResponseCurveProperty(featureId, "method", drcModel.getMethod());
-        drcPropertyRepository.save(method);
-
         DoseResponseCurveProperty description = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "description");
         if (description != null) description.setValue(drcModel.getDescription());
         else description = new DoseResponseCurveProperty(featureId, "description", drcModel.getDescription());
         drcPropertyRepository.save(description);
 
-        DoseResponseCurveProperty slope = drcPropertyRepository.findAllByFeatureIdAndName(featureId, "slope");
-        if (slope != null) slope.setValue(drcModel.getSlope());
-        else slope = new DoseResponseCurveProperty(featureId, "slope", drcModel.getSlope());
-        drcPropertyRepository.save(slope);
-
-//        for (String propertyName : drcModel.getInputParameters().keySet()) {
-//        DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, propertyName);
-//        if (property != null) property.setValue(drcModel.getInputParameters().get(propertyName));
-//        else property = new DoseResponseCurveProperty(featureId, propertyName, drcModel.getInputParameters().get(propertyName));
-//        drcPropertyRepository.save(property);
-//    }
         drcModel.getInputParameters().stream().forEach(inputParameter -> {
             DoseResponseCurveProperty property = drcPropertyRepository.findAllByFeatureIdAndName(featureId, inputParameter.name());
             if (property != null) property.setValue(inputParameter.value());
@@ -108,8 +92,6 @@ public class DoseResponseCurvePropertyService {
     	for (DoseResponseCurveProperty prop: properties) {
     		if (prop.getName().equalsIgnoreCase("model")) model.setName(prop.getValue());
     		else if (prop.getName().equalsIgnoreCase("description")) model.setDescription(prop.getValue());
-    		else if (prop.getName().equalsIgnoreCase("method")) model.setMethod(prop.getValue());
-    		else if (prop.getName().equalsIgnoreCase("slope")) model.setSlope(prop.getValue());
     		else model.getInputParameters().add(new InputParameter(prop.getName(), prop.getValue()));
     	}
     }
