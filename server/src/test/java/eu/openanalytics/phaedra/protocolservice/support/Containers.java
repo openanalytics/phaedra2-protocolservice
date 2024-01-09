@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -42,10 +42,10 @@ public class Containers {
     static {
     	DockerImageName pgImage = DockerImageName.parse("registry.openanalytics.eu/library/postgres:13-alpine").asCompatibleSubstituteFor("postgres");
         postgreSQLContainer = new PostgreSQLContainer<>(pgImage).withUrlParam("currentSchema","protocols");
-        
+
         try {
         	postgreSQLContainer.start();
-        	
+
             var connection = postgreSQLContainer.createConnection("");
             connection.createStatement().executeUpdate("create schema protocols");
             connection.setSchema("protocols");

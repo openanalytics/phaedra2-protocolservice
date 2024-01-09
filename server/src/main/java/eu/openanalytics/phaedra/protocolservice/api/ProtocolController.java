@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -148,12 +148,12 @@ public class ProtocolController {
     @GetMapping
     public ResponseEntity<List<ProtocolDTO>> getProtocols() {
         log.info("Get all protocols");
-        
+
         List<ProtocolDTO> allProtocols = protocolService.getProtocols();
         List<FeatureDTO> allFeatures = featureService.findAllFeatures();
         List<CalculationInputValueDTO> allCivs = calculationInputValueService.getAll();
         List<DRCModelDTO> allDRCModels = drcSettingsService.getAll();
-        
+
         for (ProtocolDTO protocol: allProtocols) {
             List<FeatureDTO> features = allFeatures.stream().filter(f -> f.getProtocolId() == protocol.getId()).toList();
             protocol.setFeatures(features);
