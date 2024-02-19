@@ -20,6 +20,13 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
+
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
@@ -33,12 +40,6 @@ import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueSer
 import eu.openanalytics.phaedra.protocolservice.service.DoseResponseCurvePropertyService;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.stereotype.Controller;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class ProtocolGraphQLController {
@@ -157,18 +158,18 @@ public class ProtocolGraphQLController {
     }
 
     private void addProtocolMetadata(ProtocolDTO protocolDTO) {
-        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PROTOCOL, protocolDTO.getId());
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PROTOCOL.name(), protocolDTO.getId());
         protocolDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
 
-        List<PropertyDTO> properties = metadataServiceClient.getPorperties(ObjectClass.PROTOCOL, protocolDTO.getId());
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PROTOCOL.name(), protocolDTO.getId());
         protocolDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 
     private void addFeatureMetadata(FeatureDTO featureDTO) {
-        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.FEATURE, featureDTO.getId());
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.FEATURE.name(), featureDTO.getId());
         featureDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
 
-        List<PropertyDTO> properties = metadataServiceClient.getPorperties(ObjectClass.FEATURE, featureDTO.getId());
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.FEATURE.name(), featureDTO.getId());
         featureDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 }
