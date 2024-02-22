@@ -20,19 +20,14 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
-import org.apache.commons.collections4.CollectionUtils;
+import eu.openanalytics.phaedra.protocolservice.model.Protocol;
+import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.Conditions;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -41,11 +36,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
-import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 public class ProtocolService {
@@ -56,15 +54,17 @@ public class ProtocolService {
 
     private final RestTemplate restTemplate;
     private final ProtocolRepository protocolRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper customModelMapper;
     private final IAuthorizationService authService;
+
+    private final org.modelmapper.ModelMapper modelMapper = new org.modelmapper.ModelMapper();
 
 
     public ProtocolService(RestTemplate restTemplate, ProtocolRepository protocolRepository,
                            ModelMapper modelMapper, IAuthorizationService authService) {
         this.restTemplate = restTemplate;
         this.protocolRepository = protocolRepository;
-        this.modelMapper = modelMapper;
+        this.customModelMapper = modelMapper;
         this.authService = authService;
     }
 
@@ -76,9 +76,9 @@ public class ProtocolService {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
 
         // Map protocolDTO object to Protocol object and update protocol version
-        Protocol newProtocol = updateVersion(modelMapper.map(protocolDTO));
+        Protocol newProtocol = updateVersion(customModelMapper.map(protocolDTO));
 
-        return modelMapper.map(protocolRepository.save(newProtocol));
+        return customModelMapper.map(protocolRepository.save(newProtocol));
     }
 
     /**
@@ -87,10 +87,17 @@ public class ProtocolService {
      */
     @CacheEvict(value = "protocols", key = "#protocolDTO?.id")
     public ProtocolDTO update(ProtocolDTO protocolDTO) throws ProtocolNotFoundException {
+        Protocol protocol = protocolRepository.findById(protocolDTO.getId()).orElse(null);
+        if (protocol == null) return null;
+
         authService.performAccessCheck(p -> authService.hasUserAccess());
 
+        modelMapper.typeMap(ProtocolDTO.class, Protocol.class)
+                .setPropertyCondition(Conditions.isNotNull())
+                .map(protocolDTO, protocol);
+
         // Map protocolDTO object to Protocol object and update protocol version
-        Protocol protocol = updateVersion(modelMapper.map(protocolDTO));
+        protocol = updateVersion(protocol);
 
         // Set update info
         protocol.setUpdatedOn(new Date());
@@ -100,7 +107,7 @@ public class ProtocolService {
         Protocol updated = protocolRepository.save(protocol);
 
         // Map updated protocol object to ProtocolDTO and return
-        return modelMapper.map(updated);
+        return customModelMapper.map(updated);
     }
 
     /**
@@ -120,7 +127,7 @@ public class ProtocolService {
     @Cacheable("protocols")
     public ProtocolDTO getProtocolById(Long protocolId) {
         Optional<Protocol> protocol = protocolRepository.findById(protocolId);
-        return protocol.map(modelMapper::map).orElse(null);
+        return protocol.map(customModelMapper::map).orElse(null);
     }
 
     /**
@@ -160,7 +167,7 @@ public class ProtocolService {
         List<Protocol> protocols = (List<Protocol>) protocolRepository.findAll();
         if (isNotEmpty(protocols)) {
             return protocols.stream()
-                    .map(modelMapper::map)
+                    .map(customModelMapper::map)
                     .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
@@ -185,7 +192,7 @@ public class ProtocolService {
 
         List<ProtocolDTO> result = responseEntity.getBody().stream().map(to -> {
             Optional<Protocol> protocol = protocolRepository.findById(to.getObjectId());
-            return protocol.map(modelMapper::map).orElse(null);
+            return protocol.map(customModelMapper::map).orElse(null);
         }).collect(Collectors.toList()).stream()
                 .filter(p -> p != null)
                 .collect(Collectors.toList());
