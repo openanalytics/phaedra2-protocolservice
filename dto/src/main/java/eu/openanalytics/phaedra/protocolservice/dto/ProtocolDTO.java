@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -52,4 +52,7 @@ public class ProtocolDTO {
     private String createdBy;
     private Date updatedOn;
     private String updatedBy;
+
+    private List<String> tags;
+    private List<PropertyDTO> properties;
 }

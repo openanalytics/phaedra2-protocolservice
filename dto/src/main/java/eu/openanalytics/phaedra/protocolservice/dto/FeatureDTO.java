@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -49,6 +49,9 @@ public class FeatureDTO {
     DRCModelDTO drcModel;
     String trigger;
     String status;
+
+    List<String> tags;
+    List<PropertyDTO> properties;
 
     @Builder.Default
     boolean deleted = false;

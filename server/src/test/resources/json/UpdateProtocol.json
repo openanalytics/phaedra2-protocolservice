@@ -14,7 +14,7 @@
       "protocolId": 1000,
       "formulaId": 69,
       "drcModel": {
-        "inputParameters": {}
+        "inputParameters": []
       }
     },
     {
@@ -25,7 +25,7 @@
       "protocolId": 1000,
       "formulaId": 20,
       "drcModel": {
-        "inputParameters": {}
+        "inputParameters": []
       }
     }
   ],

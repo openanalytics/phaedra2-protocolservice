@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,6 +20,17 @@
  */
 package eu.openanalytics.phaedra.protocolservice.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
+
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.protocolservice.dto.CalculationInputValueDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
@@ -29,12 +40,6 @@ import eu.openanalytics.phaedra.protocolservice.service.CalculationInputValueSer
 import eu.openanalytics.phaedra.protocolservice.service.DoseResponseCurvePropertyService;
 import eu.openanalytics.phaedra.protocolservice.service.FeatureService;
 import eu.openanalytics.phaedra.protocolservice.service.ProtocolService;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.stereotype.Controller;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class ProtocolGraphQLController {
@@ -43,35 +48,26 @@ public class ProtocolGraphQLController {
     private final FeatureService featureService;
     private final CalculationInputValueService calculationInputValueService;
     private final DoseResponseCurvePropertyService drcSettingsService;
+    private final MetadataServiceClient metadataServiceClient;
 
     public ProtocolGraphQLController(ProtocolService protocolService, FeatureService featureService,
                                      CalculationInputValueService calculationInputValueService,
-                                     DoseResponseCurvePropertyService drcSettingsService) {
+                                     DoseResponseCurvePropertyService drcSettingsService,
+                                     MetadataServiceClient metadataServiceClient) {
         this.protocolService = protocolService;
         this.featureService = featureService;
         this.calculationInputValueService = calculationInputValueService;
         this.drcSettingsService = drcSettingsService;
+        this.metadataServiceClient = metadataServiceClient;
     }
 
     @QueryMapping
     public List<ProtocolDTO> getProtocols() {
         List<ProtocolDTO> result = protocolService.getProtocols();
 
-//        result.forEach(protocol -> {
-//            List<FeatureDTO> features = featureService.findFeaturesByProtocolId(protocol.getId());
-//            protocol.setFeatures(features);
-//            features.forEach(feature -> {
-//                try {
-//                    List<CalculationInputValueDTO> civs = calculationInputValueService.getByFeatureId(feature.getId());
-//                    feature.setCivs(civs);
-//
-//                    DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
-//                    feature.setDrcModel(drcModel);
-//                } catch (FeatureNotFoundException e) {
-//                    //TODO: Throw an appropriate error
-//                }
-//            });
-//        });
+        result.forEach(protocol -> {
+            addProtocolMetadata(protocol);
+        });
 
         return result;
     }
@@ -90,10 +86,14 @@ public class ProtocolGraphQLController {
 
                     DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
                     feature.setDrcModel(drcModel);
+
+                    addFeatureMetadata(feature);
                 } catch (FeatureNotFoundException e) {
                     //TODO: Throw an appropriate error
                 }
             });
+
+            addProtocolMetadata(protocol);
         });
 
         return result;
@@ -117,6 +117,9 @@ public class ProtocolGraphQLController {
                 //TODO: Throw an appropriate error
             }
         });
+
+        addProtocolMetadata(result);
+
         return result;
     }
 
@@ -131,6 +134,8 @@ public class ProtocolGraphQLController {
 
                 DRCModelDTO drcModel = drcSettingsService.getByFeatureId(feature.getId());
                 feature.setDrcModel(drcModel);
+
+                addFeatureMetadata(feature);
             } catch (FeatureNotFoundException e) {
                 //TODO: Throw an appropriate error
             }
@@ -150,5 +155,21 @@ public class ProtocolGraphQLController {
         result.setDrcModel(drcModel);
 
         return result;
+    }
+
+    private void addProtocolMetadata(ProtocolDTO protocolDTO) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PROTOCOL.name(), protocolDTO.getId());
+        protocolDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PROTOCOL.name(), protocolDTO.getId());
+        protocolDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
+    }
+
+    private void addFeatureMetadata(FeatureDTO featureDTO) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.FEATURE.name(), featureDTO.getId());
+        featureDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.FEATURE.name(), featureDTO.getId());
+        featureDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 }

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -18,7 +18,7 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.protocolservice.vo;
+package eu.openanalytics.phaedra.protocolservice.dto;
 
-public class FeatureVO {
+public record PropertyDTO(String propertyName, String propertyValue) {
 }

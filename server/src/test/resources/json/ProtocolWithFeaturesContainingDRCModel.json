@@ -47,14 +47,32 @@
         "featureId": null,
         "name": "receptor2",
         "description": "receptor2",
-        "method": "tukey",
-        "inputParameters": {
-          "Fixed Top": "3",
-          "Confidence Level": "0.9",
-          "Fixed Bottom": "2",
-          "Fixed Slope": "1",
-          "Slope": "free"
-        }
+        "inputParameters": [
+          {
+            "name": "method",
+            "value": "tukey"
+          },
+          {
+            "name": "Fixed Top",
+            "value": "3"
+          },
+          {
+            "name": "Confidence Level",
+            "value": "0.9"
+          },
+          {
+            "name": "Fixed Bottom",
+            "value": "2"
+          },
+          {
+            "name": "Fixed Slope",
+            "value": "1"
+          },
+          {
+            "name": "Slope",
+            "value": "free"
+          }
+        ]
       },
       "trigger": null
     },
@@ -98,14 +116,32 @@
         "featureId": null,
         "name": "receptor2",
         "description": "receptor2",
-        "method": "mean",
-        "inputParameters": {
-          "Fixed Top": "1",
-          "Confidence Level": "0.5",
-          "Fixed Bottom": "-1",
-          "Fixed Slope": "1",
-          "Slope": "descending"
-        }
+        "inputParameters": [
+          {
+            "name": "method",
+            "value": "mean"
+          },
+          {
+            "name": "Fixed Top",
+            "value": "1"
+          },
+          {
+            "name": "Confidence Level",
+            "value": "0.5"
+          },
+          {
+            "name": "Fixed Bottom",
+            "value": "-1"
+          },
+          {
+            "name": "Fixed Slope",
+            "value": "1"
+          },
+          {
+            "name": "Slope",
+            "value": "descending"
+          }
+        ]
       },
       "trigger": null
     }
