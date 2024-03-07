@@ -270,7 +270,7 @@ public class ProtocolControllerTest {
         Protocol protocol = new Protocol();
         protocol.setName("New protocol name");
         protocol.setDescription("New protocol description");
-        String newVersion = "2.0";
+        String newVersion = "2.0.0";
         protocol.setVersionNumber(newVersion);
         protocol.setId(1000L);
 
