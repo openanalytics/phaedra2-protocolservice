@@ -20,13 +20,14 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
-import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
-import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
-import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
-import eu.openanalytics.phaedra.protocolservice.model.Protocol;
-import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.Conditions;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -36,21 +37,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import eu.openanalytics.phaedra.protocolservice.dto.ProtocolDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
+import eu.openanalytics.phaedra.protocolservice.exception.ProtocolNotFoundException;
+import eu.openanalytics.phaedra.protocolservice.model.Protocol;
+import eu.openanalytics.phaedra.protocolservice.repository.ProtocolRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import eu.openanalytics.phaedra.util.versioning.VersionUtils;
 
 @Service
 public class ProtocolService {
 
     private static final String PHAEDRA_METADATA_SERVICE = "http://phaedra-metadata-service/phaedra/metadata-service";
     private static final String PROTOCOL_OBJECT_CLASS = "PROTOCOL";
-    private static final String PROTOCOL_DEFAULT_VERSION = "1.0.0";
 
     private final RestTemplate restTemplate;
     private final ProtocolRepository protocolRepository;
@@ -74,10 +73,7 @@ public class ProtocolService {
      */
     public ProtocolDTO create(ProtocolDTO protocolDTO) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
-
-        // Map protocolDTO object to Protocol object and update protocol version
         Protocol newProtocol = updateVersion(customModelMapper.map(protocolDTO));
-
         return customModelMapper.map(protocolRepository.save(newProtocol));
     }
 
@@ -92,21 +88,13 @@ public class ProtocolService {
 
         authService.performAccessCheck(p -> authService.hasUserAccess());
 
+        // Map updated DTO fields onto existing protocol
         modelMapper.typeMap(ProtocolDTO.class, Protocol.class)
                 .setPropertyCondition(Conditions.isNotNull())
                 .map(protocolDTO, protocol);
 
-        // Map protocolDTO object to Protocol object and update protocol version
         protocol = updateVersion(protocol);
-
-        // Set update info
-        protocol.setUpdatedOn(new Date());
-        protocol.setUpdatedBy(authService.getCurrentPrincipalName());
-
-        // Save the updated protocol
         Protocol updated = protocolRepository.save(protocol);
-
-        // Map updated protocol object to ProtocolDTO and return
         return customModelMapper.map(updated);
     }
 
@@ -217,32 +205,19 @@ public class ProtocolService {
 
     public Protocol updateVersion(Protocol protocol) {
         Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.hhmmss");
-        String oldVersion = protocol.getVersionNumber();
 
-        // If existing protocol
-        if (protocol.getId() != null) {
-            if (StringUtils.isBlank(protocol.getVersionNumber())) {
-                String newVersion = PROTOCOL_DEFAULT_VERSION + "-" + dateFormat.format(currentDate);
-                protocol.setVersionNumber(newVersion);
-            } else {
-                String newVersion = protocol.getVersionNumber().split("-")[0] + "-" + dateFormat.format(currentDate);
-                protocol.setVersionNumber(newVersion);
-                protocol.setPreviousVersion(oldVersion);
-            }
+        if (protocol.getId() == null) {
+        	protocol.setVersionNumber(VersionUtils.generateNewVersion(null));
+            protocol.setCreatedOn(currentDate);
+            protocol.setCreatedBy(authService.getCurrentPrincipalName());
+        } else {
+        	protocol.setPreviousVersion(protocol.getVersionNumber());
+        	protocol.setVersionNumber(VersionUtils.generateNewVersion(protocol.getVersionNumber()));
             protocol.setUpdatedOn(currentDate);
             protocol.setUpdatedBy(authService.getCurrentPrincipalName());
-        // If new protocol
-        } else {
-            if (StringUtils.isBlank(protocol.getVersionNumber())) {
-                String newVersion = PROTOCOL_DEFAULT_VERSION + "-" + dateFormat.format(currentDate);
-                protocol.setVersionNumber(newVersion);
-            } else {
-                String newVersion = protocol.getVersionNumber().split("-")[0] + "-" + dateFormat.format(currentDate);
-                protocol.setVersionNumber(newVersion);
-            }
         }
 
         return protocol;
     }
+    
 }
