@@ -22,29 +22,33 @@ package eu.openanalytics.phaedra.protocolservice.client.impl;
 
 public class UrlFactory {
 
-    private static final String PROTOCOL_SERVICE = "http://phaedra-protocol-service:8080/phaedra/protocol-service";
+    private String baseURL;
+    
+    public UrlFactory(String baseURL) {
+    	this.baseURL = baseURL;
+	}
 
-    public static String protocol(long protocolId) {
-        return String.format("%s/protocols/%s", PROTOCOL_SERVICE, protocolId);
+    public String protocol(long protocolId) {
+        return String.format("%s/protocols/%s", baseURL, protocolId);
     }
 
-    public static String protocolFeatures(long protocolId) {
-        return String.format("%s/protocols/%s/features", PROTOCOL_SERVICE, protocolId);
+    public String protocolFeatures(long protocolId) {
+        return String.format("%s/protocols/%s/features", baseURL, protocolId);
     }
 
-    public static String protocolCiv(long protocolId) {
-        return String.format("%s/protocols/%s/calculationinputvalues", PROTOCOL_SERVICE, protocolId);
+    public String protocolCiv(long protocolId) {
+        return String.format("%s/protocols/%s/calculationinputvalues", baseURL, protocolId);
     }
 
-    public static String defaultFeatureStat() {
-        return String.format("%s/defaultfeaturestats", PROTOCOL_SERVICE);
+    public String defaultFeatureStat() {
+        return String.format("%s/defaultfeaturestats", baseURL);
     }
 
-    public static String featureStats(long protocolId) {
-        return String.format("%s/protocols/%s/featurestats", PROTOCOL_SERVICE, protocolId);
+    public String featureStats(long protocolId) {
+        return String.format("%s/protocols/%s/featurestats", baseURL, protocolId);
     }
 
-    public static String feature(long featureId) {
-        return String.format("%s/features/%s", PROTOCOL_SERVICE, featureId);
+    public String feature(long featureId) {
+        return String.format("%s/features/%s", baseURL, featureId);
     }
 }

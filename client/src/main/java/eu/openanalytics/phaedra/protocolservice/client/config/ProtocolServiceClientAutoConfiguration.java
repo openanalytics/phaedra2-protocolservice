@@ -21,20 +21,21 @@
 package eu.openanalytics.phaedra.protocolservice.client.config;
 
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.impl.HttpProtocolServiceClient;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 @Configuration
 public class ProtocolServiceClientAutoConfiguration {
 
     @Bean
-    public ProtocolServiceClient protocolServiceClient(PhaedraRestTemplate phaedraRestTemplate, IAuthorizationService authService) {
-        return new HttpProtocolServiceClient(phaedraRestTemplate, authService);
+    public ProtocolServiceClient protocolServiceClient(PhaedraRestTemplate phaedraRestTemplate, IAuthorizationService authService, Environment environment) {
+        return new HttpProtocolServiceClient(phaedraRestTemplate, authService, environment);
     }
 
 }
