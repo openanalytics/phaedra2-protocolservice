@@ -22,10 +22,6 @@ package eu.openanalytics.phaedra.protocolservice.dto.validation;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

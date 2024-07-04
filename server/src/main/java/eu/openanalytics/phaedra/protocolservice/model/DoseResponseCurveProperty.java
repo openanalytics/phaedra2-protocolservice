@@ -20,12 +20,12 @@
  */
 package eu.openanalytics.phaedra.protocolservice.model;
 
-import lombok.*;
-import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor

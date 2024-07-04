@@ -20,10 +20,10 @@
  */
 package eu.openanalytics.phaedra.protocolservice.model;
 
-import lombok.Data;
 import org.springframework.data.annotation.Id;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class Classification {
