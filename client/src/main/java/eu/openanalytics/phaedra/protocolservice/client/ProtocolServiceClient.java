@@ -37,6 +37,9 @@ public interface ProtocolServiceClient {
 
     List<FeatureDTO> getFeaturesOfProtocol(long protocolId) throws ProtocolUnresolvableException;
 
+    List<FeatureDTO> getFeaturesOfProtocols(List<Long> protocolIds)
+        throws ProtocolUnresolvableException;
+
     List<CalculationInputValueDTO> getCalculationInputValuesOfProtocol(long protocolId) throws ProtocolUnresolvableException;
 
     List<FeatureStatDTO> getFeatureStatsOfProtocol(long protocolId) throws ProtocolUnresolvableException;
@@ -44,5 +47,4 @@ public interface ProtocolServiceClient {
     DefaultFeatureStatDTO createDefaultFeatureStat(String name, Long formulaId, Boolean plateStat, Boolean wellTypeStat) throws DefaultFeatureStatUnresolvableException;
 
     FeatureDTO getFeature(long featureId) throws FeatureUnresolvableException;
-
 }
