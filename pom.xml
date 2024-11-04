@@ -11,7 +11,7 @@
 
     <artifactId>phaedra2-protocolservice</artifactId>
     <name>phaedra2-protocolservice</name>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
 
     <modules>
         <module>dto/</module>
