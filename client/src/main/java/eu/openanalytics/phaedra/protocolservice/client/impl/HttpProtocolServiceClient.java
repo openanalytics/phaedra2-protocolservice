@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.protocolservice.client.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,10 +50,10 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
     private final RestTemplate restTemplate;
     private final IAuthorizationService authService;
     private final UrlFactory urlFactory;
-    
+
     private static final String PROP_BASE_URL = "phaedra.protocol-service.base-url";
     private static final String DEFAULT_BASE_URL = "http://phaedra-protocol-service:8080/phaedra/protocol-service";
-    
+
     public HttpProtocolServiceClient(PhaedraRestTemplate restTemplate, IAuthorizationService authService, Environment environment) {
         this.restTemplate = restTemplate;
         this.authService = authService;
@@ -82,6 +83,22 @@ public class HttpProtocolServiceClient implements ProtocolServiceClient {
                 throw new ProtocolUnresolvableException("Features could not be converted");
             }
             return Arrays.asList(res.getBody());
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new ProtocolUnresolvableException("Features not found");
+        } catch (HttpClientErrorException ex) {
+            throw new ProtocolUnresolvableException("Error while fetching features");
+        }
+    }
+
+    @Override
+    public List<FeatureDTO> getFeaturesOfProtocols(List<Long> protocolIds)
+        throws ProtocolUnresolvableException {
+        try {
+            List<FeatureDTO> results = new ArrayList<>();
+            for (Long protocolId : protocolIds) {
+                results.addAll(getFeaturesOfProtocol(protocolId));
+            }
+            return results;
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProtocolUnresolvableException("Features not found");
         } catch (HttpClientErrorException ex) {
