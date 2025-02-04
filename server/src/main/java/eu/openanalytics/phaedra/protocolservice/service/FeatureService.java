@@ -20,12 +20,22 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -51,15 +61,21 @@ public class FeatureService {
     private final FeatureStatService featureStatService;
     private final DoseResponseCurvePropertyService drcPropertyService;
     private final CalculationInputValueService civService;
+    private final MetadataServiceGraphQlClient metadataServiceGraphQlClient;
 
-    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
-                          FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService, CalculationInputValueService civService) {
+    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate,
+        FeatureRepository featureRepository,
+        FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService,
+        CalculationInputValueService civService,
+        MetadataServiceClient metadataServiceClient,
+        MetadataServiceGraphQlClient metadataServiceGraphQlClient) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
         this.featureStatService = featureStatService;
         this.drcPropertyService = drcPropertyService;
         this.civService = civService;
+        this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
     }
 
     /**
@@ -118,6 +134,8 @@ public class FeatureService {
             featureDTO.setDrcModel(drcPropertyService.getByFeatureId(featureId));
             featureDTO.setCivs(civService.getByFeatureId(featureId));
         }
+
+        enrichWithMetadata(List.of(featureDTO));
 
         return featureDTO;
     }
@@ -188,6 +206,38 @@ public class FeatureService {
             f.setId(null);
             f.setProtocolId(newProtocolId);
             this.save(f);
+        }
+    }
+
+    private void enrichWithMetadata(List<FeatureDTO> features) {
+        if (CollectionUtils.isNotEmpty(features)) {
+            // Preallocate map size for better performance
+            Map<Long, FeatureDTO> featureMap = features.stream()
+                .collect(Collectors.toMap(FeatureDTO::getId, feature -> feature, (a, b) -> b,
+                    () -> new HashMap<>(features.size())));
+
+            // Retrieve metadata in a single call, using feature IDs directly from map keys
+            List<MetadataDTO> experimentsMetadata = metadataServiceGraphQlClient.getMetadata(
+                new ArrayList<>(featureMap.keySet()), ObjectClass.FEATURE);
+
+            // Enrich each feature only when required
+            experimentsMetadata.forEach(metadata -> {
+                FeatureDTO feature = featureMap.get(metadata.getObjectId());
+                if (feature != null) {
+                    // Set tags if available
+                    if (!metadata.getTags().isEmpty()) {
+                        feature.setTags(metadata.getTags().stream()
+                            .map(TagDTO::getTag)
+                            .collect(Collectors.toList()));
+                    }
+                    // Set properties efficiently using streams
+                    if (!metadata.getProperties().isEmpty()) {
+                        feature.setProperties(metadata.getProperties().stream()
+                            .map(property -> new PropertyDTO(property.getPropertyName(), property.getPropertyValue()))
+                            .collect(Collectors.toList()));
+                    }
+                }
+            });
         }
     }
 
