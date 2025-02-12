@@ -20,24 +20,30 @@
  */
 package eu.openanalytics.phaedra.protocolservice.service;
 
-import eu.openanalytics.phaedra.protocolservice.dto.DRCModelDTO;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.protocolservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.protocolservice.dto.TaggedObjectDTO;
 import eu.openanalytics.phaedra.protocolservice.exception.FeatureNotFoundException;
 import eu.openanalytics.phaedra.protocolservice.model.Feature;
 import eu.openanalytics.phaedra.protocolservice.repository.FeatureRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 public class FeatureService {
@@ -51,15 +57,20 @@ public class FeatureService {
     private final FeatureStatService featureStatService;
     private final DoseResponseCurvePropertyService drcPropertyService;
     private final CalculationInputValueService civService;
+    private final MetadataServiceGraphQlClient metadataServiceGraphQlClient;
 
-    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate, FeatureRepository featureRepository,
-                          FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService, CalculationInputValueService civService) {
+    public FeatureService(ModelMapper modelMapper, RestTemplate restTemplate,
+        FeatureRepository featureRepository,
+        FeatureStatService featureStatService, DoseResponseCurvePropertyService drcPropertyService,
+        CalculationInputValueService civService,
+        MetadataServiceGraphQlClient metadataServiceGraphQlClient) {
         this.modelMapper = modelMapper;
         this.restTemplate = restTemplate;
         this.featureRepository = featureRepository;
         this.featureStatService = featureStatService;
         this.drcPropertyService = drcPropertyService;
         this.civService = civService;
+        this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
     }
 
     /**
@@ -117,6 +128,8 @@ public class FeatureService {
         if (featureDTO != null) {
             featureDTO.setDrcModel(drcPropertyService.getByFeatureId(featureId));
             featureDTO.setCivs(civService.getByFeatureId(featureId));
+
+            enrichWithMetadata(List.of(featureDTO));
         }
 
         return featureDTO;
@@ -127,9 +140,14 @@ public class FeatureService {
      */
     public List<FeatureDTO> findAllFeatures() {
         List<Feature> features = (List<Feature>) featureRepository.findAll();
-        return features.stream()
-                .map(modelMapper::map)
-                .collect(Collectors.toList());
+
+        if (isNotEmpty(features)) {
+            List<FeatureDTO> featureDTOs = features.stream().map(modelMapper::map).collect(toList());
+            enrichWithMetadata(featureDTOs);
+            return featureDTOs;
+        }
+
+        return Collections.emptyList();
     }
 
     /**
@@ -139,9 +157,14 @@ public class FeatureService {
      */
     public List<FeatureDTO> findFeaturesByProtocolId(Long protocolId) {
         List<Feature> features = featureRepository.findByProtocolId(protocolId);
-        return features.stream()
-                .map(modelMapper::map)
-                .collect(Collectors.toList());
+
+        if (isNotEmpty(features)) {
+            List<FeatureDTO> featureDTOs = features.stream().map(modelMapper::map).collect(toList());
+            enrichWithMetadata(featureDTOs);
+            return featureDTOs;
+        }
+
+        return Collections.emptyList();
     }
 
     /**
@@ -166,7 +189,7 @@ public class FeatureService {
             return responseEntity.getBody().stream().map(to -> {
                 Optional<Feature> feature = featureRepository.findById(to.getObjectId());
                 return feature.map(modelMapper::map).orElse(null);
-            }).collect(Collectors.toList());
+            }).collect(toList());
         } else {
             return Collections.emptyList();
         }
@@ -191,4 +214,36 @@ public class FeatureService {
         }
     }
 
+    /**
+     * Enrich FeatureDTOs with the corresponding metadata (tags and properties)
+     *
+     * @param features
+     */
+    private void enrichWithMetadata(List<FeatureDTO> features) {
+        if (isNotEmpty(features)) {
+            Map<Long, FeatureDTO> featureMap = features.stream()
+                .collect(toMap(FeatureDTO::getId, featureDTO -> featureDTO));
+
+            List<MetadataDTO> experimentsMetadata = metadataServiceGraphQlClient.getMetadata(
+                new ArrayList<>(featureMap.keySet()), ObjectClass.FEATURE);
+
+            experimentsMetadata.forEach(metadata -> {
+                FeatureDTO feature = featureMap.get(metadata.getObjectId());
+                if (feature != null) {
+                    // Set tags if available
+                    if (!metadata.getTags().isEmpty()) {
+                        feature.setTags(metadata.getTags().stream()
+                            .map(TagDTO::getTag)
+                            .collect(toList()));
+                    }
+                    // Set properties efficiently using streams
+                    if (!metadata.getProperties().isEmpty()) {
+                        feature.setProperties(metadata.getProperties().stream()
+                            .map(property -> new PropertyDTO(property.getPropertyName(), property.getPropertyValue()))
+                            .collect(toList()));
+                    }
+                }
+            });
+        }
+    }
 }
